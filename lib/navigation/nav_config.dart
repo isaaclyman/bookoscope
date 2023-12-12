@@ -1,9 +1,8 @@
-import 'package:bookoscope/db/bookmark.db.dart';
+import 'package:bookoscope/db/endpoint.db.dart';
 import 'package:bookoscope/events/event_handler.dart';
 import 'package:bookoscope/json_data/json_types.dart';
 import 'package:bookoscope/navigation/nav_manager.dart';
 import 'package:bookoscope/pages/page_about.dart';
-import 'package:bookoscope/pages/page_bookmarks.dart';
 import 'package:bookoscope/pages/page_browse.dart';
 import 'package:bookoscope/pages/page_search.dart';
 import 'package:bookoscope/search/full_entry.dart';
@@ -28,23 +27,7 @@ class CRouterConfig {
               routes: [
                 GoRoute(
                   path: '/',
-                  redirect: (context, state) => '/search',
-                ),
-                GoRoute(
-                  path: '/search',
-                  name: CPageSearch.name,
-                  builder: (context, state) => CPageShell(
-                    routerState: state,
-                    child: const CPageSearch(),
-                  ),
-                ),
-                GoRoute(
-                  path: '/bookmarks',
-                  name: CPageBookmarks.name,
-                  builder: (context, state) => CPageShell(
-                    routerState: state,
-                    child: const CPageBookmarks(),
-                  ),
+                  redirect: (context, state) => '/browse',
                 ),
                 GoRoute(
                   path: '/browse',
@@ -52,6 +35,14 @@ class CRouterConfig {
                   builder: (context, state) => CPageShell(
                     routerState: state,
                     child: const CPageBrowse(),
+                  ),
+                ),
+                GoRoute(
+                  path: '/search',
+                  name: CPageSearch.name,
+                  builder: (context, state) => CPageShell(
+                    routerState: state,
+                    child: const CPageSearch(),
                   ),
                 ),
                 GoRoute(
@@ -94,9 +85,8 @@ class CAppShell extends StatelessWidget {
         ChangeNotifierProvider<CSearchManager>(
           create: (_) => searchManager,
         ),
-        ChangeNotifierProvider<CBookmarkManager>(
-          create: (_) => CBookmarkManager(),
-        ),
+        ChangeNotifierProvider<BKEndpointManager>(
+            create: (_) => BKEndpointManager()),
         ChangeNotifierProvider<CNavManager>(
           create: (_) => CNavManager(),
         ),
@@ -135,17 +125,12 @@ class _NavbarState extends State<_Navbar> {
 
   final List<(NavigationDestination, String)> _navItemRoutes = [
     (
-      const NavigationDestination(icon: Icon(Icons.search), label: "Search"),
-      CPageSearch.name
-    ),
-    (
-      const NavigationDestination(
-          icon: Icon(Icons.bookmark), label: "Bookmarks"),
-      CPageBookmarks.name
-    ),
-    (
       const NavigationDestination(icon: Icon(Icons.view_list), label: "Browse"),
       CPageBrowse.name
+    ),
+    (
+      const NavigationDestination(icon: Icon(Icons.search), label: "Search"),
+      CPageSearch.name
     ),
   ];
 

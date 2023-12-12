@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/Atom">
+  <updated>2023-12-12T23:12:54</updated>
+  <id>collections-1</id>
+  <title>Text Collection</title>
+  <icon>/api/opds/my-api-key/favicon</icon>
+  <author>
+    <name>Kavita</name>
+    <uri>https://www.kavitareader.com</uri>
+  </author>
+  <totalResults xmlns="http://a9.com/-/spec/opensearch/1.1/">3</totalResults>
+  <itemsPerPage xmlns="http://a9.com/-/spec/opensearch/1.1/">20</itemsPerPage>
+  <startIndex xmlns="http://a9.com/-/spec/opensearch/1.1/">1</startIndex>
+  <link rel="self" type="application/atom+xml;profile=opds-catalog;kind=acquisition" href="/api/opds/my-api-key/collections/1?pageNumber=1" />
+  <link rel="start" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/api/opds/my-api-key" />
+  <link rel="search" type="application/opensearchdescription+xml" href="/api/opds/my-api-key/search" />
+  <entry>
+    <updated>2023-12-12T23:12:54</updated>
+    <id>52</id>
+    <title>Test Book #1</title>
+    <summary>Format: Epub     Summary: Series #5</summary>
+    <link rel="subsection" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/api/opds/my-api-key/series/52" />
+    <link rel="http://opds-spec.org/image" type="image/jpeg" href="/api/image/series-cover?seriesId=52&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/image/thumbnail" type="image/jpeg" href="/api/image/series-cover?seriesId=52&amp;apiKey=my-api-key" />
+    <author>
+      <name>Test Author</name>
+      <uri>http://opds-spec.org/author/1</uri>
+    </author>
+  </entry>
+  <entry>
+    <updated>2023-12-12T23:12:54</updated>
+    <id>3</id>
+    <title>Test Book #2</title>
+    <summary>Format: Epub     Summary: Series #4</summary>
+    <link rel="subsection" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/api/opds/my-api-key/series/3" />
+    <link rel="http://opds-spec.org/image" type="image/jpeg" href="/api/image/series-cover?seriesId=3&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/image/thumbnail" type="image/jpeg" href="/api/image/series-cover?seriesId=3&amp;apiKey=my-api-key" />
+    <author>
+      <name>Test Author</name>
+      <uri>http://opds-spec.org/author/1</uri>
+    </author>
+  </entry>
+  <entry>
+    <updated>2023-12-12T23:12:54</updated>
+    <id>2</id>
+    <title>Test Book #3</title>
+    <summary>Format: Epub     Summary: Series #6</summary>
+    <link rel="subsection" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/api/opds/my-api-key/series/2" />
+    <link rel="http://opds-spec.org/image" type="image/jpeg" href="/api/image/series-cover?seriesId=2&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/image/thumbnail" type="image/jpeg" href="/api/image/series-cover?seriesId=2&amp;apiKey=my-api-key" />
+    <author>
+      <name>Test Author</name>
+      <uri>http://opds-spec.org/author/1</uri>
+    </author>
+  </entry>
+</feed>

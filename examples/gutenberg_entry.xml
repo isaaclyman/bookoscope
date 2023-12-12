@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opds="http://opds-spec.org/2010/catalog"
+  xmlns:dcterms="http://purl.org/dc/terms/" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
+  xmlns:relevance="http://a9.com/-/opensearch/extensions/relevance/1.0/">
+  <id>http://www.gutenberg.org/ebooks/1080.opds</id>
+  <updated>2023-12-12T22:26:39Z</updated>
+  <title>A Modest Proposal by Jonathan Swift</title>
+  <subtitle>Free eBooks since 1971.</subtitle>
+  <author>
+    <name>Project Gutenberg</name>
+    <uri>https://www.gutenberg.org</uri>
+    <email>webmaster@gutenberg.org</email>
+  </author>
+  <icon>https://www.gutenberg.org/gutenberg/favicon.ico</icon>
+  <link rel="search" type="application/opensearchdescription+xml"
+    title="Project Gutenberg Catalog Search" href="https://www.gutenberg.org/catalog/osd-books.xml" />
+  <link rel="self" title="This Page" type="application/atom+xml;profile=opds-catalog"
+    href="/ebooks/1080.opds" />
+  <link rel="alternate" type="text/html" title="HTML Page" href="/ebooks/1080" />
+  <link rel="start" title="Start Page" type="application/atom+xml;profile=opds-catalog"
+    href="/ebooks.opds/" />
+  <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
+  <opensearch:startIndex>1</opensearch:startIndex>
+  <entry>
+    <updated>2023-12-12T22:26:39Z</updated>
+    <title>A Modest Proposal</title>
+    <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>This edition had all images removed.</p>
+        <p> Title: A Modest Proposal<br />For preventing the children of poor people in Ireland,
+          from being a burden on their parents or country, and for making them beneficial to the
+          publick </p>
+        <p>Author: Swift, Jonathan, 1667-1745</p>
+        <p>EBook No.: 1080</p>
+        <p>Published: Oct 1, 1997</p>
+        <p>Downloads: 23937</p>
+        <p>Language: English</p>
+        <p>Subject: Political satire, English</p>
+        <p>Subject: Religious satire, English</p>
+        <p>Subject: Ireland -- Politics and government -- 18th century -- Humor</p>
+        <p>LoCC: Language and Literatures: English literature</p>
+        <p>Category: Text</p>
+        <p>Rights: Public domain in the USA.</p>
+      </div>
+    </content>
+    <id>urn:gutenberg:1080:2</id>
+    <published>1997-10-01T00:00:00+00:00</published>
+    <rights>Public domain in the USA.</rights>
+    <author>
+      <name>Swift, Jonathan</name>
+    </author>
+    <category scheme="http://purl.org/dc/terms/LCSH" term="Political satire, English" />
+    <category scheme="http://purl.org/dc/terms/LCSH" term="Religious satire, English" />
+    <category scheme="http://purl.org/dc/terms/LCSH"
+      term="Ireland -- Politics and government -- 18th century -- Humor" />
+    <category scheme="http://purl.org/dc/terms/LCC" term="PR"
+      label="Language and Literatures: English literature" />
+    <category scheme="http://purl.org/dc/terms/DCMIType" term="Text" />
+    <dcterms:language>en</dcterms:language>
+    <relevance:score>1</relevance:score>
+    <link type="application/epub+zip" rel="http://opds-spec.org/acquisition"
+      title="EPUB (no images, older E-readers)" length="65187"
+      href="https://www.gutenberg.org/ebooks/1080.epub.noimages" />
+    <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition"
+      title="Kindle (no images)" length="185888"
+      href="https://www.gutenberg.org/ebooks/1080.kindle.noimages" />
+    <link type="image/jpeg" rel="http://opds-spec.org/image"
+      href="https://www.gutenberg.org/cache/epub/1080/pg1080.cover.medium.jpg" />
+    <link type="image/jpeg" rel="http://opds-spec.org/image/thumbnail"
+      href="https://www.gutenberg.org/cache/epub/1080/pg1080.cover.small.jpg" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/1080/also/.opds" title="Readers also downloaded…" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/author/326.opds" title="By Swift, Jonathan…" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/subject/1040.opds" title="On Political satire, English…" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/subject/4856.opds" title="On Religious satire, English…" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/subject/4857.opds"
+      title="On Ireland -- Politics and government -- 18th century -- Humor…" />
+  </entry>
+  <entry>
+    <updated>2023-12-12T22:26:39Z</updated>
+    <title>A Modest Proposal</title>
+    <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>This edition has images.</p>
+        <p> Title: A Modest Proposal<br />For preventing the children of poor people in Ireland,
+          from being a burden on their parents or country, and for making them beneficial to the
+          publick </p>
+        <p>Author: Swift, Jonathan, 1667-1745</p>
+        <p>EBook No.: 1080</p>
+        <p>Published: Oct 1, 1997</p>
+        <p>Downloads: 23937</p>
+        <p>Language: English</p>
+        <p>Subject: Political satire, English</p>
+        <p>Subject: Religious satire, English</p>
+        <p>Subject: Ireland -- Politics and government -- 18th century -- Humor</p>
+        <p>LoCC: Language and Literatures: English literature</p>
+        <p>Category: Text</p>
+        <p>Rights: Public domain in the USA.</p>
+      </div>
+    </content>
+    <id>urn:gutenberg:1080:3</id>
+    <published>1997-10-01T00:00:00+00:00</published>
+    <rights>Public domain in the USA.</rights>
+    <author>
+      <name>Swift, Jonathan</name>
+    </author>
+    <category scheme="http://purl.org/dc/terms/LCSH" term="Political satire, English" />
+    <category scheme="http://purl.org/dc/terms/LCSH" term="Religious satire, English" />
+    <category scheme="http://purl.org/dc/terms/LCSH"
+      term="Ireland -- Politics and government -- 18th century -- Humor" />
+    <category scheme="http://purl.org/dc/terms/LCC" term="PR"
+      label="Language and Literatures: English literature" />
+    <category scheme="http://purl.org/dc/terms/DCMIType" term="Text" />
+    <dcterms:language>en</dcterms:language>
+    <relevance:score>1</relevance:score>
+    <link type="application/epub+zip" rel="http://opds-spec.org/acquisition"
+      title="EPUB3 (E-readers incl. Send-to-Kindle)" length="66158"
+      href="https://www.gutenberg.org/ebooks/1080.epub3.images" />
+    <link type="application/epub+zip" rel="http://opds-spec.org/acquisition"
+      title="EPUB (older E-readers)" length="65187"
+      href="https://www.gutenberg.org/ebooks/1080.epub.images" />
+    <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition"
+      title="Kindle" length="151451" href="https://www.gutenberg.org/ebooks/1080.kf8.images" />
+    <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition"
+      title="older Kindles" length="145379"
+      href="https://www.gutenberg.org/ebooks/1080.kindle.images" />
+    <link type="image/jpeg" rel="http://opds-spec.org/image"
+      href="https://www.gutenberg.org/cache/epub/1080/pg1080.cover.medium.jpg" />
+    <link type="image/jpeg" rel="http://opds-spec.org/image/thumbnail"
+      href="https://www.gutenberg.org/cache/epub/1080/pg1080.cover.small.jpg" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/1080/also/.opds" title="Readers also downloaded…" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/author/326.opds" title="By Swift, Jonathan…" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/subject/1040.opds" title="On Political satire, English…" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/subject/4856.opds" title="On Religious satire, English…" />
+    <link type="application/atom+xml;profile=opds-catalog" rel="related"
+      href="/ebooks/subject/4857.opds"
+      title="On Ireland -- Politics and government -- 18th century -- Humor…" />
+  </entry>
+</feed>

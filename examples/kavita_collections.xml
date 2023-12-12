@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/Atom">
+  <updated>2023-12-12T23:11:39</updated>
+  <id>collections</id>
+  <title>All Collections</title>
+  <icon>/api/opds/my-api-key/favicon</icon>
+  <author>
+    <name>Kavita</name>
+    <uri>https://www.kavitareader.com</uri>
+  </author>
+  <link rel="self" type="application/atom+xml;profile=opds-catalog;kind=acquisition" href="/api/opds//api/opds/my-api-key/collections" />
+  <link rel="start" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/api/opds/my-api-key" />
+  <link rel="search" type="application/opensearchdescription+xml" href="/api/opds/my-api-key/search" />
+  <entry>
+    <updated>2023-12-12T23:11:39</updated>
+    <id>1</id>
+    <title>Test Collection</title>
+    <summary />
+    <link rel="subsection" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/api/opds/my-api-key/collections/1" />
+    <link rel="http://opds-spec.org/image" type="image/jpeg" href="/api/image/collection-cover?collectionTagId=1&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/image/thumbnail" type="image/jpeg" href="/api/image/collection-cover?collectionTagId=1&amp;apiKey=my-api-key" />
+  </entry>
+</feed>

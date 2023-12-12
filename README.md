@@ -42,3 +42,9 @@ If you'd like me to spend more time on this app (meaning more free features for 
 # Contributing
 
 Before submitting a PR, please file an issue describing the feature or fix you'd like to work on. This will help me coordinate with any ongoing work.
+
+# Development
+
+When anything in lib/db/ changes:
+
+`dart run build_runner build`

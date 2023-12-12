@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "robot_fullsize 2.png",
+      "filename" : "icon 1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "robot_fullsize.png",
+      "filename" : "icon.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "robot_fullsize 1.png",
+      "filename" : "icon 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

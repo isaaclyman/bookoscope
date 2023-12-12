@@ -1,4 +1,3 @@
-import 'package:bookoscope/components/bookmark_icon_button.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/theme/colors.dart';
 import 'package:bookoscope/theme/text.dart';
@@ -147,7 +146,6 @@ class _EntryActions extends StatelessWidget {
                     ),
                   )
                 : const Spacer(),
-            CBookmarkIconButton(result: result)
           ],
         ),
       ),

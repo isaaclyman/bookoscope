@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:bookoscope/components/bookmark_icon_button.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
@@ -147,7 +146,6 @@ class CEntrySummary extends StatelessWidget {
 
     return Row(
       children: [
-        if (bookmarkOnLeft) CBookmarkIconButton(result: result),
         Expanded(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -181,7 +179,6 @@ class CEntrySummary extends StatelessWidget {
             ),
           ),
         ),
-        if (!bookmarkOnLeft) CBookmarkIconButton(result: result),
       ],
     );
   }

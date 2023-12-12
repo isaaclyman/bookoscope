@@ -19,6 +19,7 @@ dependencies:
   path_provider: ^2.1.1
   provider: ^6.0.5
   url_launcher: ^6.1.14
+  xml: ^6.5.0
 
 dev_dependencies:
   auto_screenshot:

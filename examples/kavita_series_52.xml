@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/Atom">
+  <updated>2023-12-12T23:16:03</updated>
+  <id>series-52</id>
+  <title>Test Book #1 - Storyline</title>
+  <icon>/api/opds/my-api-key/favicon</icon>
+  <author>
+    <name>Kavita</name>
+    <uri>https://www.kavitareader.com</uri>
+  </author>
+  <link rel="self" type="application/atom+xml;profile=opds-catalog;kind=acquisition"
+    href="/api/opds//api/opds/my-api-key/series/52" />
+  <link rel="start" type="application/atom+xml;profile=opds-catalog;kind=navigation"
+    href="/api/opds/my-api-key" />
+  <link rel="search" type="application/opensearchdescription+xml" href="/api/opds/my-api-key/search" />
+  <link rel="http://opds-spec.org/image" type="image/jpeg"
+    href="/api/image/series-cover?seriesId=52&amp;apiKey=my-api-key" />
+  <entry>
+    <updated>2023-12-12T23:16:03</updated>
+    <id>52</id>
+    <title>Test Book #1</title>
+    <summary>epub+zip - 8.08 MB</summary>
+    <extent xmlns="http://purl.org/dc/terms/">8.08 MB</extent>
+    <format xmlns="http://purl.org/dc/terms/format">Epub</format>
+    <content type="text">application/epub+zip</content>
+    <link rel="http://opds-spec.org/image" type="image/jpeg"
+      href="/api/image/chapter-cover?chapterId=52&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/image/thumbnail" type="image/jpeg"
+      href="/api/image/chapter-cover?chapterId=52&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/epub+zip"
+      href="/api/opds/my-api-key/series/52/volume/52/chapter/52/download/TEST_EPUB.epub"
+      title="TEST_EPUB.epub" p5:count="48" xmlns:p5="http://vaemendis.net/opds-pse/ns" />
+    <link rel="http://vaemendis.net/opds-pse/stream" type="image/jpeg"
+      href="/api/opds/my-api-key/image?libraryId=3&amp;seriesId=52&amp;volumeId=52&amp;chapterId=52&amp;pageNumber={pageNumber}"
+      p5:count="48" p5:lastReadDate="0001-01-01T00:00:00"
+      xmlns:p5="http://vaemendis.net/opds-pse/ns" />
+  </entry>
+</feed>
