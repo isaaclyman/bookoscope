@@ -1,7 +1,7 @@
-import 'package:cypher_system_srd_lookup/render/accordion.dart';
-import 'package:cypher_system_srd_lookup/render/chip.dart';
-import 'package:cypher_system_srd_lookup/render/name_description.dart';
-import 'package:cypher_system_srd_lookup/theme/text.dart';
+import 'package:bookoscope/render/accordion.dart';
+import 'package:bookoscope/render/chip.dart';
+import 'package:bookoscope/render/name_description.dart';
+import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 
 class CRenderLabeledListAccordion extends StatelessWidget {

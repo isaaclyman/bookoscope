@@ -1,8 +1,8 @@
-import 'package:cypher_system_srd_lookup/events/event_handler.dart';
-import 'package:cypher_system_srd_lookup/render/accordion.dart';
-import 'package:cypher_system_srd_lookup/render/link.dart';
-import 'package:cypher_system_srd_lookup/theme/colors.dart';
-import 'package:cypher_system_srd_lookup/theme/text.dart';
+import 'package:bookoscope/events/event_handler.dart';
+import 'package:bookoscope/render/accordion.dart';
+import 'package:bookoscope/render/link.dart';
+import 'package:bookoscope/theme/colors.dart';
+import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

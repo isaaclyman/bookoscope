@@ -1,11 +1,11 @@
-import 'package:cypher_system_srd_lookup/components/fade_horizontal_scroll.dart';
-import 'package:cypher_system_srd_lookup/events/event_handler.dart';
-import 'package:cypher_system_srd_lookup/search/search_manager.dart';
-import 'package:cypher_system_srd_lookup/theme/text.dart';
-import 'package:cypher_system_srd_lookup/util/intersperse.dart';
+import 'package:bookoscope/components/fade_horizontal_scroll.dart';
+import 'package:bookoscope/events/event_handler.dart';
+import 'package:bookoscope/search/search_manager.dart';
+import 'package:bookoscope/theme/text.dart';
+import 'package:bookoscope/util/intersperse.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cypher_system_srd_lookup/theme/colors.dart';
+import 'package:bookoscope/theme/colors.dart';
 import 'package:provider/provider.dart';
 
 class CSearchBar extends StatefulWidget {

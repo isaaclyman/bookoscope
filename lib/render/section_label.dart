@@ -1,4 +1,4 @@
-import 'package:cypher_system_srd_lookup/theme/text.dart';
+import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 
 class CRenderSectionLabel extends StatelessWidget {

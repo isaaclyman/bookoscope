@@ -1,7 +1,7 @@
-import 'package:cypher_system_srd_lookup/components/bookmark_icon_button.dart';
-import 'package:cypher_system_srd_lookup/search/search_manager.dart';
-import 'package:cypher_system_srd_lookup/theme/colors.dart';
-import 'package:cypher_system_srd_lookup/theme/text.dart';
+import 'package:bookoscope/components/bookmark_icon_button.dart';
+import 'package:bookoscope/search/search_manager.dart';
+import 'package:bookoscope/theme/colors.dart';
+import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

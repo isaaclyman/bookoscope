@@ -1,5 +1,5 @@
-import 'package:cypher_system_srd_lookup/theme/colors.dart';
-import 'package:cypher_system_srd_lookup/theme/text.dart';
+import 'package:bookoscope/theme/colors.dart';
+import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 
 class CRenderParagraph extends StatelessWidget {

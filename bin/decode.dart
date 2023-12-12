@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cypher_system_srd_lookup/json_data/json_types.dart';
+import 'package:bookoscope/json_data/json_types.dart';
 import 'package:path/path.dart';
 
 void main(List<String> arguments) async {

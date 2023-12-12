@@ -1,5 +1,5 @@
-import 'package:cypher_system_srd_lookup/db/bookmark.db.dart';
-import 'package:cypher_system_srd_lookup/search/search_manager.dart';
+import 'package:bookoscope/db/bookmark.db.dart';
+import 'package:bookoscope/search/search_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

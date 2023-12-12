@@ -1,9 +1,9 @@
-import 'package:cypher_system_srd_lookup/pages/page_about.dart';
-import 'package:cypher_system_srd_lookup/search/results.dart';
-import 'package:cypher_system_srd_lookup/search/search_bar.dart';
-import 'package:cypher_system_srd_lookup/search/search_manager.dart';
-import 'package:cypher_system_srd_lookup/theme/colors.dart';
-import 'package:cypher_system_srd_lookup/theme/text.dart';
+import 'package:bookoscope/pages/page_about.dart';
+import 'package:bookoscope/search/results.dart';
+import 'package:bookoscope/search/search_bar.dart';
+import 'package:bookoscope/search/search_manager.dart';
+import 'package:bookoscope/theme/colors.dart';
+import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

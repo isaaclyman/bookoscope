@@ -1,7 +1,7 @@
-name: cypher_system_srd_lookup
-description: An instant full-text search app for the Cypher System SRD with structured results.
+name: bookoscope
+description: Unified OPDS browser for ebooks
 publish_to: 'none'
-version: 1.2.2+7
+version: 1.0.0+1
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
@@ -45,8 +45,8 @@ flutter_launcher_icons:
 
 auto_screenshot:
   bundle_id: 
-    android: com.isaaclyman.cyphersrd
-    ios: com.isaaclyman.cyphersrd
+    android: com.isaaclyman.bookoscope
+    ios: com.isaaclyman.bookoscope
   devices:
     - iPhone 8 Plus
     - iPhone 13 Pro Max
@@ -55,12 +55,8 @@ auto_screenshot:
     - 10-inch_Tablet_API_33
     - 7-inch_Tablet_API_33
   base_url:
-    android: http://cyphersrd.isaaclyman.com/
-    ios: cyphersrd://cyphersrd.isaaclyman.com
+    android: http://bookoscope.isaaclyman.com/
+    ios: bookoscope://bookoscope.isaaclyman.com
   output_folder: screenshots
   screenshot:
     - search
-    - search?query=warrior
-    - search?category=Types&item=WARRIOR
-    - browse
-    - search?category=Abilities&item=Bash

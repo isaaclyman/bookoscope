@@ -1,4 +1,4 @@
-import 'package:cypher_system_srd_lookup/theme/colors.dart';
+import 'package:bookoscope/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class CThemeText {

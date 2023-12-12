@@ -1,7 +1,7 @@
-import 'package:cypher_system_srd_lookup/events/error_toast.dart';
-import 'package:cypher_system_srd_lookup/pages/page_search.dart';
-import 'package:cypher_system_srd_lookup/search/search_manager.dart';
-import 'package:cypher_system_srd_lookup/util/debounce.dart';
+import 'package:bookoscope/events/error_toast.dart';
+import 'package:bookoscope/pages/page_search.dart';
+import 'package:bookoscope/search/search_manager.dart';
+import 'package:bookoscope/util/debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

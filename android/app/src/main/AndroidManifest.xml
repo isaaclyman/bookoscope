@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="Cypher SRD"
+        android:label="Bookoscope"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -28,9 +28,9 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="cyphersrd.isaaclyman.com" />
+                <data android:scheme="http" android:host="bookoscope.isaaclyman.com" />
                 <data android:scheme="https" />
-                <data android:scheme="cyphersrd" />
+                <data android:scheme="bookoscope" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

@@ -1,6 +1,6 @@
-import 'package:cypher_system_srd_lookup/components/future_handler.dart';
-import 'package:cypher_system_srd_lookup/json_data/read_json.dart';
-import 'package:cypher_system_srd_lookup/navigation/nav_config.dart';
+import 'package:bookoscope/components/future_handler.dart';
+import 'package:bookoscope/json_data/read_json.dart';
+import 'package:bookoscope/navigation/nav_config.dart';
 import 'package:flutter/material.dart';
 
 void main() async {

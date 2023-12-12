@@ -1,10 +1,10 @@
 import 'dart:collection';
 
 import 'package:azlistview/azlistview.dart';
-import 'package:cypher_system_srd_lookup/components/fade_horizontal_scroll.dart';
-import 'package:cypher_system_srd_lookup/search/results.dart';
-import 'package:cypher_system_srd_lookup/search/search_manager.dart';
-import 'package:cypher_system_srd_lookup/util/intersperse.dart';
+import 'package:bookoscope/components/fade_horizontal_scroll.dart';
+import 'package:bookoscope/search/results.dart';
+import 'package:bookoscope/search/search_manager.dart';
+import 'package:bookoscope/util/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,4 +1,4 @@
-import 'package:cypher_system_srd_lookup/db/db.dart';
+import 'package:bookoscope/db/db.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
