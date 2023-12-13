@@ -1,3 +1,5 @@
+![Image of a square bookshelf stocked with several books](icons/icon_256.png)
+
 # Bookoscope
 
 #### BOOKOSCOPE IS:
@@ -14,6 +16,7 @@ Bookoscope fills that very small, very important niche.
 
 - Fast
 - Easy on the eyes
+- Includes over 80,000 public domain titles from Project Gutenberg
 - Uses cached feeds (refresh on demand)
 - Searchable by any available metadata
 - Quick download and export to the ereader of your choice
