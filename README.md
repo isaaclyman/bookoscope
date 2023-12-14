@@ -1,4 +1,4 @@
-![Image of a square bookshelf stocked with several books](icons/icon_256.png)
+![Illustration of a square bookshelf stocked with several books](icons/icon_256.png)
 
 # Bookoscope
 
@@ -10,7 +10,7 @@ A unified, searchable, visual, book-first catalog for all your OPDS endpoints.
 
 Some ereader apps can connect to OPDS endpoints, but the functionality is tucked away and awkward. There's no way to browse and search all the ebooks you have access to, all at once.
 
-Bookoscope fills that very small, very important niche.
+Bookoscope fills that very small, very important niche. It crawls your OPDS endpoints, finds and caches all the books it can, and lets you download any of them to your device with one tap. From there, you can import them to your preferred ereader.
 
 #### SELLING POINTS:
 
@@ -28,7 +28,7 @@ Bookoscope fills that very small, very important niche.
 - A self-hosted ebook server, like Kavita or calibre-web.
 - A pirating tool.
 
-You can use Bookoscope to enhance an e-reading experience that includes any or all of the above. However, Bookoscope does not endorse, affiliate with, or integrate with any other app or tool.
+You can use Bookoscope to enhance an e-reading experience that includes any or all of the above. However, Bookoscope does not endorse or affiliate with any other app or tool.
 
 # Get the app
 
@@ -48,6 +48,6 @@ Before submitting a PR, please file an issue describing the feature or fix you'd
 
 # Development
 
-When anything in lib/db/ changes:
+When anything in `lib/db/` changes:
 
 `dart run build_runner build`

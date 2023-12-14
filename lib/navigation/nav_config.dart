@@ -1,4 +1,4 @@
-import 'package:bookoscope/db/endpoint.db.dart';
+import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/events/event_handler.dart';
 import 'package:bookoscope/json_data/json_types.dart';
 import 'package:bookoscope/navigation/nav_manager.dart';
@@ -85,8 +85,8 @@ class CAppShell extends StatelessWidget {
         ChangeNotifierProvider<CSearchManager>(
           create: (_) => searchManager,
         ),
-        ChangeNotifierProvider<BKEndpointManager>(
-            create: (_) => BKEndpointManager()),
+        ChangeNotifierProvider<BKSourceManager>(
+            create: (_) => BKSourceManager()),
         ChangeNotifierProvider<CNavManager>(
           create: (_) => CNavManager(),
         ),

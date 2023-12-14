@@ -2,38 +2,43 @@ import 'package:bookoscope/db/db.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
-part 'endpoint.db.g.dart';
+part 'source.db.g.dart';
 
 @collection
-class Endpoint {
+class Source {
   Id id = Isar.autoIncrement;
 
+  String label;
   String url;
-  int sourceId;
+  String username;
+  String password;
+  bool isCompletelyCrawled = false;
 
-  Endpoint({
+  Source({
+    required this.label,
     required this.url,
-    required this.sourceId,
+    required this.username,
+    required this.password,
   });
 }
 
-class BKEndpointManager extends ChangeNotifier {
+class BKSourceManager extends ChangeNotifier {
   Isar? _database;
-  Future<List<Endpoint>> get endpointsFuture =>
-      bkDatabase.then((db) => db.endpoints.where().findAll());
+  Future<List<Source>> get sourcesFuture =>
+      bkDatabase.then((db) => db.sources.where().findAll());
   bool get isLoaded => _database != null;
 
   List<VoidCallback> onDispose = [];
 
-  BKEndpointManager() {
-    endpointsFuture.then((sources) {
+  BKSourceManager() {
+    sourcesFuture.then((sources) {
       notifyListeners();
     });
 
     bkDatabase.then((db) {
       _database = db;
       final listener =
-          db.endpoints.watchLazy().listen((event) => notifyListeners());
+          db.sources.watchLazy().listen((event) => notifyListeners());
       onDispose.add(() => listener.cancel());
     });
   }
@@ -46,27 +51,27 @@ class BKEndpointManager extends ChangeNotifier {
     super.dispose();
   }
 
-  Future upsertEndpoint(Endpoint endpoint) async {
+  Future upsertSource(Source source) async {
     final db = _database;
     if (db == null) {
       return;
     }
 
     await db.writeTxn(() async {
-      await db.endpoints.put(endpoint);
+      await db.sources.put(source);
     });
 
     notifyListeners();
   }
 
-  Future removeSource(Endpoint endpoint) async {
+  Future removeSource(Source source) async {
     final db = _database;
     if (db == null) {
       return;
     }
 
     await db.writeTxn(() async {
-      await db.endpoints.delete(endpoint.id);
+      await db.sources.delete(source.id);
     });
 
     notifyListeners();

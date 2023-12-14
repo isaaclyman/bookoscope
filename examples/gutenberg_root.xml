@@ -269,8 +269,7 @@
   <entry>
     <updated>2023-12-12T18:07:42Z</updated>
     <id>https://www.gutenberg.org/ebooks/1080.opds</id>
-    <title>A Modest Proposal
-</title>
+    <title>A Modest Proposal</title>
     <content type="text">Jonathan Swift</content>
     <link type="application/atom+xml;profile=opds-catalog" rel="subsection" href="/ebooks/1080.opds" />
     <link type="image/png" rel="http://opds-spec.org/image/thumbnail"

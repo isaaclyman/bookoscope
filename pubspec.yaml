@@ -9,27 +9,28 @@ environment:
 dependencies:
   accordion: ^2.6.0
   azlistview: ^2.0.0
-  collection: ^1.17.2
+  collection: ^1.18.0
   flutter:
     sdk: flutter
-  go_router: ^10.2.0
+  go_router: ^12.1.3
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
   json_annotation: ^4.8.1 
+  mockito: ^5.4.3
   path_provider: ^2.1.1
-  provider: ^6.0.5
-  url_launcher: ^6.1.14
+  provider: ^6.1.1
+  url_launcher: ^6.2.2
   xml: ^6.5.0
 
 dev_dependencies:
   auto_screenshot:
     path: ../auto_screenshot
-  build_runner: ^2.4.6
+  build_runner: ^2.4.7
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
   json_serializable: ^6.7.1
-  path: ^1.8.3
+  path: 1.8.3
   flutter_launcher_icons: ^0.13.1
   isar_generator: ^3.1.0+1
 

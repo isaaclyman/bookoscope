@@ -17,24 +17,14 @@ const EndpointSchema = CollectionSchema(
   name: r'Endpoint',
   id: -8981241579768495374,
   properties: {
-    r'label': PropertySchema(
+    r'sourceId': PropertySchema(
       id: 0,
-      name: r'label',
-      type: IsarType.string,
-    ),
-    r'password': PropertySchema(
-      id: 1,
-      name: r'password',
-      type: IsarType.string,
+      name: r'sourceId',
+      type: IsarType.long,
     ),
     r'url': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'url',
-      type: IsarType.string,
-    ),
-    r'username': PropertySchema(
-      id: 3,
-      name: r'username',
       type: IsarType.string,
     )
   },
@@ -58,10 +48,7 @@ int _endpointEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.label.length * 3;
-  bytesCount += 3 + object.password.length * 3;
   bytesCount += 3 + object.url.length * 3;
-  bytesCount += 3 + object.username.length * 3;
   return bytesCount;
 }
 
@@ -71,10 +58,8 @@ void _endpointSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.label);
-  writer.writeString(offsets[1], object.password);
-  writer.writeString(offsets[2], object.url);
-  writer.writeString(offsets[3], object.username);
+  writer.writeLong(offsets[0], object.sourceId);
+  writer.writeString(offsets[1], object.url);
 }
 
 Endpoint _endpointDeserialize(
@@ -84,10 +69,8 @@ Endpoint _endpointDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Endpoint(
-    label: reader.readString(offsets[0]),
-    password: reader.readString(offsets[1]),
-    url: reader.readString(offsets[2]),
-    username: reader.readString(offsets[3]),
+    sourceId: reader.readLong(offsets[0]),
+    url: reader.readString(offsets[1]),
   );
   object.id = id;
   return object;
@@ -101,12 +84,8 @@ P _endpointDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
-    case 2:
-      return (reader.readString(offset)) as P;
-    case 3:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -254,262 +233,55 @@ extension EndpointQueryFilter
     });
   }
 
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> sourceIdEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'label',
+        property: r'sourceId',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelGreaterThan(
-    String value, {
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> sourceIdGreaterThan(
+    int value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'label',
+        property: r'sourceId',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelLessThan(
-    String value, {
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> sourceIdLessThan(
+    int value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'label',
+        property: r'sourceId',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelBetween(
-    String lower,
-    String upper, {
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> sourceIdBetween(
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'label',
+        property: r'sourceId',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'label',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'label',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'label',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'label',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'label',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> labelIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'label',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'password',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'password',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'password',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'password',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'password',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'password',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'password',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'password',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'password',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> passwordIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'password',
-        value: '',
       ));
     });
   }
@@ -643,136 +415,6 @@ extension EndpointQueryFilter
       ));
     });
   }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'username',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'username',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'username',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'username',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'username',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'username',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'username',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'username',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'username',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> usernameIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'username',
-        value: '',
-      ));
-    });
-  }
 }
 
 extension EndpointQueryObject
@@ -782,27 +424,15 @@ extension EndpointQueryLinks
     on QueryBuilder<Endpoint, Endpoint, QFilterCondition> {}
 
 extension EndpointQuerySortBy on QueryBuilder<Endpoint, Endpoint, QSortBy> {
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByLabel() {
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortBySourceId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'label', Sort.asc);
+      return query.addSortBy(r'sourceId', Sort.asc);
     });
   }
 
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByLabelDesc() {
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortBySourceIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'label', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByPassword() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'password', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByPasswordDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'password', Sort.desc);
+      return query.addSortBy(r'sourceId', Sort.desc);
     });
   }
 
@@ -815,18 +445,6 @@ extension EndpointQuerySortBy on QueryBuilder<Endpoint, Endpoint, QSortBy> {
   QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByUrlDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'url', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByUsername() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'username', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByUsernameDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'username', Sort.desc);
     });
   }
 }
@@ -845,27 +463,15 @@ extension EndpointQuerySortThenBy
     });
   }
 
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByLabel() {
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenBySourceId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'label', Sort.asc);
+      return query.addSortBy(r'sourceId', Sort.asc);
     });
   }
 
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByLabelDesc() {
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenBySourceIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'label', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByPassword() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'password', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByPasswordDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'password', Sort.desc);
+      return query.addSortBy(r'sourceId', Sort.desc);
     });
   }
 
@@ -880,33 +486,13 @@ extension EndpointQuerySortThenBy
       return query.addSortBy(r'url', Sort.desc);
     });
   }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByUsername() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'username', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByUsernameDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'username', Sort.desc);
-    });
-  }
 }
 
 extension EndpointQueryWhereDistinct
     on QueryBuilder<Endpoint, Endpoint, QDistinct> {
-  QueryBuilder<Endpoint, Endpoint, QDistinct> distinctByLabel(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Endpoint, Endpoint, QDistinct> distinctBySourceId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'label', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QDistinct> distinctByPassword(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'password', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'sourceId');
     });
   }
 
@@ -914,13 +500,6 @@ extension EndpointQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'url', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Endpoint, Endpoint, QDistinct> distinctByUsername(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'username', caseSensitive: caseSensitive);
     });
   }
 }
@@ -933,27 +512,15 @@ extension EndpointQueryProperty
     });
   }
 
-  QueryBuilder<Endpoint, String, QQueryOperations> labelProperty() {
+  QueryBuilder<Endpoint, int, QQueryOperations> sourceIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'label');
-    });
-  }
-
-  QueryBuilder<Endpoint, String, QQueryOperations> passwordProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'password');
+      return query.addPropertyName(r'sourceId');
     });
   }
 
   QueryBuilder<Endpoint, String, QQueryOperations> urlProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'url');
-    });
-  }
-
-  QueryBuilder<Endpoint, String, QQueryOperations> usernameProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'username');
     });
   }
 }

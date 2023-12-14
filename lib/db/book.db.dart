@@ -12,12 +12,14 @@ class Book {
   String author;
   List<String> tags;
   List<BookDownloadUrl> downloadUrls;
+  int sourceId;
 
   Book({
     required this.title,
     required this.author,
     required this.tags,
     required this.downloadUrls,
+    required this.sourceId,
   });
 }
 
