@@ -23,12 +23,25 @@ extension BKXmlNode on XmlNode {
   }
 
   String? getMatchingChildNodeText(
-      String nodeName, bool Function(XmlElement element) matcher) {
+    String nodeName,
+    bool Function(XmlElement element) matcher,
+  ) {
     return childElements
         .firstWhereOrNull(
           (element) => element.localName == nodeName && matcher(element),
         )
         ?.innerText;
+  }
+
+  String? getMatchingChildNodeXml(
+    String nodeName,
+    bool Function(XmlElement) matcher,
+  ) {
+    return childElements
+        .firstWhereOrNull(
+          (element) => element.localName == nodeName && matcher(element),
+        )
+        ?.innerXml;
   }
 
   String? getPossiblyNestedChildNodeText(String nodeName, String innerNode) {
@@ -50,9 +63,41 @@ extension BKXmlNode on XmlNode {
   }
 
   List<String>? getChildrenNodesText(String nodeName) {
-    return childElements
+    final childTexts = childElements
         .where((element) => element.localName == nodeName)
         .map((element) => element.innerText)
+        .where((text) => text.trim().isNotEmpty)
         .toList();
+    if (childTexts.isEmpty) {
+      return null;
+    }
+
+    return childTexts;
+  }
+
+  List<String>? getChildrenNodesFirstMatchingAttribute(
+    String nodeName,
+    List<String> attributeNames,
+  ) {
+    final childAttributeValues = childElements
+        .where((element) => element.localName == nodeName)
+        .map((element) {
+          for (final attr in attributeNames) {
+            final value = element.getAttribute(attr);
+            if (value != null) {
+              return value;
+            }
+          }
+
+          return null;
+        })
+        .whereNotNull()
+        .toList();
+
+    if (childAttributeValues.isEmpty) {
+      return null;
+    }
+
+    return childAttributeValues;
   }
 }

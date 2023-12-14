@@ -14,7 +14,7 @@ A unified, searchable, visual, book-first catalog for all your OPDS endpoints.
 
 Some ereader apps can connect to OPDS endpoints, but the functionality is tucked away and awkward. There's no way to browse and search all the ebooks you have access to, all at once.
 
-Bookoscope fills that very small, very important niche. It crawls your OPDS endpoints, finds and caches all the books it can, and lets you download any of them to your device with one tap. From there, you can import them to your preferred ereader.
+Bookoscope fills that very small, very important niche. It crawls your OPDS endpoints, finds and caches all the books it can, and lets you easily download any of them to your device. From there, you can import them to your preferred ereader.
 
 #### SELLING POINTS:
 
@@ -44,7 +44,7 @@ Not yet published.
 
 If there's a problem with the app, you may [file an issue](https://github.com/isaaclyman/bookoscope/issues).
 
-If the app doesn't correctly crawl an OPDS endpoint, **please provide one or both of the following:**
+If the app doesn't correctly crawl an OPDS endpoint, **please provide at least one of the following:**
 
 - A direct link to the endpoint and a username and password (if required).
 - The complete XML download of all of the following:

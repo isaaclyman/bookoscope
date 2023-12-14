@@ -1,18 +1,36 @@
-import 'package:bookoscope/format/opds_xml.dart';
+import 'dart:io';
+
+import 'package:bookoscope/format/opds/opds_events.dart';
+import 'package:bookoscope/format/opds/opds_extractor.dart';
+import 'package:bookoscope/format/opds/opds_resource.dart';
+import 'package:bookoscope/format/opds/opds_xml.dart';
 import 'package:collection/collection.dart';
 
+/// Class for crawling an OPDS catalog starting from [opdsRootUri].
 class OPDSCrawler {
-  final String opdsRoot;
+  final String opdsRootUri;
+  final client = HttpClient();
   final Set<String> visitedEndpoints = {};
   final Set<String> foundResourceIds = {};
-  OPDSExtractor extractor;
+  late OPDSExtractor extractor;
 
   OPDSCrawler({
-    required this.opdsRoot,
-  }) : extractor = OPDSExtractor(rootUri: opdsRoot);
+    required this.opdsRootUri,
+  }) {
+    extractor = OPDSExtractor(client: client);
+  }
 
+  /// Recursively crawls the XML response from [opdsRootUri], then
+  /// any endpoints indicated by a <link> element, then <link> elements
+  /// inside of any <entry> elements that are determined not to be
+  /// acquirable resources (leaf nodes / downloadable ebooks).
+  ///
+  /// The returned [Stream] (of type [OPDSCrawlEvent]) will emit when a URI
+  /// is about to be crawled, when a resource (e.g. an ebook) is found, when
+  /// an exception occurs (e.g. the URI is accessible or the response can't
+  /// be parsed as XML), and when a document has been successfully parsed.
   Stream<OPDSCrawlEvent> crawlFromRoot() {
-    return _extractRecursive(opdsRoot);
+    return _extractRecursive(opdsRootUri);
   }
 
   Stream<OPDSCrawlEvent> _extractRecursive(String uriString) async* {
@@ -27,7 +45,7 @@ class OPDSCrawler {
     final OPDSFeed feed;
     try {
       feed = await extractor.getFeed(uri);
-      yield OPDSCrawlSuccess(crawledUri: uri.toString());
+      yield OPDSCrawlSuccess(uri: uri.toString());
     } on Exception catch (e) {
       yield OPDSCrawlException(
         exception: e,
@@ -88,38 +106,6 @@ class OPDSCrawler {
   }
 }
 
-class OPDSCrawlResource {
-  final String title;
-  final String author;
-  final List<String> tags;
-  final List<OPDSCrawlResourceUrl> downloadUrls;
-  final String? imageUrl;
-  final String? htmlDescription;
-  final String? textDescription;
-
-  const OPDSCrawlResource({
-    required this.title,
-    required this.author,
-    required this.tags,
-    required this.downloadUrls,
-    required this.imageUrl,
-    required this.htmlDescription,
-    required this.textDescription,
-  });
-}
-
-class OPDSCrawlResourceUrl {
-  final String label;
-  final String uri;
-  final String? type;
-
-  const OPDSCrawlResourceUrl({
-    required this.label,
-    required this.uri,
-    required this.type,
-  });
-}
-
 //
 // CLASSIFIERS
 //
@@ -171,48 +157,4 @@ class OPDSEntryClassifier {
 
     return false;
   }
-}
-
-//
-// EVENTS
-//
-
-abstract class OPDSCrawlEvent {
-  const OPDSCrawlEvent();
-}
-
-class OPDSCrawlBegin extends OPDSCrawlEvent {
-  final String uri;
-
-  const OPDSCrawlBegin({
-    required this.uri,
-  });
-}
-
-class OPDSCrawlSuccess extends OPDSCrawlEvent {
-  final String crawledUri;
-
-  const OPDSCrawlSuccess({
-    required this.crawledUri,
-  });
-}
-
-class OPDSCrawlException extends OPDSCrawlEvent {
-  final Exception exception;
-  final String uri;
-
-  const OPDSCrawlException({
-    required this.exception,
-    required this.uri,
-  });
-}
-
-class OPDSCrawlResourceFound extends OPDSCrawlEvent {
-  final OPDSCrawlResource resource;
-  final String uri;
-
-  const OPDSCrawlResourceFound({
-    required this.resource,
-    required this.uri,
-  });
 }

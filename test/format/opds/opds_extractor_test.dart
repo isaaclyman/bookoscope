@@ -1,19 +1,18 @@
 import 'dart:io';
 
-import 'package:bookoscope/format/opds_xml.dart';
+import 'package:bookoscope/format/opds/opds_extractor.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import '../helpers.dart';
-import 'opds_xml_test.mocks.dart';
+import '../../helpers.dart';
+import 'opds_extractor_test.mocks.dart';
 
 @GenerateMocks([HttpClient, HttpClientRequest, HttpClientResponse])
 void main() {
   group('extractXml', () {
     final client = MockHttpClient();
-    final extractor = OPDSExtractor(rootUri: 'https://example.com')
-      ..client = client;
+    final extractor = OPDSExtractor(client: client);
 
     Future<void> mockFileResponse(File file) async {
       final fileString = await file.readAsString();
@@ -41,16 +40,15 @@ void main() {
       expect(feed.updated, '2023-12-12T18:07:42Z');
 
       expect(feed.links?.length, 6);
-      expectContains(
-          feed.links,
-          (link) =>
+      expectContains(feed.links,
+          matcher: (link) =>
               link.rel == 'next' &&
               link.href == '/ebooks/search.opds/?start_index=26');
 
       expect(feed.entries?.length, 27);
       expectContains(
         feed.entries,
-        (element) =>
+        matcher: (element) =>
             element.title == 'Sort Alphabetically by Title' &&
             element.links!.any((link) =>
                 link.rel == 'subsection' &&
@@ -58,7 +56,7 @@ void main() {
       );
       expectContains(
         feed.entries,
-        (element) =>
+        matcher: (element) =>
             element.title == 'Frankenstein; Or, The Modern Prometheus' &&
             element.links!.any((link) =>
                 link.rel == 'subsection' && link.href == '/ebooks/84.opds'),
@@ -78,12 +76,13 @@ void main() {
 
       expect(feed.links?.length, 3);
       expectContains(feed.links,
-          (link) => link.rel == 'start' && link.href == '/api/opds/my-api-key');
+          matcher: (link) =>
+              link.rel == 'start' && link.href == '/api/opds/my-api-key');
 
       expect(feed.entries?.length, 6);
       expectContains(
         feed.entries,
-        (element) =>
+        matcher: (element) =>
             element.title == 'On Deck' &&
             element.links!.any((link) =>
                 link.rel == 'subsection' &&
@@ -91,7 +90,7 @@ void main() {
       );
       expectContains(
         feed.entries,
-        (element) =>
+        matcher: (element) =>
             element.title == 'All Collections' &&
             element.links!.any((link) =>
                 link.rel == 'subsection' &&
