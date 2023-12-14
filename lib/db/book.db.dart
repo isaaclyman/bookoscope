@@ -12,6 +12,7 @@ class Book {
   String author;
   List<String> tags;
   List<BookDownloadUrl> downloadUrls;
+  String imageUrl;
   int sourceId;
 
   Book({
@@ -19,6 +20,7 @@ class Book {
     required this.author,
     required this.tags,
     required this.downloadUrls,
+    required this.imageUrl,
     required this.sourceId,
   });
 }
@@ -27,6 +29,7 @@ class Book {
 class BookDownloadUrl {
   String? label;
   String? url;
+  String? type;
 }
 
 class BKBookManager extends ChangeNotifier {

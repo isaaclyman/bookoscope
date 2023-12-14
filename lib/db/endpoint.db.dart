@@ -9,10 +9,12 @@ class Endpoint {
   Id id = Isar.autoIncrement;
 
   String url;
+  bool isCrawled;
   int sourceId;
 
   Endpoint({
     required this.url,
+    required this.isCrawled,
     required this.sourceId,
   });
 }

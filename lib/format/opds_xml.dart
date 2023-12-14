@@ -7,14 +7,16 @@ import 'package:xml/xml.dart';
 import 'package:xml/xml_events.dart';
 
 class OPDSFeed {
-  String id;
-  String updated;
-  String? title;
-  Map<String, OPDSLink>? links;
-  List<OPDSEntry>? entries;
+  final String id;
+  final String url;
+  final String updated;
+  final String? title;
+  final List<OPDSLink>? links;
+  final List<OPDSEntry>? entries;
 
-  OPDSFeed({
+  const OPDSFeed({
     required this.id,
+    required this.url,
     required this.updated,
     required this.title,
     required this.links,
@@ -28,29 +30,38 @@ class OPDSFeed {
       'id': id,
       'updated': updated,
       'title': title ?? 'NULL',
-      'links': links?.values.map((l) => l.toString()).join('\n') ?? 'NULL',
+      'links': links?.map((l) => l.toString()).join('\n') ?? 'NULL',
       'entries': entries?.map((e) => e.toString()).join('\n') ?? 'NULL',
     }.toString();
   }
 }
 
 class OPDSEntry {
-  String id;
-  String updated;
-  String? title;
-  String? summary;
-  String? extent;
-  String? format;
-  Map<String, OPDSLink>? links;
+  final String id;
+  final String updated;
+  final String? title;
+  final String? author;
+  final String? summary;
+  final String? extent;
+  final String? format;
+  final List<String>? categories;
+  final List<OPDSLink>? links;
 
-  OPDSEntry({
+  final String? htmlContent;
+  final String? textContent;
+
+  const OPDSEntry({
     required this.updated,
     required this.id,
     required this.title,
+    required this.author,
     required this.summary,
     required this.extent,
     required this.format,
+    required this.categories,
     required this.links,
+    required this.htmlContent,
+    required this.textContent,
   });
 
   @override
@@ -63,23 +74,23 @@ class OPDSEntry {
       'summary': summary ?? 'NULL',
       'extent': extent ?? 'NULL',
       'format': format ?? 'NULL',
-      'links': links?.values.map((l) => l.toString()).join('\n') ?? 'NULL',
+      'links': links?.map((l) => l.toString()).join('\n') ?? 'NULL',
     }.toString();
   }
 }
 
 class OPDSLink {
-  String rel;
-  String href;
-  String? type;
-  String? title;
+  final String rel;
+  final String href;
+  final String? type;
+  final String? title;
 
   OPDSLink({
-    required this.rel,
+    required String rel,
     required this.href,
     required this.type,
     required this.title,
-  });
+  }) : rel = rel.toLowerCase();
 
   @override
   String toString() {
@@ -101,7 +112,7 @@ class OPDSExtractor {
     required this.rootUri,
   }) : client = HttpClient();
 
-  Future<OPDSFeed> getFeed(String uri) async {
+  Future<OPDSFeed> getFeed(Uri uri) async {
     final xmlStream = await _fetchXmlEvents(uri);
 
     String id = '';
@@ -125,7 +136,7 @@ class OPDSExtractor {
       (node) => title = node.innerText,
     );
 
-    final links = <String, OPDSLink>{};
+    final links = <OPDSLink>[];
     final links$ = xmlStream.listenForNode(
       'feed',
       'link',
@@ -136,7 +147,7 @@ class OPDSExtractor {
           type: node.getAttribute('type'),
           title: node.getAttribute('title'),
         );
-        links[link.rel] = link;
+        links.add(link);
       },
     );
 
@@ -158,23 +169,38 @@ class OPDSExtractor {
               ),
             );
 
-        entries.add(
-          OPDSEntry(
-            id: node.getChildNodeText('id') ?? '',
-            updated: node.getChildNodeText('updated') ?? '',
-            title: node.getChildNodeText('title'),
-            summary: node.getChildNodeText('summary'),
-            extent: node.getChildNodeText('extent'),
-            format: node.getChildNodeText('format'),
-            links: {for (final link in links) link.rel: link},
+        final entry = OPDSEntry(
+          id: node.getChildNodeText('id') ?? '',
+          updated: node.getChildNodeText('updated') ?? '',
+          title: node.getChildNodeText('title'),
+          author: node.getPossiblyNestedChildNodeText('author', 'name'),
+          summary: node.getChildNodeText('summary'),
+          extent: node.getChildNodeText('extent'),
+          format: node.getChildNodeText('format'),
+          categories: node.getChildrenNodesText('category'),
+          htmlContent: node.getMatchingChildNodeText(
+            'content',
+            (element) =>
+                element.getAttribute('type')?.toLowerCase().contains('html') ??
+                false,
           ),
+          textContent: node.getMatchingChildNodeText(
+            'content',
+            (element) =>
+                element.getAttribute('type')?.toLowerCase().contains('text') ??
+                true,
+          ),
+          links: links.toList(),
         );
+
+        entries.add(entry);
       },
     );
 
     await Future.wait([id$, updated$, title$, links$, entries$]);
     return OPDSFeed(
       id: id,
+      url: uri.toString(),
       updated: updated,
       title: title,
       links: links,
@@ -182,8 +208,8 @@ class OPDSExtractor {
     );
   }
 
-  Future<Stream<List<XmlEvent>>> _fetchXmlEvents(String uri) async {
-    final request = await client.getUrl(Uri.parse(uri));
+  Future<Stream<List<XmlEvent>>> _fetchXmlEvents(Uri uri) async {
+    final request = await client.getUrl(uri);
     final response = await request.close();
     if (response.statusCode != HttpStatus.ok) {
       throw Exception('Request to [$uri] returned [${response.statusCode}].');

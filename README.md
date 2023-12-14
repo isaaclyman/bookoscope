@@ -6,6 +6,10 @@
 
 A unified, searchable, visual, book-first catalog for all your OPDS endpoints.
 
+#### WHAT IS OPDS?
+
+[OPDS](https://opds.io/) is the open standard for web endpoints that expose catalogs of ebooks, comics, and/or manga. Many people use home OPDS servers for their personal ebook libraries.
+
 #### WHY?
 
 Some ereader apps can connect to OPDS endpoints, but the functionality is tucked away and awkward. There's no way to browse and search all the ebooks you have access to, all at once.
@@ -16,16 +20,16 @@ Bookoscope fills that very small, very important niche. It crawls your OPDS endp
 
 - Fast
 - Easy on the eyes
-- Includes over 80,000 public domain titles from Project Gutenberg
+- Includes over 80,000 public domain books from Project Gutenberg
 - Uses cached feeds (refresh on demand)
 - Searchable by any available metadata
 - Quick download and export to the ereader of your choice
 
 #### BOOKOSCOPE IS *NOT:*
 
-- An ebook reader, sync client, or annotator, like Apple Books, Google Books or Kindle.
+- An ebook reader, sync client, or annotator, like Apple Books, Google Books, or Kindle.
 - A metadata editor or organizer, like Calibre.
-- A self-hosted ebook server, like Kavita or calibre-web.
+- A self-hosted ebook server, like Kavita, Ubooquity, or calibre-web.
 - A pirating tool.
 
 You can use Bookoscope to enhance an e-reading experience that includes any or all of the above. However, Bookoscope does not endorse or affiliate with any other app or tool.
@@ -38,7 +42,15 @@ Not yet published.
 
 # Support
 
-If there's a problem with the app or one of the entries in it, you may [file an issue](https://github.com/isaaclyman/bookoscope/issues).
+If there's a problem with the app, you may [file an issue](https://github.com/isaaclyman/bookoscope/issues).
+
+If the app doesn't correctly crawl an OPDS endpoint, **please provide one or both of the following:**
+
+- A direct link to the endpoint and a username and password (if required).
+- The complete XML download of all of the following:
+  - The root OPDS feed
+  - Any other feeds referenced by the root
+  - At least one feed that includes an individual book \<entry> element
 
 If you'd like me to spend more time on this app (meaning more free features for everyone), simply [sponsor me](https://ko-fi.com/isaaclyman).
 

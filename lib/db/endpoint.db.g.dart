@@ -17,13 +17,18 @@ const EndpointSchema = CollectionSchema(
   name: r'Endpoint',
   id: -8981241579768495374,
   properties: {
-    r'sourceId': PropertySchema(
+    r'isCrawled': PropertySchema(
       id: 0,
+      name: r'isCrawled',
+      type: IsarType.bool,
+    ),
+    r'sourceId': PropertySchema(
+      id: 1,
       name: r'sourceId',
       type: IsarType.long,
     ),
     r'url': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'url',
       type: IsarType.string,
     )
@@ -58,8 +63,9 @@ void _endpointSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.sourceId);
-  writer.writeString(offsets[1], object.url);
+  writer.writeBool(offsets[0], object.isCrawled);
+  writer.writeLong(offsets[1], object.sourceId);
+  writer.writeString(offsets[2], object.url);
 }
 
 Endpoint _endpointDeserialize(
@@ -69,8 +75,9 @@ Endpoint _endpointDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Endpoint(
-    sourceId: reader.readLong(offsets[0]),
-    url: reader.readString(offsets[1]),
+    isCrawled: reader.readBool(offsets[0]),
+    sourceId: reader.readLong(offsets[1]),
+    url: reader.readString(offsets[2]),
   );
   object.id = id;
   return object;
@@ -84,8 +91,10 @@ P _endpointDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 1:
+      return (reader.readLong(offset)) as P;
+    case 2:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -229,6 +238,16 @@ extension EndpointQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> isCrawledEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isCrawled',
+        value: value,
       ));
     });
   }
@@ -424,6 +443,18 @@ extension EndpointQueryLinks
     on QueryBuilder<Endpoint, Endpoint, QFilterCondition> {}
 
 extension EndpointQuerySortBy on QueryBuilder<Endpoint, Endpoint, QSortBy> {
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByIsCrawled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCrawled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByIsCrawledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCrawled', Sort.desc);
+    });
+  }
+
   QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortBySourceId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceId', Sort.asc);
@@ -463,6 +494,18 @@ extension EndpointQuerySortThenBy
     });
   }
 
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByIsCrawled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCrawled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByIsCrawledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCrawled', Sort.desc);
+    });
+  }
+
   QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenBySourceId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceId', Sort.asc);
@@ -490,6 +533,12 @@ extension EndpointQuerySortThenBy
 
 extension EndpointQueryWhereDistinct
     on QueryBuilder<Endpoint, Endpoint, QDistinct> {
+  QueryBuilder<Endpoint, Endpoint, QDistinct> distinctByIsCrawled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isCrawled');
+    });
+  }
+
   QueryBuilder<Endpoint, Endpoint, QDistinct> distinctBySourceId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sourceId');
@@ -509,6 +558,12 @@ extension EndpointQueryProperty
   QueryBuilder<Endpoint, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Endpoint, bool, QQueryOperations> isCrawledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isCrawled');
     });
   }
 

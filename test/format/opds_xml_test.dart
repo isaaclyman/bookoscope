@@ -33,30 +33,35 @@ void main() {
       final file = File('examples/gutenberg_root.xml');
       await mockFileResponse(file);
 
-      final feed =
-          await extractor.getFeed('https://example.com/gutenberg_root');
+      final feed = await extractor
+          .getFeed(Uri.parse('https://example.com/gutenberg_root'));
 
       expect(feed.id, 'http://www.gutenberg.org/ebooks/search.opds/');
       expect(feed.title, 'All Books (sorted by popularity)');
       expect(feed.updated, '2023-12-12T18:07:42Z');
 
       expect(feed.links?.length, 6);
-      final nextLink = feed.links?['next'];
-      expect(nextLink?.href, '/ebooks/search.opds/?start_index=26');
+      expectContains(
+          feed.links,
+          (link) =>
+              link.rel == 'next' &&
+              link.href == '/ebooks/search.opds/?start_index=26');
 
       expect(feed.entries?.length, 27);
       expectContains(
         feed.entries,
         (element) =>
             element.title == 'Sort Alphabetically by Title' &&
-            element.links?['subsection']?.href ==
-                '/ebooks/search.opds/?sort_order=title',
+            element.links!.any((link) =>
+                link.rel == 'subsection' &&
+                link.href == '/ebooks/search.opds/?sort_order=title'),
       );
       expectContains(
         feed.entries,
         (element) =>
             element.title == 'Frankenstein; Or, The Modern Prometheus' &&
-            element.links?['subsection']?.href == '/ebooks/84.opds',
+            element.links!.any((link) =>
+                link.rel == 'subsection' && link.href == '/ebooks/84.opds'),
       );
     });
 
@@ -64,30 +69,33 @@ void main() {
       final file = File('examples/kavita_root.xml');
       await mockFileResponse(file);
 
-      final feed = await extractor.getFeed('https://example.com/kavita_root');
+      final feed =
+          await extractor.getFeed(Uri.parse('https://example.com/kavita_root'));
 
       expect(feed.id, 'root');
       expect(feed.title, 'Kavita');
       expect(feed.updated, '2023-12-12T22:58:37');
 
       expect(feed.links?.length, 3);
-      final nextLink = feed.links?['start'];
-      expect(nextLink?.href, '/api/opds/my-api-key');
+      expectContains(feed.links,
+          (link) => link.rel == 'start' && link.href == '/api/opds/my-api-key');
 
       expect(feed.entries?.length, 6);
       expectContains(
         feed.entries,
         (element) =>
             element.title == 'On Deck' &&
-            element.links?['subsection']?.href ==
-                '/api/opds/my-api-key/on-deck',
+            element.links!.any((link) =>
+                link.rel == 'subsection' &&
+                link.href == '/api/opds/my-api-key/on-deck'),
       );
       expectContains(
         feed.entries,
         (element) =>
             element.title == 'All Collections' &&
-            element.links?['subsection']?.href ==
-                '/api/opds/my-api-key/collections',
+            element.links!.any((link) =>
+                link.rel == 'subsection' &&
+                link.href == '/api/opds/my-api-key/collections'),
       );
     });
   });

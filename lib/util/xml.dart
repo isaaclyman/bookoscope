@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xml_events.dart';
 
@@ -19,5 +20,39 @@ extension BKXmlStream on Stream<List<XmlEvent>> {
 extension BKXmlNode on XmlNode {
   String? getChildNodeText(String nodeName) {
     return getElement(nodeName)?.innerText;
+  }
+
+  String? getMatchingChildNodeText(
+      String nodeName, bool Function(XmlElement element) matcher) {
+    return childElements
+        .firstWhereOrNull(
+          (element) => element.localName == nodeName && matcher(element),
+        )
+        ?.innerText;
+  }
+
+  String? getPossiblyNestedChildNodeText(String nodeName, String innerNode) {
+    final element = getElement(nodeName);
+    if (element == null) {
+      return null;
+    }
+
+    if (element.childElements.isEmpty) {
+      return element.innerText;
+    }
+
+    if (element.childElements.length == 1) {
+      return element.firstElementChild?.innerText;
+    }
+
+    final inner = element.getElement(innerNode);
+    return inner?.innerText;
+  }
+
+  List<String>? getChildrenNodesText(String nodeName) {
+    return childElements
+        .where((element) => element.localName == nodeName)
+        .map((element) => element.innerText)
+        .toList();
   }
 }

@@ -1083,8 +1083,13 @@ const BookDownloadUrlSchema = Schema(
       name: r'label',
       type: IsarType.string,
     ),
-    r'url': PropertySchema(
+    r'type': PropertySchema(
       id: 1,
+      name: r'type',
+      type: IsarType.string,
+    ),
+    r'url': PropertySchema(
+      id: 2,
       name: r'url',
       type: IsarType.string,
     )
@@ -1108,6 +1113,12 @@ int _bookDownloadUrlEstimateSize(
     }
   }
   {
+    final value = object.type;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.url;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -1123,7 +1134,8 @@ void _bookDownloadUrlSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.label);
-  writer.writeString(offsets[1], object.url);
+  writer.writeString(offsets[1], object.type);
+  writer.writeString(offsets[2], object.url);
 }
 
 BookDownloadUrl _bookDownloadUrlDeserialize(
@@ -1134,7 +1146,8 @@ BookDownloadUrl _bookDownloadUrlDeserialize(
 ) {
   final object = BookDownloadUrl();
   object.label = reader.readStringOrNull(offsets[0]);
-  object.url = reader.readStringOrNull(offsets[1]);
+  object.type = reader.readStringOrNull(offsets[1]);
+  object.url = reader.readStringOrNull(offsets[2]);
   return object;
 }
 
@@ -1148,6 +1161,8 @@ P _bookDownloadUrlDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    case 2:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1305,6 +1320,160 @@ extension BookDownloadUrlQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'label',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'type',
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'type',
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'type',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'type',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'type',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<BookDownloadUrl, BookDownloadUrl, QAfterFilterCondition>
+      typeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'type',
         value: '',
       ));
     });
