@@ -33,23 +33,28 @@ const BookSchema = CollectionSchema(
       name: r'imageUrl',
       type: IsarType.string,
     ),
-    r'originalId': PropertySchema(
+    r'isGutenberg': PropertySchema(
       id: 3,
+      name: r'isGutenberg',
+      type: IsarType.bool,
+    ),
+    r'originalId': PropertySchema(
+      id: 4,
       name: r'originalId',
       type: IsarType.string,
     ),
     r'sourceId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'sourceId',
       type: IsarType.long,
     ),
     r'tags': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'tags',
       type: IsarType.stringList,
     ),
     r'title': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'title',
       type: IsarType.string,
     )
@@ -100,13 +105,18 @@ int _bookEstimateSize(
       bytesCount += value.length * 3;
     }
   }
-  bytesCount += 3 + object.downloadUrls.length * 3;
   {
-    final offsets = allOffsets[BookDownloadUrl]!;
-    for (var i = 0; i < object.downloadUrls.length; i++) {
-      final value = object.downloadUrls[i];
-      bytesCount +=
-          BookDownloadUrlSchema.estimateSize(value, offsets, allOffsets);
+    final list = object.downloadUrls;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[BookDownloadUrl]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount +=
+              BookDownloadUrlSchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
     }
   }
   {
@@ -141,10 +151,11 @@ void _bookSerialize(
     object.downloadUrls,
   );
   writer.writeString(offsets[2], object.imageUrl);
-  writer.writeString(offsets[3], object.originalId);
-  writer.writeLong(offsets[4], object.sourceId);
-  writer.writeStringList(offsets[5], object.tags);
-  writer.writeString(offsets[6], object.title);
+  writer.writeBool(offsets[3], object.isGutenberg);
+  writer.writeString(offsets[4], object.originalId);
+  writer.writeLong(offsets[5], object.sourceId);
+  writer.writeStringList(offsets[6], object.tags);
+  writer.writeString(offsets[7], object.title);
 }
 
 Book _bookDeserialize(
@@ -156,17 +167,17 @@ Book _bookDeserialize(
   final object = Book(
     authors: reader.readStringList(offsets[0]) ?? [],
     downloadUrls: reader.readObjectList<BookDownloadUrl>(
-          offsets[1],
-          BookDownloadUrlSchema.deserialize,
-          allOffsets,
-          BookDownloadUrl(),
-        ) ??
-        [],
+      offsets[1],
+      BookDownloadUrlSchema.deserialize,
+      allOffsets,
+      BookDownloadUrl(),
+    ),
     imageUrl: reader.readStringOrNull(offsets[2]),
-    originalId: reader.readString(offsets[3]),
-    sourceId: reader.readLong(offsets[4]),
-    tags: reader.readStringList(offsets[5]) ?? [],
-    title: reader.readString(offsets[6]),
+    isGutenberg: reader.readBool(offsets[3]),
+    originalId: reader.readString(offsets[4]),
+    sourceId: reader.readLong(offsets[5]),
+    tags: reader.readStringList(offsets[6]) ?? [],
+    title: reader.readString(offsets[7]),
   );
   object.id = id;
   return object;
@@ -183,21 +194,22 @@ P _bookDeserializeProp<P>(
       return (reader.readStringList(offset) ?? []) as P;
     case 1:
       return (reader.readObjectList<BookDownloadUrl>(
-            offset,
-            BookDownloadUrlSchema.deserialize,
-            allOffsets,
-            BookDownloadUrl(),
-          ) ??
-          []) as P;
+        offset,
+        BookDownloadUrlSchema.deserialize,
+        allOffsets,
+        BookDownloadUrl(),
+      )) as P;
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readLong(offset)) as P;
     case 6:
+      return (reader.readStringList(offset) ?? []) as P;
+    case 7:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -645,6 +657,22 @@ extension BookQueryFilter on QueryBuilder<Book, Book, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Book, Book, QAfterFilterCondition> downloadUrlsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'downloadUrls',
+      ));
+    });
+  }
+
+  QueryBuilder<Book, Book, QAfterFilterCondition> downloadUrlsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'downloadUrls',
+      ));
+    });
+  }
+
   QueryBuilder<Book, Book, QAfterFilterCondition> downloadUrlsLengthEqualTo(
       int length) {
     return QueryBuilder.apply(this, (query) {
@@ -922,6 +950,16 @@ extension BookQueryFilter on QueryBuilder<Book, Book, QFilterCondition> {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'imageUrl',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Book, Book, QAfterFilterCondition> isGutenbergEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isGutenberg',
+        value: value,
       ));
     });
   }
@@ -1475,6 +1513,18 @@ extension BookQuerySortBy on QueryBuilder<Book, Book, QSortBy> {
     });
   }
 
+  QueryBuilder<Book, Book, QAfterSortBy> sortByIsGutenberg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isGutenberg', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Book, Book, QAfterSortBy> sortByIsGutenbergDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isGutenberg', Sort.desc);
+    });
+  }
+
   QueryBuilder<Book, Book, QAfterSortBy> sortByOriginalId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'originalId', Sort.asc);
@@ -1537,6 +1587,18 @@ extension BookQuerySortThenBy on QueryBuilder<Book, Book, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Book, Book, QAfterSortBy> thenByIsGutenberg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isGutenberg', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Book, Book, QAfterSortBy> thenByIsGutenbergDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isGutenberg', Sort.desc);
+    });
+  }
+
   QueryBuilder<Book, Book, QAfterSortBy> thenByOriginalId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'originalId', Sort.asc);
@@ -1588,6 +1650,12 @@ extension BookQueryWhereDistinct on QueryBuilder<Book, Book, QDistinct> {
     });
   }
 
+  QueryBuilder<Book, Book, QDistinct> distinctByIsGutenberg() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isGutenberg');
+    });
+  }
+
   QueryBuilder<Book, Book, QDistinct> distinctByOriginalId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1628,7 +1696,7 @@ extension BookQueryProperty on QueryBuilder<Book, Book, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Book, List<BookDownloadUrl>, QQueryOperations>
+  QueryBuilder<Book, List<BookDownloadUrl>?, QQueryOperations>
       downloadUrlsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'downloadUrls');
@@ -1638,6 +1706,12 @@ extension BookQueryProperty on QueryBuilder<Book, Book, QQueryProperty> {
   QueryBuilder<Book, String?, QQueryOperations> imageUrlProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'imageUrl');
+    });
+  }
+
+  QueryBuilder<Book, bool, QQueryOperations> isGutenbergProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isGutenberg');
     });
   }
 
