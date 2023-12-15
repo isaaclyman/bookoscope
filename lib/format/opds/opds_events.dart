@@ -13,6 +13,11 @@ class OPDSCrawlBegin extends OPDSCrawlEvent {
   const OPDSCrawlBegin({
     required this.uri,
   });
+
+  @override
+  String toString() {
+    return '{OPDSCrawlBegin: $uri}';
+  }
 }
 
 /// Indicates that [uri] was successfully crawled.
@@ -23,6 +28,11 @@ class OPDSCrawlSuccess extends OPDSCrawlEvent {
   const OPDSCrawlSuccess({
     required this.uri,
   });
+
+  @override
+  String toString() {
+    return '{OPDSCrawlSuccess: $uri}';
+  }
 }
 
 /// Indicates that [uri] could not be crawled due to [exception].
@@ -34,6 +44,11 @@ class OPDSCrawlException extends OPDSCrawlEvent {
     required this.exception,
     required this.uri,
   });
+
+  @override
+  String toString() {
+    return '{OPDSCrawlException at $uri: $exception}';
+  }
 }
 
 /// Indicates that a [resource] (e.g. an ebook) was found somewhere in the
@@ -46,4 +61,9 @@ class OPDSCrawlResourceFound extends OPDSCrawlEvent {
     required this.resource,
     required this.uri,
   });
+
+  @override
+  String toString() {
+    return '{OPDSCrawlResourceFound in response from $uri}';
+  }
 }

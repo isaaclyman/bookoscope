@@ -12,7 +12,7 @@ import 'opds_extractor_test.mocks.dart';
 void main() {
   group('extractXml', () {
     final client = MockHttpClient();
-    final extractor = OPDSExtractor(client: client);
+    final extractor = OPDSExtractor()..client = client;
 
     Future<void> mockFileResponse(File file) async {
       final fileString = await file.readAsString();

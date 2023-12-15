@@ -1,6 +1,6 @@
 import 'dart:async';
 
-void Function() cDebounce(Duration duration, Function() action) {
+void Function() bkDebounce(Duration duration, Function() action) {
   Timer? timer;
 
   return () {

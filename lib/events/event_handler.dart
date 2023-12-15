@@ -10,7 +10,7 @@ class CEventHandler {
   late final void Function() debouncedSearch;
 
   CEventHandler({required this.searchManager}) {
-    debouncedSearch = cDebounce(
+    debouncedSearch = bkDebounce(
       const Duration(milliseconds: 150),
       () => searchManager.search(),
     );

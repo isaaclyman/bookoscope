@@ -21,8 +21,7 @@ class OPDSCrawlResource {
 
 /// A link that can be used to download some version of an [OPDSCrawlResource].
 class OPDSCrawlResourceUrl {
-  /// The original title of the link, if available. Otherwise, defaults to
-  /// "Download".
+  /// The original title of the link, if available.
   final String label;
   final String uri;
 

@@ -9,7 +9,7 @@ Iterable<T> _intersperse<T>(T element, Iterable<T> iterable) sync* {
   }
 }
 
-extension CIntersperseEx<T> on Iterable<T> {
+extension BKIntersperseEx<T> on Iterable<T> {
   Iterable<T> intersperse(T element) {
     return _intersperse(element, this);
   }

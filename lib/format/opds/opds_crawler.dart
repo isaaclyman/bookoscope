@@ -4,21 +4,19 @@ import 'package:bookoscope/format/opds/opds_events.dart';
 import 'package:bookoscope/format/opds/opds_extractor.dart';
 import 'package:bookoscope/format/opds/opds_resource.dart';
 import 'package:bookoscope/format/opds/opds_xml.dart';
+import 'package:bookoscope/util/uri.dart';
 import 'package:collection/collection.dart';
 
 /// Class for crawling an OPDS catalog starting from [opdsRootUri].
 class OPDSCrawler {
   final String opdsRootUri;
-  final client = HttpClient();
   final Set<String> visitedEndpoints = {};
   final Set<String> foundResourceIds = {};
-  late OPDSExtractor extractor;
+  final extractor = OPDSExtractor();
 
   OPDSCrawler({
     required this.opdsRootUri,
-  }) {
-    extractor = OPDSExtractor(client: client);
-  }
+  });
 
   /// Recursively crawls the XML response from [opdsRootUri], then
   /// any endpoints indicated by a <link> element, then <link> elements
@@ -34,11 +32,15 @@ class OPDSCrawler {
   }
 
   Stream<OPDSCrawlEvent> _extractRecursive(String uriString) async* {
-    if (visitedEndpoints.contains(uriString)) {
+    final uri =
+        uriString.startsWith('http://') || uriString.startsWith('https://')
+            ? Uri.parse(uriString)
+            : joinUri(opdsRootUri, uriString);
+
+    if (visitedEndpoints.contains(uri.toString())) {
       return;
     }
 
-    final uri = Uri.parse(uriString);
     visitedEndpoints.add(uri.toString());
     yield OPDSCrawlBegin(uri: uri.toString());
 
@@ -121,7 +123,9 @@ class OPDSLinkClassifier {
   }
 
   static bool isImage(OPDSLink link) {
-    return [_relImage, _relThumbnail].contains(link.rel);
+    final type = link.type;
+    return [_relImage, _relThumbnail].contains(link.rel) ||
+        (type != null && type.startsWith('image/'));
   }
 
   static bool isAcquisition(OPDSLink link) {
@@ -140,7 +144,13 @@ class OPDSLinkClassifier {
 
     final thumbnail =
         links.firstWhereOrNull((link) => link.rel == _relThumbnail);
-    return thumbnail?.href;
+    if (thumbnail != null) {
+      return thumbnail.href;
+    }
+
+    final otherImage = links
+        .firstWhereOrNull((link) => link.type?.startsWith('image/') ?? false);
+    return otherImage?.href;
   }
 }
 

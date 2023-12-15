@@ -8,11 +8,7 @@ import 'package:xml/xml_events.dart';
 
 /// Uses [client] to extract [OPDSFeed]s from [Uri]s.
 class OPDSExtractor {
-  final HttpClient client;
-
-  const OPDSExtractor({
-    required this.client,
-  });
+  HttpClient client = HttpClient();
 
   /// Extracts an [OPDSFeed] from a [Uri]. Uses a [Stream] internally
   /// to conserve memory.
