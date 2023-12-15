@@ -17,18 +17,23 @@ const EndpointSchema = CollectionSchema(
   name: r'Endpoint',
   id: -8981241579768495374,
   properties: {
-    r'isCrawled': PropertySchema(
+    r'exceptionMessage': PropertySchema(
       id: 0,
+      name: r'exceptionMessage',
+      type: IsarType.string,
+    ),
+    r'isCrawled': PropertySchema(
+      id: 1,
       name: r'isCrawled',
       type: IsarType.bool,
     ),
     r'sourceId': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'sourceId',
       type: IsarType.long,
     ),
     r'url': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'url',
       type: IsarType.string,
     )
@@ -38,7 +43,21 @@ const EndpointSchema = CollectionSchema(
   deserialize: _endpointDeserialize,
   deserializeProp: _endpointDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'url': IndexSchema(
+      id: -5756857009679432345,
+      name: r'url',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'url',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _endpointGetId,
@@ -53,6 +72,12 @@ int _endpointEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.exceptionMessage;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.url.length * 3;
   return bytesCount;
 }
@@ -63,9 +88,10 @@ void _endpointSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.isCrawled);
-  writer.writeLong(offsets[1], object.sourceId);
-  writer.writeString(offsets[2], object.url);
+  writer.writeString(offsets[0], object.exceptionMessage);
+  writer.writeBool(offsets[1], object.isCrawled);
+  writer.writeLong(offsets[2], object.sourceId);
+  writer.writeString(offsets[3], object.url);
 }
 
 Endpoint _endpointDeserialize(
@@ -75,9 +101,10 @@ Endpoint _endpointDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Endpoint(
-    isCrawled: reader.readBool(offsets[0]),
-    sourceId: reader.readLong(offsets[1]),
-    url: reader.readString(offsets[2]),
+    exceptionMessage: reader.readStringOrNull(offsets[0]),
+    isCrawled: reader.readBool(offsets[1]),
+    sourceId: reader.readLong(offsets[2]),
+    url: reader.readString(offsets[3]),
   );
   object.id = id;
   return object;
@@ -91,10 +118,12 @@ P _endpointDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 2:
+      return (reader.readLong(offset)) as P;
+    case 3:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -186,10 +215,208 @@ extension EndpointQueryWhere on QueryBuilder<Endpoint, Endpoint, QWhereClause> {
       ));
     });
   }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterWhereClause> urlEqualTo(String url) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'url',
+        value: [url],
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterWhereClause> urlNotEqualTo(
+      String url) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [],
+              upper: [url],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [url],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [url],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [],
+              upper: [url],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
 }
 
 extension EndpointQueryFilter
     on QueryBuilder<Endpoint, Endpoint, QFilterCondition> {
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'exceptionMessage',
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'exceptionMessage',
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'exceptionMessage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'exceptionMessage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'exceptionMessage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'exceptionMessage',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'exceptionMessage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'exceptionMessage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'exceptionMessage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'exceptionMessage',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'exceptionMessage',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition>
+      exceptionMessageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'exceptionMessage',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Endpoint, Endpoint, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -443,6 +670,18 @@ extension EndpointQueryLinks
     on QueryBuilder<Endpoint, Endpoint, QFilterCondition> {}
 
 extension EndpointQuerySortBy on QueryBuilder<Endpoint, Endpoint, QSortBy> {
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByExceptionMessage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'exceptionMessage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByExceptionMessageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'exceptionMessage', Sort.desc);
+    });
+  }
+
   QueryBuilder<Endpoint, Endpoint, QAfterSortBy> sortByIsCrawled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isCrawled', Sort.asc);
@@ -482,6 +721,18 @@ extension EndpointQuerySortBy on QueryBuilder<Endpoint, Endpoint, QSortBy> {
 
 extension EndpointQuerySortThenBy
     on QueryBuilder<Endpoint, Endpoint, QSortThenBy> {
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByExceptionMessage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'exceptionMessage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenByExceptionMessageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'exceptionMessage', Sort.desc);
+    });
+  }
+
   QueryBuilder<Endpoint, Endpoint, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -533,6 +784,14 @@ extension EndpointQuerySortThenBy
 
 extension EndpointQueryWhereDistinct
     on QueryBuilder<Endpoint, Endpoint, QDistinct> {
+  QueryBuilder<Endpoint, Endpoint, QDistinct> distinctByExceptionMessage(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'exceptionMessage',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Endpoint, Endpoint, QDistinct> distinctByIsCrawled() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isCrawled');
@@ -558,6 +817,12 @@ extension EndpointQueryProperty
   QueryBuilder<Endpoint, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Endpoint, String?, QQueryOperations> exceptionMessageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'exceptionMessage');
     });
   }
 

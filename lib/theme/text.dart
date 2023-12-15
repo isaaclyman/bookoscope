@@ -3,36 +3,36 @@ import 'package:flutter/material.dart';
 
 class CThemeText {
   final TextStyle accordionInnerLabel = TextStyle(
-    color: cThemeColors.text,
+    color: bkThemeColors.text,
     fontSize: 14,
     fontWeight: FontWeight.bold,
   );
 
   final TextStyle entryCategory = TextStyle(
-    color: cThemeColors.muted,
+    color: bkThemeColors.muted,
     fontSize: 10,
     fontWeight: FontWeight.bold,
   );
 
   final TextStyle entryChip = TextStyle(
-    color: cThemeColors.mutedContrast,
+    color: bkThemeColors.mutedContrast,
     fontSize: 10,
     fontWeight: FontWeight.bold,
   );
 
   final TextStyle entryListHeader = TextStyle(
-    color: cThemeColors.text,
+    color: bkThemeColors.text,
     fontSize: 18,
   );
 
   final TextStyle entryMainHeader = TextStyle(
-    color: cThemeColors.accent,
+    color: bkThemeColors.accent,
     fontSize: 20,
     fontWeight: FontWeight.w300,
   );
 
   final TextStyle filterChip = TextStyle(
-    color: cThemeColors.text,
+    color: bkThemeColors.text,
     fontSize: 12,
   );
 
@@ -45,38 +45,38 @@ class CThemeText {
   );
 
   final TextStyle link = TextStyle(
-    color: cThemeColors.accent,
+    color: bkThemeColors.accent,
     decoration: TextDecoration.underline,
-    decorationColor: cThemeColors.accent,
+    decorationColor: bkThemeColors.accent,
   );
 
   final TextStyle mapHorizontalTableCellBordered = TextStyle(
-    color: cThemeColors.accent,
+    color: bkThemeColors.accent,
     fontWeight: FontWeight.bold,
   );
 
   final TextStyle mapHorizontalTableCellSolidColor = TextStyle(
-    color: cThemeColors.accentContrast,
+    color: bkThemeColors.accentContrast,
     fontWeight: FontWeight.bold,
   );
 
   final TextStyle mapVerticalTableCellBordered = TextStyle(
-    color: cThemeColors.text,
+    color: bkThemeColors.text,
     fontWeight: FontWeight.bold,
   );
 
   final TextStyle mapVerticalTableCellSolidColor = TextStyle(
-    color: cThemeColors.accentContrast,
+    color: bkThemeColors.accentContrast,
     fontWeight: FontWeight.bold,
   );
 
   final TextStyle resultCategoryHeader = TextStyle(
-    color: cThemeColors.muted,
+    color: bkThemeColors.muted,
     fontSize: 12,
   );
 
   final TextStyle resultEntryHeader = TextStyle(
-    color: cThemeColors.accent,
+    color: bkThemeColors.accent,
     fontSize: 16,
   );
 

@@ -1,5 +1,6 @@
 /// A resource (e.g. an individual ebook).
 class OPDSCrawlResource {
+  final String originalId;
   final String title;
   final String author;
   final List<String> tags;
@@ -9,6 +10,7 @@ class OPDSCrawlResource {
   final String? textDescription;
 
   const OPDSCrawlResource({
+    required this.originalId,
     required this.title,
     required this.author,
     required this.tags,

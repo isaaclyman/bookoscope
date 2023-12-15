@@ -56,7 +56,7 @@ class CRenderLabeledResultLinkAccordion extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 8),
                       child: Icon(
                         Icons.link,
-                        color: cThemeColors.accent,
+                        color: bkThemeColors.accent,
                       ),
                     ),
                     Expanded(

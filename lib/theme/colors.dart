@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CThemeColors {
+class BKThemeColors {
   final Color primary = Colors.blue[900]!;
   final Color primaryContrast = Colors.white;
   final Color accent = Colors.pink[900]!;
@@ -10,8 +10,8 @@ class CThemeColors {
   final Color text = Colors.black87;
 }
 
-final cThemeColors = CThemeColors();
+final bkThemeColors = BKThemeColors();
 
-extension CThemeColorsEx on BuildContext {
-  CThemeColors get colors => cThemeColors;
+extension BKThemeColorsEx on BuildContext {
+  BKThemeColors get colors => bkThemeColors;
 }

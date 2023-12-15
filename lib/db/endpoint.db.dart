@@ -8,18 +8,23 @@ part 'endpoint.db.g.dart';
 class Endpoint {
   Id id = Isar.autoIncrement;
 
+  @Index()
   String url;
+
   bool isCrawled;
+  String? exceptionMessage;
+
   int sourceId;
 
   Endpoint({
     required this.url,
     required this.isCrawled,
     required this.sourceId,
+    this.exceptionMessage,
   });
 }
 
-class BKEndpointManager extends ChangeNotifier {
+class DBEndpoints extends ChangeNotifier {
   Isar? _database;
   Future<List<Endpoint>> get endpointsFuture =>
       bkDatabase.then((db) => db.endpoints.where().findAll());
@@ -27,7 +32,7 @@ class BKEndpointManager extends ChangeNotifier {
 
   List<VoidCallback> onDispose = [];
 
-  BKEndpointManager() {
+  DBEndpoints() {
     endpointsFuture.then((sources) {
       notifyListeners();
     });
@@ -48,20 +53,21 @@ class BKEndpointManager extends ChangeNotifier {
     super.dispose();
   }
 
-  Future upsertEndpoint(Endpoint endpoint) async {
+  Future upsert(Endpoint endpoint) async {
     final db = _database;
     if (db == null) {
       return;
     }
 
     await db.writeTxn(() async {
+      await db.endpoints.where().urlEqualTo(endpoint.url).deleteAll();
       await db.endpoints.put(endpoint);
     });
 
     notifyListeners();
   }
 
-  Future removeSource(Endpoint endpoint) async {
+  Future remove(Endpoint endpoint) async {
     final db = _database;
     if (db == null) {
       return;

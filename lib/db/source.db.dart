@@ -22,7 +22,7 @@ class Source {
   });
 }
 
-class BKSourceManager extends ChangeNotifier {
+class DBSources extends ChangeNotifier {
   Isar? _database;
   Future<List<Source>> get sourcesFuture =>
       bkDatabase.then((db) => db.sources.where().findAll());
@@ -30,7 +30,7 @@ class BKSourceManager extends ChangeNotifier {
 
   List<VoidCallback> onDispose = [];
 
-  BKSourceManager() {
+  DBSources() {
     sourcesFuture.then((sources) {
       notifyListeners();
     });
@@ -51,7 +51,7 @@ class BKSourceManager extends ChangeNotifier {
     super.dispose();
   }
 
-  Future upsertSource(Source source) async {
+  Future upsert(Source source) async {
     final db = _database;
     if (db == null) {
       return;
@@ -64,7 +64,7 @@ class BKSourceManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future removeSource(Source source) async {
+  Future remove(Source source) async {
     final db = _database;
     if (db == null) {
       return;

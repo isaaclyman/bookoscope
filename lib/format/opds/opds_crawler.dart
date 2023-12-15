@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bookoscope/format/opds/opds_events.dart';
 import 'package:bookoscope/format/opds/opds_extractor.dart';
 import 'package:bookoscope/format/opds/opds_resource.dart';
@@ -83,6 +81,7 @@ class OPDSCrawler {
       final links = entry.links ?? [];
       yield OPDSCrawlResourceFound(
         resource: OPDSCrawlResource(
+          originalId: entry.id,
           title: entry.title ?? 'Title Not Found',
           author: entry.author ?? '',
           tags: [

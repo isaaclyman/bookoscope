@@ -5,7 +5,9 @@ import 'package:bookoscope/format/opds/opds_events.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:xml/xml.dart';
 
+import '../../helpers.dart';
 import 'opds_extractor_test.mocks.dart';
 
 const page1xml = '''
@@ -89,39 +91,196 @@ const page3xml = '''
 </feed>
 ''';
 
+const invalidXml = '''
+<blah blah
+:::doesn't work
+<
+''';
+
 @GenerateMocks([HttpClient, HttpClientRequest, HttpClientResponse])
 void main() {
-  group('OPDSCrawler', () {
-    final client = MockHttpClient();
-    final crawler = OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
-      ..extractor.client = client;
+  final client = MockHttpClient();
 
-    Future<void> mockFileResponse(String uri, String response) async {
-      final mockRequest = MockHttpClientRequest();
-      final mockResponse = MockHttpClientResponse();
+  Future<void> mockFileResponse(String uri, String response) async {
+    final mockRequest = MockHttpClientRequest();
+    final mockResponse = MockHttpClientResponse();
 
-      when(client.getUrl(
-        argThat(predicate<Uri>((uriArg) => uriArg.toString().endsWith(uri))),
-      )).thenAnswer((_) => Future.value(mockRequest));
-      when(mockRequest.close()).thenAnswer((_) => Future.value(mockResponse));
-      when(mockResponse.statusCode).thenReturn(200);
-      when(mockResponse.transform(any))
-          .thenAnswer((_) => Stream<String>.fromIterable(response.split('\n')));
-    }
+    when(client.getUrl(
+      argThat(predicate<Uri>((uriArg) => uriArg.toString().endsWith(uri))),
+    )).thenAnswer((_) => Future.value(mockRequest));
+    when(mockRequest.close()).thenAnswer((_) => Future.value(mockResponse));
+    when(mockResponse.statusCode).thenReturn(200);
+    when(mockResponse.transform(any))
+        .thenAnswer((_) => Stream<String>.fromIterable(response.split('\n')));
+  }
 
-    mockFileResponse('/page1xml', page1xml);
-    mockFileResponse('/page2xml', page2xml);
-    mockFileResponse('/page3xml', page3xml);
+  group('OPDSCrawler - valid endpoints', () {
+    OPDSCrawler crawler =
+        OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
+          ..extractor.client = client;
 
-    test('crawls three distinct pages and finds two resources', () async {
+    setUp(() {
+      crawler = OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
+        ..extractor.client = client;
+      mockFileResponse('/page1xml', page1xml);
+      mockFileResponse('/page2xml', page2xml);
+      mockFileResponse('/page3xml', page3xml);
+    });
+
+    tearDown(() => reset(client));
+
+    test('crawls exactly three distinct pages without duplication', () async {
+      await crawler.crawlFromRoot().drain();
+
+      verify(client.getUrl(
+        argThat(predicate<Uri>((uri) => uri.toString().endsWith('page1xml'))),
+      )).called(1);
+      verify(client.getUrl(
+        argThat(predicate<Uri>((uri) => uri.toString().endsWith('page2xml'))),
+      )).called(1);
+      verify(client.getUrl(
+        argThat(predicate<Uri>((uri) => uri.toString().endsWith('page3xml'))),
+      )).called(1);
+
+      verifyNoMoreInteractions(client);
+    });
+
+    test('emits exactly three OPDSCrawlBegin events', () async {
       final events = <OPDSCrawlEvent>[];
 
       await for (final event in crawler.crawlFromRoot()) {
         events.add(event);
       }
 
-      print(events);
-      expect(verify(client.getUrl(any)).callCount, 3);
+      final beginEvents = events.whereType<OPDSCrawlBegin>();
+
+      expect(beginEvents.length, 3);
+
+      expectContains(beginEvents,
+          matcher: (event) => event.uri.endsWith('page1xml'));
+      expectContains(beginEvents,
+          matcher: (event) => event.uri.endsWith('page2xml'));
+      expectContains(beginEvents,
+          matcher: (event) => event.uri.endsWith('page3xml'));
+    });
+
+    test('emits exactly three OPDSCrawlSuccess events', () async {
+      final events = <OPDSCrawlEvent>[];
+
+      await for (final event in crawler.crawlFromRoot()) {
+        events.add(event);
+      }
+
+      final successEvents = events.whereType<OPDSCrawlSuccess>();
+
+      expect(successEvents.length, 3);
+
+      expectContains(successEvents,
+          matcher: (event) => event.uri.endsWith('page1xml'));
+      expectContains(successEvents,
+          matcher: (event) => event.uri.endsWith('page2xml'));
+      expectContains(successEvents,
+          matcher: (event) => event.uri.endsWith('page3xml'));
+    });
+
+    test('finds exactly two resources', () async {
+      final events = <OPDSCrawlEvent>[];
+
+      await for (final event in crawler.crawlFromRoot()) {
+        events.add(event);
+      }
+
+      final resourceEvents = events.whereType<OPDSCrawlResourceFound>();
+
+      expect(resourceEvents.length, 2);
+
+      expectContains(resourceEvents,
+          matcher: (event) => event.resource.title == 'Test Book #1');
+      expectContains(resourceEvents,
+          matcher: (event) => event.resource.title == 'Test Book #2');
+    });
+  });
+
+  group('OPDSCrawler - invalid endpoint', () {
+    OPDSCrawler crawler =
+        OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
+          ..extractor.client = client;
+
+    setUp(() {
+      crawler = OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
+        ..extractor.client = client;
+      mockFileResponse('/page1xml', page1xml);
+      mockFileResponse('/page2xml', page2xml);
+      mockFileResponse('/page3xml', invalidXml);
+    });
+
+    tearDown(() => reset(client));
+
+    test('crawls all three pages', () async {
+      await crawler.crawlFromRoot().drain();
+
+      verify(client.getUrl(
+        argThat(predicate<Uri>((uri) => uri.toString().endsWith('page1xml'))),
+      )).called(1);
+      verify(client.getUrl(
+        argThat(predicate<Uri>((uri) => uri.toString().endsWith('page2xml'))),
+      )).called(1);
+      verify(client.getUrl(
+        argThat(predicate<Uri>((uri) => uri.toString().endsWith('page3xml'))),
+      )).called(1);
+
+      verifyNoMoreInteractions(client);
+    });
+
+    test('emits three begin events', () async {
+      final events = <OPDSCrawlEvent>[];
+
+      await for (final event in crawler.crawlFromRoot()) {
+        events.add(event);
+      }
+
+      final beginEvents = events.whereType<OPDSCrawlBegin>();
+
+      expect(beginEvents.length, 3);
+
+      expectContains(beginEvents,
+          matcher: (event) => event.uri.endsWith('page1xml'));
+      expectContains(beginEvents,
+          matcher: (event) => event.uri.endsWith('page2xml'));
+      expectContains(beginEvents,
+          matcher: (event) => event.uri.endsWith('page3xml'));
+    });
+
+    test('emits one error', () async {
+      final events = <OPDSCrawlEvent>[];
+
+      await for (final event in crawler.crawlFromRoot()) {
+        events.add(event);
+      }
+
+      final exceptionEvents = events.whereType<OPDSCrawlException>();
+
+      expect(exceptionEvents.length, 1);
+
+      expectContains(exceptionEvents,
+          matcher: (event) =>
+              event.uri.endsWith('page3xml') &&
+              event.exception is XmlParserException);
+    });
+
+    test('finds one resource', () async {
+      final events = <OPDSCrawlEvent>[];
+
+      await for (final event in crawler.crawlFromRoot()) {
+        events.add(event);
+      }
+
+      final resourceEvents = events.whereType<OPDSCrawlResourceFound>();
+
+      expect(resourceEvents.length, 1);
+
+      expectContains(resourceEvents,
+          matcher: (event) => event.resource.title == 'Test Book #1');
     });
   });
 }

@@ -85,8 +85,7 @@ class CAppShell extends StatelessWidget {
         ChangeNotifierProvider<CSearchManager>(
           create: (_) => searchManager,
         ),
-        ChangeNotifierProvider<BKSourceManager>(
-            create: (_) => BKSourceManager()),
+        ChangeNotifierProvider<DBSources>(create: (_) => DBSources()),
         ChangeNotifierProvider<CNavManager>(
           create: (_) => CNavManager(),
         ),

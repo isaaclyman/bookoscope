@@ -8,14 +8,22 @@ part 'book.db.g.dart';
 class Book {
   Id id = Isar.autoIncrement;
 
-  String title;
-  String author;
-  List<String> tags;
-  List<BookDownloadUrl> downloadUrls;
-  String imageUrl;
+  @Index(composite: [CompositeIndex('sourceId')])
+  String originalId;
   int sourceId;
 
+  String title;
+
+  String author;
+
+  List<String> tags;
+
+  List<BookDownloadUrl> downloadUrls;
+
+  String? imageUrl;
+
   Book({
+    required this.originalId,
     required this.title,
     required this.author,
     required this.tags,
@@ -28,11 +36,17 @@ class Book {
 @embedded
 class BookDownloadUrl {
   String? label;
-  String? url;
+  String? uri;
   String? type;
+
+  BookDownloadUrl({
+    this.label,
+    this.uri,
+    this.type,
+  });
 }
 
-class BKBookManager extends ChangeNotifier {
+class DBBooks extends ChangeNotifier {
   Isar? _database;
   Future<List<Book>> get booksFuture =>
       bkDatabase.then((db) => db.books.where().findAll());
@@ -40,7 +54,7 @@ class BKBookManager extends ChangeNotifier {
 
   List<VoidCallback> onDispose = [];
 
-  BKBookManager() {
+  DBBooks() {
     booksFuture.then((endpoints) {
       notifyListeners();
     });
@@ -61,20 +75,24 @@ class BKBookManager extends ChangeNotifier {
     super.dispose();
   }
 
-  Future addBooks(List<Book> books) async {
+  Future upsert(Book book) async {
     final db = _database;
     if (db == null) {
       return;
     }
 
     await db.writeTxn(() async {
-      await db.books.putAll(books);
+      await db.books
+          .where()
+          .originalIdSourceIdEqualTo(book.originalId, book.sourceId)
+          .deleteAll();
+      await db.books.put(book);
     });
 
     notifyListeners();
   }
 
-  Future removeBook(Book book) async {
+  Future remove(Book book) async {
     final db = _database;
     if (db == null) {
       return;
