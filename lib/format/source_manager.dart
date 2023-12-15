@@ -1,9 +1,10 @@
 import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/endpoint.db.dart';
 import 'package:bookoscope/db/source.db.dart';
+import 'package:bookoscope/format/guten/guten_extractor.dart';
 import 'package:bookoscope/format/opds/opds_crawler.dart';
 import 'package:bookoscope/format/opds/opds_events.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class BKCrawlManager extends ChangeNotifier {
   final DBSources dbSources;
@@ -18,11 +19,11 @@ class BKCrawlManager extends ChangeNotifier {
 
   Stream<OPDSCrawlEvent> crawlOpdsUri(Source source) async* {
     final crawler = OPDSCrawler(opdsRootUri: source.url);
-    dbSources.upsert(source);
+    await dbSources.upsert(source);
 
     await for (final event in crawler.crawlFromRoot()) {
       if (event is OPDSCrawlBegin) {
-        dbEndpoints.upsert(Endpoint(
+        await dbEndpoints.upsert(Endpoint(
           url: event.uri,
           isCrawled: false,
           sourceId: source.id,
@@ -30,7 +31,7 @@ class BKCrawlManager extends ChangeNotifier {
       }
 
       if (event is OPDSCrawlSuccess) {
-        dbEndpoints.upsert(Endpoint(
+        await dbEndpoints.upsert(Endpoint(
           url: event.uri,
           isCrawled: true,
           sourceId: source.id,
@@ -38,7 +39,7 @@ class BKCrawlManager extends ChangeNotifier {
       }
 
       if (event is OPDSCrawlException) {
-        dbEndpoints.upsert(Endpoint(
+        await dbEndpoints.upsert(Endpoint(
           url: event.uri,
           isCrawled: true,
           sourceId: source.id,
@@ -47,11 +48,11 @@ class BKCrawlManager extends ChangeNotifier {
       }
 
       if (event is OPDSCrawlResourceFound) {
-        dbBooks.upsert(Book(
+        await dbBooks.upsert(Book(
           originalId: event.resource.originalId,
           sourceId: source.id,
           title: event.resource.title,
-          author: event.resource.author,
+          authors: event.resource.authors,
           tags: event.resource.tags,
           downloadUrls: event.resource.downloadUrls
               .map((resourceUri) => BookDownloadUrl(
@@ -61,6 +62,7 @@ class BKCrawlManager extends ChangeNotifier {
                   ))
               .toList(),
           imageUrl: event.resource.imageUrl,
+          isGutenberg: false,
         ));
       }
 
@@ -68,6 +70,37 @@ class BKCrawlManager extends ChangeNotifier {
     }
 
     source.isCompletelyCrawled = true;
-    dbSources.upsert(source);
+    await dbSources.upsert(source);
+  }
+
+  Future<void> parseGutenbergCatalog() async {
+    final extractor = GCSVExtractor();
+    final source = Source(
+      label: 'Project Gutenberg',
+      url: 'file:pg_catalog.csv',
+      username: null,
+      password: null,
+    );
+    await dbSources.upsert(source);
+
+    await for (final row in extractor.getRows()) {
+      if (row.title == 'No title') {
+        continue;
+      }
+
+      await dbBooks.upsert(Book(
+        originalId: row.id.toString(),
+        sourceId: source.id,
+        title: row.title,
+        authors: row.authors ?? [],
+        tags: (row.subjects ?? []).followedBy(row.bookshelves ?? []).toList(),
+        downloadUrls: null,
+        imageUrl: null,
+        isGutenberg: true,
+      ));
+    }
+
+    source.isCompletelyCrawled = true;
+    await dbSources.upsert(source);
   }
 }

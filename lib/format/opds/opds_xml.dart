@@ -39,7 +39,7 @@ class OPDSEntry {
   final String id;
   final String updated;
   final String? title;
-  final String? author;
+  final List<String>? authors;
   final String? summary;
   final String? extent;
   final String? format;
@@ -53,7 +53,7 @@ class OPDSEntry {
       : id = node.getChildNodeText('id') ?? '',
         updated = node.getChildNodeText('updated') ?? '',
         title = node.getChildNodeText('title'),
-        author = node.getPossiblyNestedChildNodeText('author', 'name'),
+        authors = node.getPossiblyNestedChildNodeTexts('author', 'name'),
         summary = node.getChildNodeText('summary'),
         extent = node.getChildNodeText('extent'),
         format = node.getChildNodeText('format'),

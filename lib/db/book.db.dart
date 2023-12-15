@@ -14,22 +14,25 @@ class Book {
 
   String title;
 
-  String author;
+  List<String> authors;
 
   List<String> tags;
 
-  List<BookDownloadUrl> downloadUrls;
+  List<BookDownloadUrl>? downloadUrls;
 
   String? imageUrl;
+
+  bool isGutenberg;
 
   Book({
     required this.originalId,
     required this.title,
-    required this.author,
+    required this.authors,
     required this.tags,
     required this.downloadUrls,
     required this.imageUrl,
     required this.sourceId,
+    required this.isGutenberg,
   });
 }
 

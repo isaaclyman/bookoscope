@@ -97,7 +97,7 @@ void main() {
         expect(entry.textContent, 'Our most popular books.');
 
         expect(entry.summary, null);
-        expect(entry.author, null);
+        expect(entry.authors, null);
         expect(entry.categories, null);
         expect(entry.extent, null);
         expect(entry.format, null);
@@ -188,7 +188,7 @@ void main() {
         );
 
         expect(entry.summary, null);
-        expect(entry.author, 'Swift, Jonathan');
+        expect(entry.authors, 'Swift, Jonathan');
         expectNotNull(entry.categories);
         expect(entry.categories!.length, 5);
         expectContains(entry.categories,
@@ -232,7 +232,7 @@ void main() {
         expect(entry.textContent, 'Browse On Deck');
 
         expect(entry.summary, null);
-        expect(entry.author, null);
+        expect(entry.authors, null);
         expect(entry.categories, null);
         expect(entry.extent, null);
         expect(entry.format, null);
@@ -279,7 +279,7 @@ void main() {
         expect(entry.textContent, 'application/epub+zip');
 
         expect(entry.summary, 'epub+zip - 8.08 MB');
-        expect(entry.author, null);
+        expect(entry.authors, null);
         expect(entry.categories, null);
 
         expect(entry.extent, '8.08 MB');

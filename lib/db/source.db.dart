@@ -8,10 +8,15 @@ part 'source.db.g.dart';
 class Source {
   Id id = Isar.autoIncrement;
 
-  String label;
+  @Index()
   String url;
-  String username;
-  String password;
+
+  String label;
+
+  String? username;
+
+  String? password;
+
   bool isCompletelyCrawled = false;
 
   Source({
@@ -58,6 +63,7 @@ class DBSources extends ChangeNotifier {
     }
 
     await db.writeTxn(() async {
+      await db.sources.where().urlEqualTo(source.url).deleteAll();
       await db.sources.put(source);
     });
 

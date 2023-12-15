@@ -2,7 +2,7 @@
 class OPDSCrawlResource {
   final String originalId;
   final String title;
-  final String author;
+  final List<String> authors;
   final List<String> tags;
   final List<OPDSCrawlResourceUrl> downloadUrls;
   final String? imageUrl;
@@ -12,7 +12,7 @@ class OPDSCrawlResource {
   const OPDSCrawlResource({
     required this.originalId,
     required this.title,
-    required this.author,
+    required this.authors,
     required this.tags,
     required this.downloadUrls,
     required this.imageUrl,

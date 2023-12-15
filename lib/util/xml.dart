@@ -62,6 +62,32 @@ extension BKXmlNode on XmlNode {
     return inner?.innerText;
   }
 
+  List<String>? getPossiblyNestedChildNodeTexts(
+      String nodeName, String innerNode) {
+    final childTexts = childElements
+        .where((element) => element.localName == nodeName)
+        .map((element) {
+          if (element.childElements.isEmpty) {
+            return element.innerText;
+          }
+
+          if (element.childElements.length == 1) {
+            return element.firstElementChild?.innerText;
+          }
+
+          final inner = element.getElement(innerNode);
+          return inner?.innerText;
+        })
+        .whereNotNull()
+        .where((text) => text.trim().isNotEmpty)
+        .toList();
+    if (childTexts.isEmpty) {
+      return null;
+    }
+
+    return childTexts;
+  }
+
   List<String>? getChildrenNodesText(String nodeName) {
     final childTexts = childElements
         .where((element) => element.localName == nodeName)

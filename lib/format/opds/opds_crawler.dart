@@ -83,7 +83,7 @@ class OPDSCrawler {
         resource: OPDSCrawlResource(
           originalId: entry.id,
           title: entry.title ?? 'Title Not Found',
-          author: entry.author ?? '',
+          authors: entry.authors ?? [],
           tags: [
             if (entry.format != null) entry.format!,
             if (entry.categories != null) ...entry.categories!,

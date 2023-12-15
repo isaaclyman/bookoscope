@@ -20,7 +20,7 @@ Bookoscope fills that very small, very important niche. It crawls your OPDS endp
 
 - Fast
 - Easy on the eyes
-- Includes over 80,000 public domain books from Project Gutenberg
+- Includes over 70,000 public domain books from Project Gutenberg
 - Uses cached feeds (refresh on demand)
 - Searchable by any available metadata
 - Quick download and export to the ereader of your choice

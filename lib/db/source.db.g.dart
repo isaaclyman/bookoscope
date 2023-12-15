@@ -48,7 +48,21 @@ const SourceSchema = CollectionSchema(
   deserialize: _sourceDeserialize,
   deserializeProp: _sourceDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'url': IndexSchema(
+      id: -5756857009679432345,
+      name: r'url',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'url',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _sourceGetId,
@@ -64,9 +78,19 @@ int _sourceEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.label.length * 3;
-  bytesCount += 3 + object.password.length * 3;
+  {
+    final value = object.password;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.url.length * 3;
-  bytesCount += 3 + object.username.length * 3;
+  {
+    final value = object.username;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -91,9 +115,9 @@ Source _sourceDeserialize(
 ) {
   final object = Source(
     label: reader.readString(offsets[1]),
-    password: reader.readString(offsets[2]),
+    password: reader.readStringOrNull(offsets[2]),
     url: reader.readString(offsets[3]),
-    username: reader.readString(offsets[4]),
+    username: reader.readStringOrNull(offsets[4]),
   );
   object.id = id;
   object.isCompletelyCrawled = reader.readBool(offsets[0]);
@@ -112,11 +136,11 @@ P _sourceDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -205,6 +229,49 @@ extension SourceQueryWhere on QueryBuilder<Source, Source, QWhereClause> {
         upper: upperId,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterWhereClause> urlEqualTo(String url) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'url',
+        value: [url],
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterWhereClause> urlNotEqualTo(String url) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [],
+              upper: [url],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [url],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [url],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'url',
+              lower: [],
+              upper: [url],
+              includeUpper: false,
+            ));
+      }
     });
   }
 }
@@ -402,8 +469,24 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> passwordIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'password',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> passwordIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'password',
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> passwordEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -416,7 +499,7 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
   }
 
   QueryBuilder<Source, Source, QAfterFilterCondition> passwordGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -431,7 +514,7 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
   }
 
   QueryBuilder<Source, Source, QAfterFilterCondition> passwordLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -446,8 +529,8 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
   }
 
   QueryBuilder<Source, Source, QAfterFilterCondition> passwordBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -660,8 +743,24 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> usernameIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'username',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> usernameIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'username',
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> usernameEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -674,7 +773,7 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
   }
 
   QueryBuilder<Source, Source, QAfterFilterCondition> usernameGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -689,7 +788,7 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
   }
 
   QueryBuilder<Source, Source, QAfterFilterCondition> usernameLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -704,8 +803,8 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
   }
 
   QueryBuilder<Source, Source, QAfterFilterCondition> usernameBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -986,7 +1085,7 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Source, String, QQueryOperations> passwordProperty() {
+  QueryBuilder<Source, String?, QQueryOperations> passwordProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'password');
     });
@@ -998,7 +1097,7 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Source, String, QQueryOperations> usernameProperty() {
+  QueryBuilder<Source, String?, QQueryOperations> usernameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'username');
     });
