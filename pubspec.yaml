@@ -1,13 +1,14 @@
 name: bookoscope
 description: Unified OPDS browser for ebooks
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.0 <4.0.0'
+  sdk: ">=3.1.0 <4.0.0"
 
 dependencies:
   accordion: ^2.6.0
+  auto_size_text: ^3.0.0
   collection: ^1.18.0
   csv: ^5.1.1
   flutter:
@@ -15,7 +16,7 @@ dependencies:
   go_router: ^12.1.3
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
-  json_annotation: ^4.8.1 
+  json_annotation: ^4.8.1
   mockito: ^5.4.3
   path_provider: ^2.1.1
   provider: ^6.1.1
@@ -36,7 +37,23 @@ dev_dependencies:
 
 flutter:
   assets:
-  - assets/
+    - assets/
+  fonts:
+    - family: Titillium
+      fonts:
+        - asset: fonts/TitilliumWeb-Regular.ttf
+        - asset: fonts/TitilliumWeb-Italic.ttf
+          style: italic
+        - asset: fonts/TitilliumWeb-Bold.ttf
+          weight: 500
+        - asset: fonts/TitilliumWeb-BoldItalic.ttf
+          style: italic
+          weight: 500
+        - asset: fonts/TitilliumWeb-Light.ttf
+          weight: 300
+        - asset: fonts/TitilliumWeb-LightItalic.ttf
+          style: italic
+          weight: 300
   uses-material-design: true
 
 flutter_launcher_icons:
@@ -46,7 +63,7 @@ flutter_launcher_icons:
   image_path: "./icons/icon.png"
 
 auto_screenshot:
-  bundle_id: 
+  bundle_id:
     android: com.isaaclyman.bookoscope
     ios: com.isaaclyman.bookoscope
   devices:

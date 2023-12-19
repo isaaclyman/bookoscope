@@ -29,7 +29,7 @@ class BKSearchManager extends ChangeNotifier {
         },
         allSearchables = _root.searchableSources
             .expand((source) => source.searchables)
-            .sortedBy((item) => item.header.replaceAll(RegExp("[\"']"), ''))
+            .sortedBy((item) => item.title.replaceAll(RegExp("[\"']"), ''))
             .toList();
 
   void search() {
@@ -53,8 +53,9 @@ class BKSearchManager extends ChangeNotifier {
 
         return BKSearchResult(
           sourceName: source.sourceName,
-          header: searchable.header,
-          summary: id,
+          title: searchable.title,
+          author: id,
+          imageUrl: searchable.imageUrl,
           getRenderables: searchable.getRenderables,
           priority: 0,
         );
@@ -64,15 +65,16 @@ class BKSearchManager extends ChangeNotifier {
     }
 
     var searchable =
-        searchableSource.searchables.firstWhereOrNull((it) => it.header == id);
+        searchableSource.searchables.firstWhereOrNull((it) => it.title == id);
     if (searchable == null) {
       return null;
     }
 
     return BKSearchResult(
       sourceName: searchableSource.sourceName,
-      header: searchable.header,
-      summary: id,
+      title: searchable.title,
+      author: id,
+      imageUrl: searchable.imageUrl,
       getRenderables: searchable.getRenderables,
       priority: 0,
     );
@@ -134,13 +136,13 @@ class BKSearchManager extends ChangeNotifier {
         resultSource.addResult(
           BKSearchResult(
             sourceName: sourceName,
-            header: searchable.header,
-            summary: matchingText,
+            title: searchable.title,
+            author: matchingText,
+            imageUrl: searchable.imageUrl,
             getRenderables: searchable.getRenderables,
-            priority:
-                searchText.toLowerCase() == searchable.header.toLowerCase()
-                    ? -1
-                    : priority,
+            priority: searchText.toLowerCase() == searchable.title.toLowerCase()
+                ? -1
+                : priority,
           ),
         );
       }
@@ -148,7 +150,7 @@ class BKSearchManager extends ChangeNotifier {
 
     for (var category in results.values) {
       category.results.sort((v1, v2) => v1.priority == v2.priority
-          ? v1.header.compareTo(v2.header)
+          ? v1.title.compareTo(v2.title)
           : v1.priority.compareTo(v2.priority));
     }
 
@@ -178,15 +180,17 @@ class BKSearchResultSource {
 
 class BKSearchResult {
   final String sourceName;
-  final String header;
-  final String summary;
+  final String title;
+  final String author;
+  final String? imageUrl;
   final Iterable<Widget> Function() getRenderables;
   final int priority;
 
   BKSearchResult({
     required this.sourceName,
-    required this.header,
-    required this.summary,
+    required this.title,
+    required this.author,
+    required this.imageUrl,
     required this.getRenderables,
     required this.priority,
   });
@@ -216,8 +220,9 @@ abstract class BKHasSearchables {
 
 abstract class BKSearchable {
   String get originalId;
-  String get header;
-  String get defaultDescription;
+  String get title;
+  String get author;
+  String? get imageUrl;
   Iterable<String> get searchTextList;
   Iterable<Widget> getRenderables();
 }

@@ -62,7 +62,6 @@ class _CResultsBlockState extends State<CResultsBlock> {
                             .map((r) => BKBookTile(
                                   result: r,
                                   searchText: widget.searchText,
-                                  bookmarkOnLeft: false,
                                 )),
                         if (cat.results.length >
                             (resultsToShow[cat.sourceName] ?? 10))

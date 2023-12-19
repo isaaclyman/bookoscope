@@ -47,27 +47,31 @@ class _BookGrid extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 5.0,
-        mainAxisSpacing: 5.0,
-        childAspectRatio: 1 / 1.6,
-      ),
-      itemCount: searchables.length,
-      itemBuilder: (_, ix) {
-        final result = searchables.elementAt(ix);
-        return BKBookTile(
-            bookmarkOnLeft: true,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 5,
+          childAspectRatio: 1 / 1.6,
+        ),
+        itemCount: searchables.length,
+        itemBuilder: (_, ix) {
+          final result = searchables.elementAt(ix);
+          return BKBookTile(
             result: BKSearchResult(
               sourceName: "",
-              header: result.header,
-              summary: result.defaultDescription,
+              title: result.title,
+              author: result.author,
+              imageUrl: result.imageUrl,
               getRenderables: result.getRenderables,
               priority: 0,
             ),
-            searchText: null);
-      },
+            searchText: null,
+          );
+        },
+      ),
     );
   }
 }

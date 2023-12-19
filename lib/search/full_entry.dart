@@ -34,7 +34,7 @@ class CFullEntry extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 2),
                       child: Text(
-                        result.header,
+                        result.title,
                         style: context.text.entryMainHeader,
                       ),
                     ),
@@ -135,7 +135,7 @@ class _EntryActions extends StatelessWidget {
                           ),
                           Expanded(
                             child: Text(
-                              "Back to ${searchManager.lastResult?.header ?? "previous entry"}",
+                              "Back to ${searchManager.lastResult?.title ?? "previous entry"}",
                             ),
                           ),
                         ],

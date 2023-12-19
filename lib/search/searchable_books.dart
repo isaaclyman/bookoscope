@@ -13,16 +13,15 @@ class BKSearchableBook extends BKSearchable {
   });
 
   @override
-  String get defaultDescription => book.authors.join("; ");
+  String get author => book.authors.join("; ");
 
   @override
   Iterable<Widget> getRenderables() {
-    // TODO: implement getRenderables
-    throw UnimplementedError();
+    return [Text('Placeholder')];
   }
 
   @override
-  String get header => book.title;
+  String get title => book.title;
 
   @override
   String get originalId => book.originalId;
@@ -34,6 +33,9 @@ class BKSearchableBook extends BKSearchable {
         ...book.authors,
         ...book.tags,
       ];
+
+  @override
+  String? get imageUrl => book.imageUrl;
 }
 
 class BKHasSearchableSources extends BKHasSearchables {
