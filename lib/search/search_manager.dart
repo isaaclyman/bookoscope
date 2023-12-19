@@ -4,7 +4,7 @@ import 'package:azlistview/azlistview.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
-class CSearchManager extends ChangeNotifier {
+class BKSearchManager extends ChangeNotifier {
   final CHasSearchables _root;
   CSearchableCategory? get browsingCategory => selectedBrowseFilter == null
       ? null
@@ -23,7 +23,7 @@ class CSearchManager extends ChangeNotifier {
   CSearchResult? get lastResult => pastResults.last;
   bool get canGoBack => pastResults.isNotEmpty;
 
-  CSearchManager(this._root)
+  BKSearchManager(this._root)
       : filterState = {for (var s in _root.searchables) s.category: true},
         selectedBrowseFilter = _root.searchables.first.category;
 

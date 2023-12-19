@@ -142,7 +142,7 @@ class CEntrySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchManager = Provider.of<CSearchManager>(context);
+    final searchManager = Provider.of<BKSearchManager>(context);
 
     return Row(
       children: [

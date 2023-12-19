@@ -20,7 +20,7 @@ class CPageBrowse extends StatefulWidget {
 class _CPageBrowseState extends State<CPageBrowse> {
   @override
   Widget build(BuildContext context) {
-    final searchManager = context.watch<CSearchManager>();
+    final searchManager = context.watch<BKSearchManager>();
     final selectedFilter = searchManager.selectedBrowseFilter;
     final searchables = searchManager.browsingCategory?.searchables;
 

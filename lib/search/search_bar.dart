@@ -31,7 +31,7 @@ class _CSearchBarState extends State<CSearchBar> {
     _focusNode.addListener(_onFocusChange);
     onDispose.add(() => _focusNode.removeListener(_onFocusChange));
 
-    final searchManager = context.read<CSearchManager>();
+    final searchManager = context.read<BKSearchManager>();
     searchManager.addListener(_onSearchChange);
     _onSearchChange();
     onDispose.add(() => searchManager.removeListener(_onSearchChange));
@@ -50,7 +50,7 @@ class _CSearchBarState extends State<CSearchBar> {
 
   void _onSearchChange() {
     if (context.mounted) {
-      _controller.text = context.read<CSearchManager>().searchText;
+      _controller.text = context.read<BKSearchManager>().searchText;
     }
   }
 
@@ -114,7 +114,7 @@ class _CSearchFiltersState extends State<CSearchFilters> {
   @override
   Widget build(BuildContext context) {
     final handler = context.watch<CEventHandler>();
-    final searchManager = context.watch<CSearchManager>();
+    final searchManager = context.watch<BKSearchManager>();
     final areAllFiltersToggledOn =
         searchManager.filterState.entries.every((kvp) => kvp.value);
 

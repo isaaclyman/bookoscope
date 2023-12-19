@@ -188,7 +188,7 @@ void main() {
         );
 
         expect(entry.summary, null);
-        expect(entry.authors, 'Swift, Jonathan');
+        expectContains(entry.authors, literal: 'Swift, Jonathan');
         expectNotNull(entry.categories);
         expect(entry.categories!.length, 5);
         expectContains(entry.categories,

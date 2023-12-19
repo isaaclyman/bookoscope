@@ -35,6 +35,36 @@ void expectContains<T>(
   );
 }
 
+void expectNotContains<T>(
+  Iterable<T>? iterable, {
+  T? literal,
+  bool Function(T element)? matcher,
+}) {
+  assert(
+    literal != null || matcher != null,
+    'Either a literal element or a matcher must be provided.',
+  );
+
+  expect(iterable != null, true, reason: 'Iterable was null');
+
+  final result = iterable?.firstWhereOrNull((element) {
+    if (literal != null) {
+      return literal == element;
+    }
+
+    if (matcher != null) {
+      return matcher(element);
+    }
+
+    return false;
+  });
+  expect(
+    result == null,
+    true,
+    reason: 'Iterable contained a matching element',
+  );
+}
+
 void expectEmpty<T>(Iterable<T>? iterable) {
   expectNotNull(iterable);
   expect(

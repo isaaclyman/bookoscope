@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CEventHandler {
-  final CSearchManager searchManager;
+  final BKSearchManager searchManager;
   late final void Function() debouncedSearch;
 
   CEventHandler({required this.searchManager}) {

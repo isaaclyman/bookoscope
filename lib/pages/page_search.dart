@@ -22,7 +22,7 @@ class _CPageSearchState extends State<CPageSearch> {
 
   @override
   Widget build(BuildContext context) {
-    final searchManager = context.watch<CSearchManager>();
+    final searchManager = context.watch<BKSearchManager>();
 
     return Column(
       mainAxisSize: MainAxisSize.max,

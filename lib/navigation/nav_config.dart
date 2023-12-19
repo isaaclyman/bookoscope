@@ -13,14 +13,12 @@ import 'package:provider/provider.dart';
 
 class CRouterConfig {
   final GoRouter config;
-  final CJsonRoot dataRoot;
 
-  CRouterConfig({required this.dataRoot})
+  CRouterConfig()
       : config = GoRouter(
           routes: [
             ShellRoute(
               builder: (context, state, child) => CAppShell(
-                dataRoot: dataRoot,
                 routerState: state,
                 child: child,
               ),
@@ -61,17 +59,15 @@ class CRouterConfig {
 
 class CAppShell extends StatelessWidget {
   final Widget child;
-  final CJsonRoot dataRoot;
-  final CSearchManager searchManager;
+  final BKSearchManager searchManager;
   final GoRouterState routerState;
   late final CEventHandler eventHandler;
 
   CAppShell({
     super.key,
-    required this.dataRoot,
     required this.routerState,
     required this.child,
-  }) : searchManager = CSearchManager(dataRoot) {
+  }) : searchManager = BKSearchManager() {
     eventHandler = CEventHandler(searchManager: searchManager);
   }
 
@@ -82,7 +78,7 @@ class CAppShell extends StatelessWidget {
         Provider<CEventHandler>(
           create: (_) => eventHandler,
         ),
-        ChangeNotifierProvider<CSearchManager>(
+        ChangeNotifierProvider<BKSearchManager>(
           create: (_) => searchManager,
         ),
         ChangeNotifierProvider<DBSources>(create: (_) => DBSources()),
@@ -93,7 +89,7 @@ class CAppShell extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         bottomNavigationBar: _Navbar(currentRouteName: routerState.name),
-        endDrawer: Consumer<CSearchManager>(
+        endDrawer: Consumer<BKSearchManager>(
           builder: (_, searchManager, __) => Drawer(
             child: searchManager.selectedResult != null
                 ? SafeArea(

@@ -106,7 +106,7 @@ class _EntryActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchManager = context.watch<CSearchManager>();
+    final searchManager = context.watch<BKSearchManager>();
 
     return DecoratedBox(
       decoration: BoxDecoration(

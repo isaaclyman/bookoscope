@@ -1,5 +1,3 @@
-import 'package:bookoscope/components/future_handler.dart';
-import 'package:bookoscope/json_data/read_json.dart';
 import 'package:bookoscope/navigation/nav_config.dart';
 import 'package:flutter/material.dart';
 
@@ -17,15 +15,10 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
-    return CFutureHandler(
-      future: readSrdJson(),
-      builder: (context, dataRoot) => MaterialApp.router(
-        routerConfig: CRouterConfig(dataRoot: dataRoot).config,
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(useMaterial3: true),
-      ),
-      errorMessage: "Error loading data file.",
-      nullDataMessage: "Data file is empty.",
+    return MaterialApp.router(
+      routerConfig: CRouterConfig().config,
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true),
     );
   }
 }

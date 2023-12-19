@@ -9,19 +9,19 @@ class GCSVRow {
 
   GCSVRow.fromMap(Map<String, dynamic> map)
       : id = map['Text#'] as int,
-        title = map['Title'] as String,
+        title = map['Title'].toString(),
         issued = map['Issued'] as String?,
         language = map['Language'] as String?,
-        authors = (map['Authors'] as String)
-            .split(';')
+        authors = (map['Authors'] as String?)
+            ?.split(';')
             .map((author) => author.trim())
             .toList(),
-        subjects = (map['Subjects'] as String)
-            .split(';')
+        subjects = (map['Subjects'] as String?)
+            ?.split(';')
             .map((subject) => subject.trim())
             .toList(),
-        bookshelves = (map['Bookshelves'] as String)
-            .split(';')
+        bookshelves = (map['Bookshelves'] as String?)
+            ?.split(';')
             .map((shelf) => shelf.trim())
             .toList();
 }

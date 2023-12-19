@@ -1,7 +1,7 @@
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:bookoscope/format/csv/guten_csv.dart';
+import 'package:bookoscope/format/guten/guten_csv.dart';
 
 class GCSVExtractor {
   Stream<GCSVRow> getRows() async* {
