@@ -18,7 +18,7 @@ class CRenderLinksParagraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CEventHandler>(
+    return Consumer<BKEventHandler>(
       builder: (_, handler, child) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

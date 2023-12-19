@@ -5,11 +5,11 @@ import 'package:bookoscope/util/debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class CEventHandler {
+class BKEventHandler {
   final BKSearchManager searchManager;
   late final void Function() debouncedSearch;
 
-  CEventHandler({required this.searchManager}) {
+  BKEventHandler({required this.searchManager}) {
     debouncedSearch = bkDebounce(
       const Duration(milliseconds: 150),
       () => searchManager.search(),

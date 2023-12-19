@@ -22,7 +22,7 @@ class _CPageBrowseState extends State<CPageBrowse> {
   Widget build(BuildContext context) {
     final searchManager = context.watch<BKSearchManager>();
     final selectedFilter = searchManager.selectedBrowseFilter;
-    final searchables = searchManager.browsingCategory?.searchables;
+    final searchables = searchManager.browsingSource?.searchables;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +72,7 @@ class _CPageBrowseState extends State<CPageBrowse> {
 }
 
 class _AlphabeticalEntryList extends StatelessWidget {
-  final List<CSearchable> searchables;
+  final List<BKSearchable> searchables;
   final String category;
 
   const _AlphabeticalEntryList({
@@ -87,7 +87,7 @@ class _AlphabeticalEntryList extends StatelessWidget {
     }
 
     final beans =
-        searchables.map((s) => CSearchableBean.fromCSearchable(s)).toList();
+        searchables.map((s) => BKSearchableBean.fromCSearchable(s)).toList();
     final indexLetters =
         LinkedHashSet<String>.from(beans.map((b) => b.getSuspensionTag()))
             .toList();
@@ -99,8 +99,8 @@ class _AlphabeticalEntryList extends StatelessWidget {
         final result = searchables.elementAt(index);
         return CEntrySummary(
           bookmarkOnLeft: true,
-          result: CSearchResult(
-            category: category,
+          result: BKSearchResult(
+            sourceName: category,
             header: result.header,
             summary: result.defaultDescription,
             getRenderables: result.getRenderables,

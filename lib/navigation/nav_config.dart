@@ -1,12 +1,14 @@
+import 'package:bookoscope/db/book.db.dart';
+import 'package:bookoscope/db/endpoint.db.dart';
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/events/event_handler.dart';
-import 'package:bookoscope/json_data/json_types.dart';
 import 'package:bookoscope/navigation/nav_manager.dart';
 import 'package:bookoscope/pages/page_about.dart';
 import 'package:bookoscope/pages/page_browse.dart';
 import 'package:bookoscope/pages/page_search.dart';
 import 'package:bookoscope/search/full_entry.dart';
 import 'package:bookoscope/search/search_manager.dart';
+import 'package:bookoscope/search/searchable_books.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -59,29 +61,35 @@ class CRouterConfig {
 
 class CAppShell extends StatelessWidget {
   final Widget child;
-  final BKSearchManager searchManager;
   final GoRouterState routerState;
-  late final CEventHandler eventHandler;
 
-  CAppShell({
+  const CAppShell({
     super.key,
     required this.routerState,
     required this.child,
-  }) : searchManager = BKSearchManager() {
-    eventHandler = CEventHandler(searchManager: searchManager);
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<CEventHandler>(
-          create: (_) => eventHandler,
-        ),
-        ChangeNotifierProvider<BKSearchManager>(
-          create: (_) => searchManager,
-        ),
         ChangeNotifierProvider<DBSources>(create: (_) => DBSources()),
+        ChangeNotifierProvider<DBEndpoints>(create: (_) => DBEndpoints()),
+        ChangeNotifierProvider<DBBooks>(create: (_) => DBBooks()),
+        ChangeNotifierProxyProvider2<DBSources, DBBooks, BKSearchManager?>(
+          create: (_) => null,
+          update: (_, dbSources, dbBooks, __) => BKSearchManager(
+            BKHasSearchableSources(
+              sources: dbSources.sources,
+              books: dbBooks.books,
+            ),
+          ),
+        ),
+        ProxyProvider<BKSearchManager, BKEventHandler>(
+          update: (_, searchManager, __) => BKEventHandler(
+            searchManager: searchManager,
+          ),
+        ),
         ChangeNotifierProvider<CNavManager>(
           create: (_) => CNavManager(),
         ),
@@ -189,7 +197,7 @@ class CPageShell extends StatelessWidget {
     final navManager = Provider.of<CNavManager>(context, listen: false);
     Future.microtask(() => navManager.notifyRoute(routerState.name));
 
-    final handler = Provider.of<CEventHandler>(context, listen: false);
+    final handler = Provider.of<BKEventHandler>(context, listen: false);
     final params = routerState.uri.queryParameters;
 
     final query = params["query"];

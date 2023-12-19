@@ -53,12 +53,14 @@ class DBBooks extends ChangeNotifier {
   Isar? _database;
   Future<List<Book>> get booksFuture =>
       bkDatabase.then((db) => db.books.where().findAll());
+  List<Book> books = [];
   bool get isLoaded => _database != null;
 
   List<VoidCallback> onDispose = [];
 
   DBBooks() {
-    booksFuture.then((endpoints) {
+    booksFuture.then((books) {
+      this.books = books;
       notifyListeners();
     });
 

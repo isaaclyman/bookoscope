@@ -5,51 +5,53 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class BKSearchManager extends ChangeNotifier {
-  final CHasSearchables _root;
-  CSearchableCategory? get browsingCategory => selectedBrowseFilter == null
+  final BKHasSearchables _root;
+  BKSearchableSource? get browsingSource => selectedBrowseFilter == null
       ? null
-      : _root.searchables
-          .firstWhereOrNull((cat) => cat.category == selectedBrowseFilter);
+      : _root.searchableSources
+          .firstWhereOrNull((cat) => cat.sourceName == selectedBrowseFilter);
 
   String searchText = "";
   Map<String, bool> filterState;
   String? selectedBrowseFilter;
 
-  Iterable<CSearchResultCategory> results = [];
+  Iterable<BKSearchResultSource> results = [];
   bool get hasResults => results.isNotEmpty;
 
-  CSearchResult? selectedResult;
-  List<CSearchResult> pastResults = [];
-  CSearchResult? get lastResult => pastResults.last;
+  BKSearchResult? selectedResult;
+  List<BKSearchResult> pastResults = [];
+  BKSearchResult? get lastResult => pastResults.last;
   bool get canGoBack => pastResults.isNotEmpty;
 
   BKSearchManager(this._root)
-      : filterState = {for (var s in _root.searchables) s.category: true},
-        selectedBrowseFilter = _root.searchables.first.category;
+      : filterState = {
+          for (var s in _root.searchableSources) s.sourceName: true
+        },
+        selectedBrowseFilter = _root.searchableSources.first.sourceName;
 
   void search() {
     results = _getResults();
     notifyListeners();
   }
 
-  CSearchResult? getResult(String? searchableCategoryName, String itemName) {
-    var searchableCategory = searchableCategoryName != null
-        ? _root.searchables
-            .firstWhereOrNull((cat) => cat.category == searchableCategoryName)
+  BKSearchResult? getResult(String? sourceName, String id) {
+    var searchableSource = sourceName != null
+        ? _root.searchableSources
+            .firstWhereOrNull((cat) => cat.sourceName == sourceName)
         : null;
 
-    if (searchableCategory == null) {
-      for (var category in _root.searchables) {
-        var searchable = category.searchables
-            .firstWhereOrNull((it) => it.header == itemName);
+    if (searchableSource == null) {
+      for (var source in _root.searchableSources) {
+        var searchable =
+            source.searchables.firstWhereOrNull((it) => it.originalId == id);
         if (searchable == null) {
           continue;
         }
 
-        return CSearchResult(
-          category: category.category,
+        return BKSearchResult(
+          sourceName: source.sourceName,
           header: searchable.header,
-          summary: itemName,
+          summary: id,
           getRenderables: searchable.getRenderables,
           priority: 0,
         );
@@ -58,16 +60,16 @@ class BKSearchManager extends ChangeNotifier {
       return null;
     }
 
-    var searchable = searchableCategory.searchables
-        .firstWhereOrNull((it) => it.header == itemName);
+    var searchable =
+        searchableSource.searchables.firstWhereOrNull((it) => it.header == id);
     if (searchable == null) {
       return null;
     }
 
-    return CSearchResult(
-      category: searchableCategory.category,
+    return BKSearchResult(
+      sourceName: searchableSource.sourceName,
       header: searchable.header,
-      summary: itemName,
+      summary: id,
       getRenderables: searchable.getRenderables,
       priority: 0,
     );
@@ -78,7 +80,7 @@ class BKSearchManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectResult(BuildContext context, CSearchResult? result) {
+  void selectResult(BuildContext context, BKSearchResult? result) {
     if (selectedResult != null && selectedResult != result) {
       pastResults.add(selectedResult!);
     }
@@ -97,21 +99,21 @@ class BKSearchManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Iterable<CSearchResultCategory> _getResults() {
+  Iterable<BKSearchResultSource> _getResults() {
     if (searchText.trim().isEmpty) {
       return [];
     }
 
-    final results = <String, CSearchResultCategory>{};
+    final results = <String, BKSearchResultSource>{};
 
-    for (var searchableCategory in _root.searchables) {
-      final category = searchableCategory.category;
+    for (var source in _root.searchableSources) {
+      final sourceName = source.sourceName;
 
-      if (filterState[category] == false) {
+      if (filterState[sourceName] == false) {
         continue;
       }
 
-      for (var searchable in searchableCategory.searchables) {
+      for (var searchable in source.searchables) {
         final match = searchable.searchTextList.indexed.firstWhereOrNull(
             (it) => it.$2.toLowerCase().contains(searchText.toLowerCase()));
         if (match == null) {
@@ -119,16 +121,16 @@ class BKSearchManager extends ChangeNotifier {
         }
 
         final (priority, matchingText) = match;
-        final resultCategory = results.putIfAbsent(
-          category,
-          () => CSearchResultCategory(
-            category: category,
+        final resultSource = results.putIfAbsent(
+          sourceName,
+          () => BKSearchResultSource(
+            sourceName: sourceName,
             results: [],
           ),
         );
-        resultCategory.addResult(
-          CSearchResult(
-            category: category,
+        resultSource.addResult(
+          BKSearchResult(
+            sourceName: sourceName,
             header: searchable.header,
             summary: matchingText,
             getRenderables: searchable.getRenderables,
@@ -149,37 +151,37 @@ class BKSearchManager extends ChangeNotifier {
 
     return results.values
         .sorted((v1, v2) => v1.minPriority == v2.minPriority
-            ? v1.category.compareTo(v2.category)
+            ? v1.sourceName.compareTo(v2.sourceName)
             : v1.minPriority.compareTo(v2.minPriority))
         .toList();
   }
 }
 
-class CSearchResultCategory {
-  final String category;
-  final List<CSearchResult> results;
+class BKSearchResultSource {
+  final String sourceName;
+  final List<BKSearchResult> results;
   int minPriority = 100;
 
-  CSearchResultCategory({
-    required this.category,
+  BKSearchResultSource({
+    required this.sourceName,
     required this.results,
   });
 
-  void addResult(CSearchResult result) {
+  void addResult(BKSearchResult result) {
     minPriority = min(minPriority, result.priority);
     results.add(result);
   }
 }
 
-class CSearchResult {
-  final String category;
+class BKSearchResult {
+  final String sourceName;
   final String header;
   final String summary;
   final Iterable<Widget> Function() getRenderables;
   final int priority;
 
-  CSearchResult({
-    required this.category,
+  BKSearchResult({
+    required this.sourceName,
     required this.header,
     required this.summary,
     required this.getRenderables,
@@ -187,10 +189,10 @@ class CSearchResult {
   });
 }
 
-class CSearchableBean implements ISuspensionBean {
-  CSearchable searchable;
+class BKSearchableBean implements ISuspensionBean {
+  BKSearchable searchable;
 
-  CSearchableBean.fromCSearchable(this.searchable);
+  BKSearchableBean.fromCSearchable(this.searchable);
 
   @override
   bool isShowSuspension = true;
@@ -203,12 +205,12 @@ class CSearchableBean implements ISuspensionBean {
 // FOR DATA CLASSES
 //
 
-class CSearchableCategory {
-  String category;
-  List<CSearchable> searchables;
+class BKSearchableSource {
+  String sourceName;
+  List<BKSearchable> searchables;
 
-  CSearchableCategory({
-    required this.category,
+  BKSearchableSource({
+    required this.sourceName,
     required this.searchables,
   });
 }
@@ -217,22 +219,23 @@ class CSearchableCategory {
 // INTERFACES
 //
 
-abstract class CHasSearchables {
-  List<CSearchableCategory> get searchables;
+abstract class BKHasSearchables {
+  List<BKSearchableSource> get searchableSources;
 }
 
-abstract class CSearchable {
+abstract class BKSearchable {
+  String get originalId;
   String get header;
   String get defaultDescription;
   Iterable<String> get searchTextList;
   Iterable<Widget> getRenderables();
 }
 
-abstract class CSearchableItem {
+abstract class BKSearchableItem {
   String get searchText;
 }
 
-abstract class CSearchableComplexItem {
+abstract class BKSearchableComplexItem {
   Iterable<String> get searchTextList;
   Iterable<Widget> getRenderables();
 }

@@ -34,7 +34,7 @@ class CRenderLabeledResultLinkAccordion extends StatelessWidget {
               ),
             ),
           ...links.map(
-            (link) => Consumer<CEventHandler>(
+            (link) => Consumer<BKEventHandler>(
               builder: (_, handler, ___) => GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CFullEntry extends StatelessWidget {
-  final CSearchResult result;
+  final BKSearchResult result;
 
   const CFullEntry({
     super.key,
@@ -28,7 +28,7 @@ class CFullEntry extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      result.category,
+                      result.sourceName,
                       style: context.text.entryCategory,
                     ),
                     Padding(
@@ -68,7 +68,7 @@ class _EntryBody extends StatelessWidget {
     required this.result,
   });
 
-  final CSearchResult result;
+  final BKSearchResult result;
 
   @override
   Widget build(BuildContext context) {
@@ -83,13 +83,10 @@ class _EntryBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            ...result
-                .getRenderables()
-                .map((r) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: r,
-                    ))
-                .toList(),
+            ...result.getRenderables().map((r) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: r,
+                )),
           ],
         ),
       ),
@@ -98,7 +95,7 @@ class _EntryBody extends StatelessWidget {
 }
 
 class _EntryActions extends StatelessWidget {
-  final CSearchResult result;
+  final BKSearchResult result;
 
   const _EntryActions({
     required this.result,

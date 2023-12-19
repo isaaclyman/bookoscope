@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CFutureHandler<T> extends StatelessWidget {
+class BKFutureHandler<T> extends StatelessWidget {
   final Future<T> future;
   final Widget Function(
     BuildContext context,
@@ -9,7 +9,7 @@ class CFutureHandler<T> extends StatelessWidget {
   final String errorMessage;
   final String nullDataMessage;
 
-  const CFutureHandler({
+  const BKFutureHandler({
     super.key,
     required this.future,
     required this.builder,

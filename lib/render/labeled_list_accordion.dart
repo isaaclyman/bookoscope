@@ -32,7 +32,7 @@ class CRenderLabeledListAccordion extends StatelessWidget {
                 style: context.text.accordionInnerLabel,
               ),
             ),
-          ...listItems.map((it) => _LabeledListItem(it)).toList(),
+          ...listItems.map((it) => _LabeledListItem(it)),
         ],
       ),
     );

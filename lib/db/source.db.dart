@@ -31,12 +31,14 @@ class DBSources extends ChangeNotifier {
   Isar? _database;
   Future<List<Source>> get sourcesFuture =>
       bkDatabase.then((db) => db.sources.where().findAll());
+  List<Source> sources = [];
   bool get isLoaded => _database != null;
 
   List<VoidCallback> onDispose = [];
 
   DBSources() {
     sourcesFuture.then((sources) {
+      this.sources = sources;
       notifyListeners();
     });
 

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CResultsBlock extends StatefulWidget {
-  final Iterable<CSearchResultCategory> results;
+  final Iterable<BKSearchResultSource> results;
   final String? searchText;
   final String noResultsMessage;
 
@@ -49,13 +49,13 @@ class _CResultsBlockState extends State<CResultsBlock> {
           : ListView(
               children: widget.results
                   .map((cat) => [
-                        _CategoryHeader(text: cat.category),
+                        _CategoryHeader(text: cat.sourceName),
                         ...cat.results
                             .slice(
                               0,
                               min(
                                   resultsToShow.putIfAbsent(
-                                      cat.category, () => 10),
+                                      cat.sourceName, () => 10),
                                   cat.results.length),
                             )
                             .map((r) => CEntrySummary(
@@ -64,17 +64,17 @@ class _CResultsBlockState extends State<CResultsBlock> {
                                   bookmarkOnLeft: false,
                                 )),
                         if (cat.results.length >
-                            (resultsToShow[cat.category] ?? 10))
+                            (resultsToShow[cat.sourceName] ?? 10))
                           _LoadMoreResults(
-                            categoryName: cat.category,
+                            categoryName: cat.sourceName,
                             onLoadMore: () {
                               setState(() {
-                                resultsToShow[cat.category] = resultsToShow
-                                        .putIfAbsent(cat.category, () => 10) +
+                                resultsToShow[cat.sourceName] = resultsToShow
+                                        .putIfAbsent(cat.sourceName, () => 10) +
                                     10;
                               });
                             },
-                            resultsShown: resultsToShow[cat.category] ?? 10,
+                            resultsShown: resultsToShow[cat.sourceName] ?? 10,
                             totalResults: cat.results.length,
                           ),
                       ])
@@ -130,7 +130,7 @@ class _CategoryHeader extends StatelessWidget {
 
 class CEntrySummary extends StatelessWidget {
   final String? searchText;
-  final CSearchResult result;
+  final BKSearchResult result;
   final bool bookmarkOnLeft;
 
   const CEntrySummary({

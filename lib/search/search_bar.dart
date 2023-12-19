@@ -68,7 +68,7 @@ class _CSearchBarState extends State<CSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final handler = context.watch<CEventHandler>();
+    final handler = context.watch<BKEventHandler>();
 
     return TextField(
       controller: _controller,
@@ -113,7 +113,7 @@ class _CSearchFiltersState extends State<CSearchFilters> {
 
   @override
   Widget build(BuildContext context) {
-    final handler = context.watch<CEventHandler>();
+    final handler = context.watch<BKEventHandler>();
     final searchManager = context.watch<BKSearchManager>();
     final areAllFiltersToggledOn =
         searchManager.filterState.entries.every((kvp) => kvp.value);
@@ -166,8 +166,7 @@ class _CSearchFiltersState extends State<CSearchFilters> {
                     horizontal: 4,
                   ),
                 ),
-              )
-              .toList(),
+              ),
         ],
       ),
     );
