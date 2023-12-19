@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:azlistview/azlistview.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class BKSearchManager extends ChangeNotifier {
   final BKHasSearchables _root;
+  List<BKSearchable> allSearchables;
   BKSearchableSource? get browsingSource => selectedBrowseFilter == null
       ? null
       : _root.searchableSources
@@ -27,7 +27,10 @@ class BKSearchManager extends ChangeNotifier {
       : filterState = {
           for (var s in _root.searchableSources) s.sourceName: true
         },
-        selectedBrowseFilter = _root.searchableSources.first.sourceName;
+        allSearchables = _root.searchableSources
+            .expand((source) => source.searchables)
+            .sortedBy((item) => item.header.replaceAll(RegExp("[\"']"), ''))
+            .toList();
 
   void search() {
     results = _getResults();
@@ -187,18 +190,6 @@ class BKSearchResult {
     required this.getRenderables,
     required this.priority,
   });
-}
-
-class BKSearchableBean implements ISuspensionBean {
-  BKSearchable searchable;
-
-  BKSearchableBean.fromCSearchable(this.searchable);
-
-  @override
-  bool isShowSuspension = true;
-
-  @override
-  String getSuspensionTag() => searchable.header[0];
 }
 
 //

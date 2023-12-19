@@ -13,7 +13,7 @@ class BKSearchableBook extends BKSearchable {
   });
 
   @override
-  String get defaultDescription => book.title;
+  String get defaultDescription => book.authors.join("; ");
 
   @override
   Iterable<Widget> getRenderables() {

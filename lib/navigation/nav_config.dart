@@ -1,11 +1,12 @@
 import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/endpoint.db.dart';
+import 'package:bookoscope/db/initialize.dart';
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/events/event_handler.dart';
+import 'package:bookoscope/format/crawl_manager.dart';
 import 'package:bookoscope/navigation/nav_manager.dart';
-import 'package:bookoscope/pages/page_about.dart';
-import 'package:bookoscope/pages/page_browse.dart';
 import 'package:bookoscope/pages/page_search.dart';
+import 'package:bookoscope/pages/page_sources.dart';
 import 'package:bookoscope/search/full_entry.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/search/searchable_books.dart';
@@ -13,57 +14,49 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class CRouterConfig {
+class BKRouterConfig {
   final GoRouter config;
 
-  CRouterConfig()
+  BKRouterConfig()
       : config = GoRouter(
           routes: [
             ShellRoute(
-              builder: (context, state, child) => CAppShell(
+              builder: (context, state, child) => BKAppShell(
                 routerState: state,
                 child: child,
               ),
               routes: [
                 GoRoute(
                   path: '/',
-                  redirect: (context, state) => '/browse',
-                ),
-                GoRoute(
-                  path: '/browse',
-                  name: CPageBrowse.name,
-                  builder: (context, state) => CPageShell(
-                    routerState: state,
-                    child: const CPageBrowse(),
-                  ),
+                  redirect: (context, state) => '/search',
                 ),
                 GoRoute(
                   path: '/search',
-                  name: CPageSearch.name,
-                  builder: (context, state) => CPageShell(
+                  name: BKPageBrowse.name,
+                  builder: (context, state) => BKPageShell(
                     routerState: state,
-                    child: const CPageSearch(),
+                    child: const BKPageBrowse(),
                   ),
                 ),
                 GoRoute(
-                  path: '/about',
-                  name: CPageAbout.name,
-                  builder: (context, state) => CPageShell(
+                  path: '/sources',
+                  name: BKPageSources.name,
+                  builder: (context, state) => BKPageShell(
                     routerState: state,
-                    child: const CPageAbout(),
+                    child: const BKPageSources(),
                   ),
-                )
+                ),
               ],
             )
           ],
         );
 }
 
-class CAppShell extends StatelessWidget {
+class BKAppShell extends StatelessWidget {
   final Widget child;
   final GoRouterState routerState;
 
-  const CAppShell({
+  const BKAppShell({
     super.key,
     required this.routerState,
     required this.child,
@@ -93,9 +86,22 @@ class CAppShell extends StatelessWidget {
         ChangeNotifierProvider<CNavManager>(
           create: (_) => CNavManager(),
         ),
+        ProxyProvider3<DBSources, DBEndpoints, DBBooks, BKCrawlManager>(
+          update: (_, dbSources, dbEndpoints, dbBooks, __) => BKCrawlManager(
+            dbSources: dbSources,
+            dbEndpoints: dbEndpoints,
+            dbBooks: dbBooks,
+          ),
+        ),
+        ProxyProvider2<DBSources, BKCrawlManager, DBInitialize>(
+          update: (_, dbSources, crawlManager, __) => DBInitialize(
+            dbSources: dbSources,
+            crawlManager: crawlManager,
+          ),
+          lazy: false,
+        )
       ],
       child: Scaffold(
-        backgroundColor: Colors.white,
         bottomNavigationBar: _Navbar(currentRouteName: routerState.name),
         endDrawer: Consumer<BKSearchManager>(
           builder: (_, searchManager, __) => Drawer(
@@ -128,12 +134,18 @@ class _NavbarState extends State<_Navbar> {
 
   final List<(NavigationDestination, String)> _navItemRoutes = [
     (
-      const NavigationDestination(icon: Icon(Icons.view_list), label: "Browse"),
-      CPageBrowse.name
+      const NavigationDestination(
+        icon: Icon(Icons.shelves),
+        label: "Browse",
+      ),
+      BKPageBrowse.name
     ),
     (
-      const NavigationDestination(icon: Icon(Icons.search), label: "Search"),
-      CPageSearch.name
+      const NavigationDestination(
+        icon: Icon(Icons.device_hub),
+        label: "Sources",
+      ),
+      BKPageSources.name
     ),
   ];
 
@@ -182,11 +194,11 @@ class _NavbarState extends State<_Navbar> {
   }
 }
 
-class CPageShell extends StatelessWidget {
+class BKPageShell extends StatelessWidget {
   final Widget child;
   final GoRouterState routerState;
 
-  const CPageShell({
+  const BKPageShell({
     super.key,
     required this.child,
     required this.routerState,
@@ -214,13 +226,8 @@ class CPageShell extends StatelessWidget {
       Scaffold.of(context).closeEndDrawer();
     }
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
-      child: SizedBox.expand(
-        child: SafeArea(child: child),
-      ),
+    return SizedBox.expand(
+      child: SafeArea(child: child),
     );
   }
 }

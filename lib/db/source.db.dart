@@ -39,6 +39,7 @@ class DBSources extends ChangeNotifier {
   DBSources() {
     sourcesFuture.then((sources) {
       this.sources = sources;
+
       notifyListeners();
     });
 

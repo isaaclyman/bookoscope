@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class CPageSources extends StatefulWidget {
+class BKPageSources extends StatefulWidget {
   static const name = 'Sources';
 
-  const CPageSources({super.key});
+  const BKPageSources({super.key});
 
   @override
-  State<CPageSources> createState() => _CPageSearchState();
+  State<BKPageSources> createState() => _BKPageSourcesState();
 }
 
-class _CPageSearchState extends State<CPageSources> {
+class _BKPageSourcesState extends State<BKPageSources> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

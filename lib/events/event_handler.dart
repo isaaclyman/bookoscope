@@ -42,6 +42,6 @@ class BKEventHandler {
   void setSearchQuery(BuildContext context, String query) {
     searchManager.searchText = query;
     debouncedSearch();
-    context.goNamed(CPageSearch.name);
+    context.goNamed(BKPageBrowse.name);
   }
 }

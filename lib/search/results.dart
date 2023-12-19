@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bookoscope/search/book_tile.dart';
 import 'package:collection/collection.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/theme/text.dart';
@@ -58,7 +59,7 @@ class _CResultsBlockState extends State<CResultsBlock> {
                                       cat.sourceName, () => 10),
                                   cat.results.length),
                             )
-                            .map((r) => CEntrySummary(
+                            .map((r) => BKBookTile(
                                   result: r,
                                   searchText: widget.searchText,
                                   bookmarkOnLeft: false,
@@ -128,62 +129,6 @@ class _CategoryHeader extends StatelessWidget {
   }
 }
 
-class CEntrySummary extends StatelessWidget {
-  final String? searchText;
-  final BKSearchResult result;
-  final bool bookmarkOnLeft;
-
-  const CEntrySummary({
-    super.key,
-    required this.result,
-    required this.searchText,
-    required this.bookmarkOnLeft,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final searchManager = Provider.of<BKSearchManager>(context);
-
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              searchManager.selectResult(context, result);
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: 6,
-                left: bookmarkOnLeft ? 0 : 24,
-                right: 24,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      result.header,
-                      style: context.text.resultEntryHeader,
-                    ),
-                  ),
-                  if (result.summary.isNotEmpty)
-                    _HighlightMatch(
-                      matchText: searchText,
-                      fullText: result.summary,
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _LoadMoreResults extends StatelessWidget {
   final String categoryName;
   final void Function() onLoadMore;
@@ -218,66 +163,5 @@ class _LoadMoreResults extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class _HighlightMatch extends StatelessWidget {
-  final String? matchText;
-  final String fullText;
-
-  const _HighlightMatch({
-    required this.matchText,
-    required this.fullText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (matchText == null) {
-      return Text.rich(
-        TextSpan(text: fullText),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-
-    final fullMatchIx =
-        fullText.toLowerCase().indexOf(matchText!.toLowerCase());
-
-    final minWindow = max(30, matchText!.length);
-    String windowedText;
-    if (minWindow >= fullText.length || fullMatchIx <= minWindow) {
-      windowedText = fullText;
-    } else if (fullMatchIx >= fullText.length - minWindow) {
-      windowedText = "...${fullText.substring(fullText.length - minWindow)}";
-    } else {
-      windowedText = "...${fullText.substring(fullMatchIx - minWindow ~/ 2)}";
-    }
-
-    final windowMatchIx =
-        windowedText.toLowerCase().indexOf(matchText!.toLowerCase());
-
-    return windowMatchIx == -1
-        ? Text.rich(
-            TextSpan(text: windowedText),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          )
-        : Text.rich(
-            TextSpan(children: [
-              TextSpan(
-                text: windowedText.substring(0, windowMatchIx),
-              ),
-              TextSpan(
-                text: windowedText.substring(
-                    windowMatchIx, windowMatchIx + matchText!.length),
-                style: context.text.highlight,
-              ),
-              TextSpan(
-                text: windowedText.substring(windowMatchIx + matchText!.length),
-              ),
-            ]),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          );
   }
 }

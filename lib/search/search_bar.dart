@@ -80,7 +80,7 @@ class _CSearchBarState extends State<CSearchBar> {
         ),
         enabledBorder: _inputBorder(1),
         focusedBorder: _inputBorder(2),
-        labelText: "Search SRD",
+        labelText: "Search books",
         suffixIcon: _controller.text.isEmpty
             ? null
             : IconButton(
@@ -120,7 +120,7 @@ class _CSearchFiltersState extends State<CSearchFilters> {
 
     return CFadeHorizontalScroll(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(

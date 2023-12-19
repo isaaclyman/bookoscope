@@ -4,9 +4,10 @@ import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/format/guten/guten_extractor.dart';
 import 'package:bookoscope/format/opds/opds_crawler.dart';
 import 'package:bookoscope/format/opds/opds_events.dart';
-import 'package:flutter/material.dart';
 
-class BKCrawlManager extends ChangeNotifier {
+const String bkFakeGutenbergUrl = 'file:pg_catalog.csv';
+
+class BKCrawlManager {
   final DBSources dbSources;
   final DBEndpoints dbEndpoints;
   final DBBooks dbBooks;
@@ -77,7 +78,7 @@ class BKCrawlManager extends ChangeNotifier {
     final extractor = GCSVExtractor();
     final source = Source(
       label: 'Project Gutenberg',
-      url: 'file:pg_catalog.csv',
+      url: bkFakeGutenbergUrl,
       username: null,
       password: null,
     );

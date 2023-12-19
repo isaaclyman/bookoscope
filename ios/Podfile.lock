@@ -34,7 +34,7 @@ SPEC CHECKSUMS:
   integration_test: 13825b8a9334a850581300559b8839134b124670
   isar_flutter_libs: b69f437aeab9c521821c3f376198c4371fa21073
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
-  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
+  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
 
 PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
 

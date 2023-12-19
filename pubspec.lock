@@ -56,14 +56,6 @@ packages:
       relative: true
     source: path
     version: "0.0.2"
-  azlistview:
-    dependency: "direct main"
-    description:
-      name: azlistview
-      sha256: "93e865f11777a271b439f0d6b00799c0797e9daeec2e082a2e01373809c4b90d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -630,14 +622,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
-  scrollable_positioned_list:
-    dependency: transitive
-    description:
-      name: scrollable_positioned_list
-      sha256: "9566352ab9ba05794ee6c8864f154afba5d36c5637d0e3e32c615ba4ceb92772"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.3"
   shelf:
     dependency: transitive
     description:
