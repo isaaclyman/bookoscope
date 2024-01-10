@@ -7,15 +7,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class BKSearchManager extends ChangeNotifier {
-  late BKHasSearchableSources _root;
-  late List<BKSearchable> allSearchables;
-  late Map<String, bool> filterState;
+  BKHasSearchableSources _root = BKHasSearchableSources(
+    books: [],
+    sources: [],
+  );
+  Map<String, bool> filterState = {};
 
   BKSearchableSource? get browsingSource => selectedBrowseFilter == null
       ? null
       : _root.searchableSources
           .firstWhereOrNull((cat) => cat.sourceName == selectedBrowseFilter);
 
+  bool get isSearching => searchText.trim().isNotEmpty;
   String searchText = "";
   String? selectedBrowseFilter;
 
@@ -27,9 +30,7 @@ class BKSearchManager extends ChangeNotifier {
   BKSearchResult? get lastResult => pastResults.last;
   bool get canGoBack => pastResults.isNotEmpty;
 
-  BKSearchManager(DBSources dbSources, DBBooks dbBooks) {
-    refreshSources(dbSources, dbBooks);
-  }
+  BKSearchManager();
 
   void search() {
     results = _getResults();
@@ -85,10 +86,7 @@ class BKSearchManager extends ChangeNotifier {
       books: dbBooks.books,
     );
     filterState = {for (var s in _root.searchableSources) s.sourceName: true};
-    allSearchables = _root.searchableSources
-        .expand((source) => source.searchables)
-        .sortedBy((item) => item.title.replaceAll(RegExp("[\"']"), ''))
-        .toList();
+    search();
   }
 
   void selectBrowseFilter(String? filter) {
@@ -116,10 +114,7 @@ class BKSearchManager extends ChangeNotifier {
   }
 
   Iterable<BKSearchResultSource> _getResults() {
-    if (searchText.trim().isEmpty) {
-      return [];
-    }
-
+    final showEverything = !isSearching;
     final results = <String, BKSearchResultSource>{};
 
     for (var source in _root.searchableSources) {
@@ -130,25 +125,34 @@ class BKSearchManager extends ChangeNotifier {
       }
 
       for (var searchable in source.searchables) {
-        final match = searchable.searchTextList.indexed.firstWhereOrNull(
-            (it) => it.$2.toLowerCase().contains(searchText.toLowerCase()));
-        if (match == null) {
-          continue;
+        int priority = 0;
+        String? matchingText;
+
+        if (!showEverything) {
+          final match = searchable.searchTextList.indexed.firstWhereOrNull(
+              (it) => it.$2.toLowerCase().contains(searchText.toLowerCase()));
+
+          if (match == null) {
+            continue;
+          }
+
+          (priority, matchingText) = match;
         }
 
-        final (priority, matchingText) = match;
         final resultSource = results.putIfAbsent(
           sourceName,
           () => BKSearchResultSource(
             sourceName: sourceName,
+            isBuiltInSource: source.isBuiltInSource,
             results: [],
           ),
         );
+
         resultSource.addResult(
           BKSearchResult(
             sourceName: sourceName,
             title: searchable.title,
-            author: matchingText,
+            author: matchingText ?? searchable.author,
             imageUrl: searchable.imageUrl,
             getRenderables: searchable.getRenderables,
             priority: searchText.toLowerCase() == searchable.title.toLowerCase()
@@ -165,21 +169,27 @@ class BKSearchManager extends ChangeNotifier {
           : v1.priority.compareTo(v2.priority));
     }
 
-    return results.values
-        .sorted((v1, v2) => v1.minPriority == v2.minPriority
-            ? v1.sourceName.compareTo(v2.sourceName)
-            : v1.minPriority.compareTo(v2.minPriority))
-        .toList();
+    return results.values.sorted((v1, v2) {
+      if (v1.isBuiltInSource != v2.isBuiltInSource) {
+        return v1.isBuiltInSource ? -1 : 1;
+      }
+
+      return v1.minPriority == v2.minPriority
+          ? v1.sourceName.compareTo(v2.sourceName)
+          : v1.minPriority.compareTo(v2.minPriority);
+    }).toList();
   }
 }
 
 class BKSearchResultSource {
   final String sourceName;
+  final bool isBuiltInSource;
   final List<BKSearchResult> results;
   int minPriority = 100;
 
   BKSearchResultSource({
     required this.sourceName,
+    required this.isBuiltInSource,
     required this.results,
   });
 
@@ -213,10 +223,12 @@ class BKSearchResult {
 
 class BKSearchableSource {
   String sourceName;
+  bool isBuiltInSource;
   List<BKSearchable> searchables;
 
   BKSearchableSource({
     required this.sourceName,
+    required this.isBuiltInSource,
     required this.searchables,
   });
 }

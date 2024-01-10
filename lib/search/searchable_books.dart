@@ -65,6 +65,7 @@ class BKHasSearchableSources extends BKHasSearchables {
         .where((source) => source.isEnabled)
         .map((source) => BKSearchableSource(
               sourceName: source.label,
+              isBuiltInSource: !source.isEditable,
               searchables: booksBySourceId[source.id]
                       ?.map((book) => BKSearchableBook(
                             book: book,

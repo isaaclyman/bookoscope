@@ -10,6 +10,7 @@ import 'package:bookoscope/pages/page_sources.dart';
 import 'package:bookoscope/search/full_entry.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/search/searchable_books.dart';
+import 'package:bookoscope/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -70,11 +71,11 @@ class BKAppShell extends StatelessWidget {
         ChangeNotifierProvider<DBEndpoints>(create: (_) => DBEndpoints()),
         ChangeNotifierProvider<DBBooks>(create: (_) => DBBooks()),
         ChangeNotifierProxyProvider2<DBSources, DBBooks, BKSearchManager?>(
-          create: (_) => null,
-          update: (_, dbSources, dbBooks, __) => BKSearchManager(
-            dbSources,
-            dbBooks,
-          ),
+          create: (_) => BKSearchManager(),
+          update: (_, dbSources, dbBooks, searchManager) {
+            searchManager?.refreshSources(dbSources, dbBooks);
+            return searchManager;
+          },
         ),
         ProxyProvider<BKSearchManager, BKEventHandler>(
           update: (_, searchManager, __) => BKEventHandler(
@@ -225,7 +226,11 @@ class BKPageShell extends StatelessWidget {
     }
 
     return SizedBox.expand(
-      child: SafeArea(child: child),
+      child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.grey[850],
+          ),
+          child: SafeArea(child: child)),
     );
   }
 }

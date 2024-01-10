@@ -14,7 +14,7 @@ class _BKBrowseAllState extends State<BKBrowseAll> {
   @override
   Widget build(BuildContext context) {
     final searchManager = context.watch<BKSearchManager>();
-    final searchables = searchManager.allSearchables;
+    final searchables = searchManager.results;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,7 +25,8 @@ class _BKBrowseAllState extends State<BKBrowseAll> {
           child: Padding(
             padding: const EdgeInsets.only(top: 8),
             child: _BookGrid(
-              searchables: searchables,
+              combineSources: !searchManager.isSearching,
+              resultSources: searchables,
             ),
           ),
         ),
@@ -35,43 +36,69 @@ class _BKBrowseAllState extends State<BKBrowseAll> {
 }
 
 class _BookGrid extends StatelessWidget {
-  final List<BKSearchable> searchables;
+  final bool combineSources;
+  final Iterable<BKSearchResultSource> resultSources;
 
   const _BookGrid({
-    required this.searchables,
+    required this.combineSources,
+    required this.resultSources,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (searchables.isEmpty) {
+    if (resultSources.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 5,
-          childAspectRatio: 1 / 1.6,
-        ),
-        itemCount: searchables.length,
-        itemBuilder: (_, ix) {
-          final result = searchables.elementAt(ix);
-          return BKBookTile(
-            result: BKSearchResult(
+    final combinedSources = !combineSources
+        ? resultSources
+        : [
+            BKSearchResultSource(
               sourceName: "",
-              title: result.title,
-              author: result.author,
-              imageUrl: result.imageUrl,
-              getRenderables: result.getRenderables,
-              priority: 0,
+              isBuiltInSource: true,
+              results:
+                  resultSources.expand((source) => source.results).toList(),
             ),
-            searchText: null,
-          );
-        },
-      ),
+          ];
+
+    return Column(
+      children: combinedSources
+          .map(
+            (source) => [
+              Text(source.sourceName),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                      childAspectRatio: 1 / 1.6,
+                    ),
+                    itemCount: source.results.length,
+                    itemBuilder: (_, ix) {
+                      final result = source.results.elementAt(ix);
+                      return BKBookTile(
+                        result: BKSearchResult(
+                          sourceName: "",
+                          title: result.title,
+                          author: result.author,
+                          imageUrl: result.imageUrl,
+                          getRenderables: result.getRenderables,
+                          priority: 0,
+                        ),
+                        searchText: null,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          )
+          .expand((pair) => pair)
+          .toList(),
     );
   }
 }
