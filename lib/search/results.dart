@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CResultsBlock extends StatefulWidget {
   final Iterable<BKSearchResultSource> results;

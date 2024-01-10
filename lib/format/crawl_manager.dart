@@ -79,8 +79,11 @@ class BKCrawlManager {
     final source = Source(
       label: 'Project Gutenberg',
       url: bkFakeGutenbergUrl,
+      description: "70,000+ free and public domain ebooks",
       username: null,
       password: null,
+      isEditable: false,
+      isEnabled: true,
     );
     await dbSources.upsert(source);
 

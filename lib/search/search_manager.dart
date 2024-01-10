@@ -1,18 +1,22 @@
 import 'dart:math';
 
+import 'package:bookoscope/db/book.db.dart';
+import 'package:bookoscope/db/source.db.dart';
+import 'package:bookoscope/search/searchable_books.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class BKSearchManager extends ChangeNotifier {
-  final BKHasSearchables _root;
-  List<BKSearchable> allSearchables;
+  late BKHasSearchableSources _root;
+  late List<BKSearchable> allSearchables;
+  late Map<String, bool> filterState;
+
   BKSearchableSource? get browsingSource => selectedBrowseFilter == null
       ? null
       : _root.searchableSources
           .firstWhereOrNull((cat) => cat.sourceName == selectedBrowseFilter);
 
   String searchText = "";
-  Map<String, bool> filterState;
   String? selectedBrowseFilter;
 
   Iterable<BKSearchResultSource> results = [];
@@ -23,14 +27,9 @@ class BKSearchManager extends ChangeNotifier {
   BKSearchResult? get lastResult => pastResults.last;
   bool get canGoBack => pastResults.isNotEmpty;
 
-  BKSearchManager(this._root)
-      : filterState = {
-          for (var s in _root.searchableSources) s.sourceName: true
-        },
-        allSearchables = _root.searchableSources
-            .expand((source) => source.searchables)
-            .sortedBy((item) => item.title.replaceAll(RegExp("[\"']"), ''))
-            .toList();
+  BKSearchManager(DBSources dbSources, DBBooks dbBooks) {
+    refreshSources(dbSources, dbBooks);
+  }
 
   void search() {
     results = _getResults();
@@ -78,6 +77,18 @@ class BKSearchManager extends ChangeNotifier {
       getRenderables: searchable.getRenderables,
       priority: 0,
     );
+  }
+
+  void refreshSources(DBSources dbSources, DBBooks dbBooks) {
+    _root = BKHasSearchableSources(
+      sources: dbSources.sources,
+      books: dbBooks.books,
+    );
+    filterState = {for (var s in _root.searchableSources) s.sourceName: true};
+    allSearchables = _root.searchableSources
+        .expand((source) => source.searchables)
+        .sortedBy((item) => item.title.replaceAll(RegExp("[\"']"), ''))
+        .toList();
   }
 
   void selectBrowseFilter(String? filter) {

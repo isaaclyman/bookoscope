@@ -43,14 +43,13 @@ class BKHasSearchableSources extends BKHasSearchables {
   final List<Source> sources;
 
   @override
-  late final List<BKSearchableSource> searchableSources;
+  List<BKSearchableSource> get searchableSources =>
+      _getSearchableSources(sources, books);
 
   BKHasSearchableSources({
     required this.books,
     required this.sources,
-  }) {
-    searchableSources = _getSearchableSources(sources, books);
-  }
+  });
 
   List<BKSearchableSource> _getSearchableSources(
     List<Source> sources,
@@ -63,6 +62,7 @@ class BKHasSearchableSources extends BKHasSearchables {
     }
 
     return sources
+        .where((source) => source.isEnabled)
         .map((source) => BKSearchableSource(
               sourceName: source.label,
               searchables: booksBySourceId[source.id]

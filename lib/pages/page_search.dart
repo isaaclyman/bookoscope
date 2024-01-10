@@ -1,6 +1,5 @@
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/search/browse_all.dart';
-import 'package:bookoscope/search/results.dart';
 import 'package:bookoscope/search/search_bar.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class _BKPageBrowseState extends State<BKPageBrowse> {
     final sources = context.watch<DBSources>();
     final searchManager = context.watch<BKSearchManager>();
 
-    if (sources.sources.isEmpty) {
+    if (sources.sources.where((source) => source.isEnabled).isEmpty) {
       return const Center(
         child: Text('No sources found. Add one to begin.'),
       );

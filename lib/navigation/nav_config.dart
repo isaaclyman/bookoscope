@@ -72,10 +72,8 @@ class BKAppShell extends StatelessWidget {
         ChangeNotifierProxyProvider2<DBSources, DBBooks, BKSearchManager?>(
           create: (_) => null,
           update: (_, dbSources, dbBooks, __) => BKSearchManager(
-            BKHasSearchableSources(
-              sources: dbSources.sources,
-              books: dbBooks.books,
-            ),
+            dbSources,
+            dbBooks,
           ),
         ),
         ProxyProvider<BKSearchManager, BKEventHandler>(

@@ -1,4 +1,5 @@
 import 'package:bookoscope/db/db.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
@@ -13,17 +14,26 @@ class Source {
 
   String label;
 
+  String? description;
+
   String? username;
 
   String? password;
 
   bool isCompletelyCrawled = false;
 
+  bool isEditable;
+
+  bool isEnabled;
+
   Source({
     required this.label,
+    required this.description,
     required this.url,
     required this.username,
     required this.password,
+    required this.isEditable,
+    required this.isEnabled,
   });
 }
 
@@ -38,7 +48,13 @@ class DBSources extends ChangeNotifier {
 
   DBSources() {
     sourcesFuture.then((sources) {
-      this.sources = sources;
+      this.sources = sources.sorted((a, b) {
+        if (a.isEnabled != b.isEnabled) {
+          return a.isEnabled ? -1 : 1;
+        }
+
+        return a.label.compareTo(b.label);
+      });
 
       notifyListeners();
     });
@@ -73,7 +89,7 @@ class DBSources extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future remove(Source source) async {
+  Future delete(Source source) async {
     final db = _database;
     if (db == null) {
       return;

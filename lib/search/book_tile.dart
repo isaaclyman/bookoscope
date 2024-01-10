@@ -40,6 +40,10 @@ class BKBookTile extends StatelessWidget {
                     ),
             ),
             ListTile(
+              contentPadding: const EdgeInsets.only(
+                left: 16,
+                right: 2,
+              ),
               title: Text(
                 result.title,
                 maxLines: 1,

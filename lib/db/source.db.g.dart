@@ -17,28 +17,43 @@ const SourceSchema = CollectionSchema(
   name: r'Source',
   id: 1877768871581930899,
   properties: {
-    r'isCompletelyCrawled': PropertySchema(
+    r'description': PropertySchema(
       id: 0,
+      name: r'description',
+      type: IsarType.string,
+    ),
+    r'isCompletelyCrawled': PropertySchema(
+      id: 1,
       name: r'isCompletelyCrawled',
       type: IsarType.bool,
     ),
+    r'isEditable': PropertySchema(
+      id: 2,
+      name: r'isEditable',
+      type: IsarType.bool,
+    ),
+    r'isEnabled': PropertySchema(
+      id: 3,
+      name: r'isEnabled',
+      type: IsarType.bool,
+    ),
     r'label': PropertySchema(
-      id: 1,
+      id: 4,
       name: r'label',
       type: IsarType.string,
     ),
     r'password': PropertySchema(
-      id: 2,
+      id: 5,
       name: r'password',
       type: IsarType.string,
     ),
     r'url': PropertySchema(
-      id: 3,
+      id: 6,
       name: r'url',
       type: IsarType.string,
     ),
     r'username': PropertySchema(
-      id: 4,
+      id: 7,
       name: r'username',
       type: IsarType.string,
     )
@@ -77,6 +92,12 @@ int _sourceEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.description;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.label.length * 3;
   {
     final value = object.password;
@@ -100,11 +121,14 @@ void _sourceSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.isCompletelyCrawled);
-  writer.writeString(offsets[1], object.label);
-  writer.writeString(offsets[2], object.password);
-  writer.writeString(offsets[3], object.url);
-  writer.writeString(offsets[4], object.username);
+  writer.writeString(offsets[0], object.description);
+  writer.writeBool(offsets[1], object.isCompletelyCrawled);
+  writer.writeBool(offsets[2], object.isEditable);
+  writer.writeBool(offsets[3], object.isEnabled);
+  writer.writeString(offsets[4], object.label);
+  writer.writeString(offsets[5], object.password);
+  writer.writeString(offsets[6], object.url);
+  writer.writeString(offsets[7], object.username);
 }
 
 Source _sourceDeserialize(
@@ -114,13 +138,16 @@ Source _sourceDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Source(
-    label: reader.readString(offsets[1]),
-    password: reader.readStringOrNull(offsets[2]),
-    url: reader.readString(offsets[3]),
-    username: reader.readStringOrNull(offsets[4]),
+    description: reader.readStringOrNull(offsets[0]),
+    isEditable: reader.readBool(offsets[2]),
+    isEnabled: reader.readBool(offsets[3]),
+    label: reader.readString(offsets[4]),
+    password: reader.readStringOrNull(offsets[5]),
+    url: reader.readString(offsets[6]),
+    username: reader.readStringOrNull(offsets[7]),
   );
   object.id = id;
-  object.isCompletelyCrawled = reader.readBool(offsets[0]);
+  object.isCompletelyCrawled = reader.readBool(offsets[1]);
   return object;
 }
 
@@ -132,14 +159,20 @@ P _sourceDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readBool(offset)) as P;
-    case 1:
-      return (reader.readString(offset)) as P;
-    case 2:
       return (reader.readStringOrNull(offset)) as P;
+    case 1:
+      return (reader.readBool(offset)) as P;
+    case 2:
+      return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -277,6 +310,152 @@ extension SourceQueryWhere on QueryBuilder<Source, Source, QWhereClause> {
 }
 
 extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'description',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'description',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'description',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'description',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'description',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> descriptionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'description',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -334,6 +513,26 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isCompletelyCrawled',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isEditableEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isEditable',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isEnabledEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isEnabled',
         value: value,
       ));
     });
@@ -895,6 +1094,18 @@ extension SourceQueryObject on QueryBuilder<Source, Source, QFilterCondition> {}
 extension SourceQueryLinks on QueryBuilder<Source, Source, QFilterCondition> {}
 
 extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
+  QueryBuilder<Source, Source, QAfterSortBy> sortByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByIsCompletelyCrawled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isCompletelyCrawled', Sort.asc);
@@ -904,6 +1115,30 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
   QueryBuilder<Source, Source, QAfterSortBy> sortByIsCompletelyCrawledDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isCompletelyCrawled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsEditable() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isEditable', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsEditableDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isEditable', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isEnabled', Sort.desc);
     });
   }
 
@@ -957,6 +1192,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
 }
 
 extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
+  QueryBuilder<Source, Source, QAfterSortBy> thenByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -978,6 +1225,30 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
   QueryBuilder<Source, Source, QAfterSortBy> thenByIsCompletelyCrawledDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isCompletelyCrawled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsEditable() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isEditable', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsEditableDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isEditable', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isEnabled', Sort.desc);
     });
   }
 
@@ -1031,9 +1302,28 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
 }
 
 extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
+  QueryBuilder<Source, Source, QDistinct> distinctByDescription(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByIsCompletelyCrawled() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isCompletelyCrawled');
+    });
+  }
+
+  QueryBuilder<Source, Source, QDistinct> distinctByIsEditable() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isEditable');
+    });
+  }
+
+  QueryBuilder<Source, Source, QDistinct> distinctByIsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isEnabled');
     });
   }
 
@@ -1073,9 +1363,27 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Source, String?, QQueryOperations> descriptionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'description');
+    });
+  }
+
   QueryBuilder<Source, bool, QQueryOperations> isCompletelyCrawledProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isCompletelyCrawled');
+    });
+  }
+
+  QueryBuilder<Source, bool, QQueryOperations> isEditableProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isEditable');
+    });
+  }
+
+  QueryBuilder<Source, bool, QQueryOperations> isEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isEnabled');
     });
   }
 
