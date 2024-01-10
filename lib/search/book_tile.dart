@@ -158,21 +158,22 @@ class _DefaultBookCover extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(
-              child: Center(
-                child: AutoSizeText(
-                  title,
-                  maxLines: 3,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withAlpha(220),
-                    fontSize: 26,
-                    fontFamily: 'Titillium',
-                  ),
+              child: AutoSizeText(
+                title,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withAlpha(220),
+                  fontSize: 26,
+                  fontFamily: 'Titillium',
                 ),
               ),
             ),
             Text(
               author,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white.withAlpha(220),
