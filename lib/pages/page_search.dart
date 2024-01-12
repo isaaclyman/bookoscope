@@ -1,7 +1,6 @@
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/search/browse_all.dart';
 import 'package:bookoscope/search/search_bar.dart';
-import 'package:bookoscope/search/search_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +19,6 @@ class _BKPageBrowseState extends State<BKPageBrowse> {
   @override
   Widget build(BuildContext context) {
     final sources = context.watch<DBSources>();
-    final searchManager = context.watch<BKSearchManager>();
 
     if (sources.sources.where((source) => source.isEnabled).isEmpty) {
       return const Center(

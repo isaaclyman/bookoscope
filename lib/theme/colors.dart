@@ -7,7 +7,7 @@ class BKThemeColors {
   final Color accentContrast = Colors.white;
   final Color muted = Colors.grey[600]!;
   final Color mutedContrast = Colors.white;
-  final Color text = Colors.black87;
+  final Color text = Colors.white;
 }
 
 final bkThemeColors = BKThemeColors();

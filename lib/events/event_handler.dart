@@ -11,7 +11,7 @@ class BKEventHandler {
 
   BKEventHandler({required this.searchManager}) {
     debouncedSearch = bkDebounce(
-      const Duration(milliseconds: 150),
+      const Duration(milliseconds: 300),
       () => searchManager.search(),
     );
   }
@@ -42,6 +42,5 @@ class BKEventHandler {
   void setSearchQuery(BuildContext context, String query) {
     searchManager.searchText = query;
     debouncedSearch();
-    context.goNamed(BKPageBrowse.name);
   }
 }

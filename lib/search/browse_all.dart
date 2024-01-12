@@ -65,7 +65,17 @@ class _BookGrid extends StatelessWidget {
       children: combinedSources
           .map(
             (source) => [
-              Text(source.sourceName),
+              if (source.sourceName.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    source.sourceName,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),

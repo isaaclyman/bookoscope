@@ -145,7 +145,12 @@ class _CSearchFiltersState extends State<CSearchFilters> {
           ...searchManager.filterState.entries
               .map<Widget>(
                 (kvp) => FilterChip(
-                  label: Text(kvp.key),
+                  label: Text(
+                    kvp.key,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                   labelPadding: const EdgeInsets.symmetric(
                     horizontal: 4,
                     vertical: 0,

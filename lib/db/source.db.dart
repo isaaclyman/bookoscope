@@ -47,24 +47,12 @@ class DBSources extends ChangeNotifier {
   List<VoidCallback> onDispose = [];
 
   DBSources() {
-    sourcesFuture.then((sources) {
-      this.sources = sources.sorted((a, b) {
-        if (a.isEnabled != b.isEnabled) {
-          return a.isEnabled ? -1 : 1;
-        }
-
-        return a.label.compareTo(b.label);
-      });
-
-      notifyListeners();
-    });
-
     bkDatabase.then((db) {
       _database = db;
-      final listener =
-          db.sources.watchLazy().listen((event) => notifyListeners());
+      final listener = db.sources.watchLazy().listen((event) => _updateData());
       onDispose.add(() => listener.cancel());
     });
+    _updateData();
   }
 
   @override
@@ -73,6 +61,19 @@ class DBSources extends ChangeNotifier {
       callback();
     }
     super.dispose();
+  }
+
+  void _updateData() {
+    sourcesFuture.then((sources) {
+      this.sources = sources.sorted((a, b) {
+        if (a.isEnabled != b.isEnabled) {
+          return a.isEnabled ? -1 : 1;
+        }
+
+        return a.label.compareTo(b.label);
+      });
+      notifyListeners();
+    });
   }
 
   Future upsert(Source source) async {
@@ -85,8 +86,6 @@ class DBSources extends ChangeNotifier {
       await db.sources.where().urlEqualTo(source.url).deleteAll();
       await db.sources.put(source);
     });
-
-    notifyListeners();
   }
 
   Future delete(Source source) async {
@@ -98,7 +97,5 @@ class DBSources extends ChangeNotifier {
     await db.writeTxn(() async {
       await db.sources.delete(source.id);
     });
-
-    notifyListeners();
   }
 }

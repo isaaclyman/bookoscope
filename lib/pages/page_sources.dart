@@ -1,8 +1,9 @@
 import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/search/search_manager.dart';
-import 'package:bookoscope/theme/text.dart';
+import 'package:bookoscope/sources/page_edit_source.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class BKPageSources extends StatefulWidget {
@@ -75,7 +76,9 @@ class _BKPageSourcesState extends State<BKPageSources> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              context.pushNamed(BKPageEditSource.name);
+            },
             icon: const Icon(Icons.add),
             label: const Text("Add source"),
           ),
@@ -115,7 +118,9 @@ class _SourceActions extends StatelessWidget {
             // TODO: Handle this case.
             break;
           case _SourceAction.edit:
-            // TODO: Handle this case.
+            if (context.mounted) {
+              context.pushNamed(BKPageEditSource.name, extra: source);
+            }
             break;
           case _SourceAction.disable:
             source.isEnabled = false;

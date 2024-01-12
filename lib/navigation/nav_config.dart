@@ -9,8 +9,7 @@ import 'package:bookoscope/pages/page_search.dart';
 import 'package:bookoscope/pages/page_sources.dart';
 import 'package:bookoscope/search/full_entry.dart';
 import 'package:bookoscope/search/search_manager.dart';
-import 'package:bookoscope/search/searchable_books.dart';
-import 'package:bookoscope/theme/colors.dart';
+import 'package:bookoscope/sources/page_edit_source.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +45,16 @@ class BKRouterConfig {
                     routerState: state,
                     child: const BKPageSources(),
                   ),
+                  routes: [
+                    GoRoute(
+                      path: 'add',
+                      name: BKPageEditSource.name,
+                      builder: (context, state) => BKPageShell(
+                        routerState: state,
+                        child: const BKPageEditSource(),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             )
@@ -227,10 +236,11 @@ class BKPageShell extends StatelessWidget {
 
     return SizedBox.expand(
       child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.grey[850],
-          ),
-          child: SafeArea(child: child)),
+        decoration: BoxDecoration(
+          color: Colors.grey[850],
+        ),
+        child: SafeArea(child: child),
+      ),
     );
   }
 }
