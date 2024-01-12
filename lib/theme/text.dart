@@ -70,6 +70,11 @@ class CThemeText {
     fontWeight: FontWeight.bold,
   );
 
+  final TextStyle pageHeader = const TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.normal,
+  );
+
   final TextStyle resultCategoryHeader = TextStyle(
     color: bkThemeColors.muted,
     fontSize: 12,

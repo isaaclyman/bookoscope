@@ -2,6 +2,8 @@ import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/sources/page_edit_source.dart';
+import 'package:bookoscope/sources/page_fetch_source.dart';
+import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -23,14 +25,12 @@ class _BKPageSourcesState extends State<BKPageSources> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Center(
             child: Text(
               "Sources",
-              style: TextStyle(
-                fontSize: 24,
-              ),
+              style: context.text.pageHeader,
             ),
           ),
         ),
@@ -115,7 +115,9 @@ class _SourceActions extends StatelessWidget {
 
         switch (action) {
           case _SourceAction.refresh:
-            // TODO: Handle this case.
+            if (context.mounted) {
+              context.pushNamed(BKPageFetchSource.name, extra: source);
+            }
             break;
           case _SourceAction.edit:
             if (context.mounted) {

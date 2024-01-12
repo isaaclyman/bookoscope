@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xml_events.dart';
 
 extension BKXmlStream on Stream<List<XmlEvent>> {
-  Future<void> listenForNode(
+  StreamSubscription listenForNode(
     String parentName,
     String nodeName,
     void Function(XmlNode element) processFn,
@@ -12,8 +14,7 @@ extension BKXmlStream on Stream<List<XmlEvent>> {
             event.parent?.name == parentName && event.name == nodeName)
         .toXmlNodes()
         .expand((element) => element)
-        .listen(processFn)
-        .asFuture();
+        .listen(processFn);
   }
 }
 

@@ -8,9 +8,9 @@ import 'package:bookoscope/format/opds/opds_events.dart';
 const String bkFakeGutenbergUrl = 'file:pg_catalog.csv';
 
 class BKCrawlManager {
-  final DBSources dbSources;
-  final DBEndpoints dbEndpoints;
-  final DBBooks dbBooks;
+  DBSources dbSources;
+  DBEndpoints dbEndpoints;
+  DBBooks dbBooks;
 
   BKCrawlManager({
     required this.dbSources,

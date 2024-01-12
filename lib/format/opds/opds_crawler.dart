@@ -46,7 +46,7 @@ class OPDSCrawler {
     try {
       feed = await extractor.getFeed(uri);
       yield OPDSCrawlSuccess(uri: uri.toString());
-    } on Exception catch (e) {
+    } catch (e) {
       yield OPDSCrawlException(
         exception: e,
         uri: uri.toString(),

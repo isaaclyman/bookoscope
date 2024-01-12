@@ -1,5 +1,7 @@
 import 'package:bookoscope/db/source.db.dart';
+import 'package:bookoscope/sources/page_fetch_source.dart';
 import 'package:bookoscope/sources/source_disclaimer.dart';
+import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -64,12 +66,10 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
                 isNew ? "Add Source" : "Edit Source",
-                style: const TextStyle(
-                  fontSize: 24,
-                ),
+                style: context.text.pageHeader,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -138,6 +138,9 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                 },
               ),
             ),
+            //
+            // AUTHENTICATION IS NOT YET IMPLEMENTED
+            //
             // Padding(
             //   padding: const EdgeInsets.symmetric(vertical: 8),
             //   child: TextFormField(
@@ -169,9 +172,9 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                   ? null
                   : () {
                       dbSources.upsert(source);
-                      context.pop();
+                      context.goNamed(BKPageFetchSource.name, extra: source);
                     },
-              child: const Text("Save"),
+              child: const Text("Save and crawl"),
             ),
           ],
         ),

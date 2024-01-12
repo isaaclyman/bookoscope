@@ -33,10 +33,19 @@ class BKBookTile extends StatelessWidget {
                   ? Image.network(
                       imageUrl,
                       fit: BoxFit.contain,
+                      errorBuilder: (_, err, ___) {
+                        debugPrint(err.toString());
+                        return _DefaultBookCover(
+                          title: result.title,
+                          author: result.author,
+                          sourceName: result.sourceName,
+                        );
+                      },
                     )
                   : _DefaultBookCover(
                       title: result.title,
                       author: result.author,
+                      sourceName: result.sourceName,
                     ),
             ),
             ListTile(
@@ -49,9 +58,10 @@ class BKBookTile extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              subtitle: _HighlightMatch(
-                matchText: searchText,
-                fullText: result.author,
+              subtitle: Text(
+                result.author,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.download_for_offline_rounded),
@@ -129,10 +139,12 @@ class _HighlightMatch extends StatelessWidget {
 class _DefaultBookCover extends StatelessWidget {
   final String title;
   final String author;
+  final String sourceName;
 
   const _DefaultBookCover({
     required this.title,
     required this.author,
+    required this.sourceName,
   });
 
   @override
@@ -171,7 +183,7 @@ class _DefaultBookCover extends StatelessWidget {
               ),
             ),
             Text(
-              author,
+              sourceName,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

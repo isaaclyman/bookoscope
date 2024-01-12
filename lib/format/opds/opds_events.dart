@@ -37,7 +37,7 @@ class OPDSCrawlSuccess extends OPDSCrawlEvent {
 
 /// Indicates that [uri] could not be crawled due to [exception].
 class OPDSCrawlException extends OPDSCrawlEvent {
-  final Exception exception;
+  final Object exception;
   final String uri;
 
   const OPDSCrawlException({

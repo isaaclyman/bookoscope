@@ -1,9 +1,7 @@
 import 'package:bookoscope/events/error_toast.dart';
-import 'package:bookoscope/pages/page_search.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/util/debounce.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class BKEventHandler {
   final BKSearchManager searchManager;
