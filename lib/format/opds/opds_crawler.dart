@@ -55,9 +55,29 @@ class OPDSCrawler {
     }
 
     final links = feed.links ?? [];
-    for (final link in links
-        .where((link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type))) {
-      await for (final event in _extractRecursive(link.href)) {
+    final selfLink = links
+        .firstWhereOrNull((link) => OPDSLinkClassifier.isSelf(link.rel))
+        ?.href;
+
+    var bestGuessRoot =
+        selfLink != null && selfLink.trim().isNotEmpty ? selfLink : null;
+
+    String nextRootUri = opdsRootUri;
+    if (bestGuessRoot != null) {
+      if (bestGuessRoot.contains("?")) {
+        bestGuessRoot = bestGuessRoot.substring(0, bestGuessRoot.indexOf("?"));
+      }
+
+      if (uriString.contains(bestGuessRoot)) {
+        nextRootUri = uriString.substring(0, uriString.indexOf(bestGuessRoot));
+      }
+    }
+
+    for (final link in links.where(
+      (link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type),
+    )) {
+      final nextUri = joinUriString(nextRootUri, link.href);
+      await for (final event in _extractRecursive(nextUri)) {
         yield event;
       }
     }
@@ -66,8 +86,10 @@ class OPDSCrawler {
     for (final entry in entries.whereNot(OPDSEntryClassifier.isLeafResource)) {
       final entryLinks = entry.links ?? [];
       for (final link in entryLinks.where(
-          (link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type))) {
-        await for (final event in _extractRecursive(link.href)) {
+        (link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type),
+      )) {
+        final nextUri = joinUriString(nextRootUri, link.href);
+        await for (final event in _extractRecursive(nextUri)) {
           yield event;
         }
       }
@@ -129,12 +151,17 @@ const _knownMimeTypeLabels = <String, String>{
 
 class OPDSLinkClassifier {
   static const String _relSelf = 'self';
+  static const String _relStart = 'start';
   static const String _relImageRoot = '//opds-spec.org/image';
   static const String _relThumbnail = '//opds-spec.org/image/thumbnail';
   static const String _relAcquisitionRoot = '//opds-spec.org/acquisition';
 
   static bool isSelf(String rel) {
     return rel == _relSelf;
+  }
+
+  static bool isStart(String rel) {
+    return rel == _relStart;
   }
 
   static bool isImage(String rel, String? type) {

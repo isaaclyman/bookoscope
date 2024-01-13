@@ -45,6 +45,17 @@ class BKSearchableBook extends BKSearchable {
               .map((cat) => CSearchQueryLink(cat, "Category: $cat"))
               .toList(),
         ),
+      if (book.metadata.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: CRenderLabeledListAccordion(
+            book.metadata.map(
+              (metadata) => CNameDescription(
+                  metadata.type ?? "Meta", metadata.content ?? "Unknown"),
+            ),
+            label: "Metadata",
+          ),
+        ),
       if ((book.downloadUrls?.isEmpty ?? true) && !book.isGutenberg)
         const Text("No download links found.")
       else if (book.isGutenberg)
@@ -74,14 +85,6 @@ class BKSearchableBook extends BKSearchable {
                     );
                   }).toList() ??
                   []),
-        ),
-      if (book.metadata.isNotEmpty)
-        CRenderLabeledListAccordion(
-          book.metadata.map(
-            (metadata) => CNameDescription(
-                metadata.type ?? "Meta", metadata.content ?? "Unknown"),
-          ),
-          label: "Metadata",
         ),
     ];
   }

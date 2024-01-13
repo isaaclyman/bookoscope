@@ -17,7 +17,7 @@ class OPDSExtractor {
   Future<OPDSFeed> getFeed(Uri uri) async {
     final xmlStream = await _fetchXmlEvents(uri);
     final feedSubElements = xmlStream
-        .selectSubtreeEvents((event) => event.parent?.localName == 'feed')
+        .selectSubtreeEvents((event) => event.parent?.name == 'feed')
         .toXmlNodes()
         .expand((nodes) => nodes)
         .where((node) => node is XmlElement)

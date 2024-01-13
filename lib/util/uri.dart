@@ -1,11 +1,15 @@
 Uri joinUri(String baseUri, String relativeUri) {
+  return Uri.parse(joinUriString(baseUri, relativeUri));
+}
+
+String joinUriString(String baseUri, String relativeUri) {
   if (relativeUri.startsWith('/')) {
-    return joinUri(baseUri, relativeUri.substring(1));
+    return joinUriString(baseUri, relativeUri.substring(1));
   }
 
-  final baseSegments = baseUri.split('/');
-  baseSegments.removeLast();
-  final normalizedBaseUri = baseSegments.join('/');
+  if (baseUri.endsWith('/')) {
+    return joinUriString(baseUri.substring(0, baseUri.length - 1), relativeUri);
+  }
 
-  return Uri.parse('$normalizedBaseUri/$relativeUri');
+  return '$baseUri/$relativeUri';
 }

@@ -1,4 +1,5 @@
 import 'package:bookoscope/db/source.db.dart';
+import 'package:bookoscope/format/opds/opds_extractor.dart';
 import 'package:bookoscope/sources/page_fetch_source.dart';
 import 'package:bookoscope/sources/source_disclaimer.dart';
 import 'package:bookoscope/theme/text.dart';
@@ -30,6 +31,9 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
   String? _urlFieldError;
   String? _nameFieldError;
   bool confirmedOwnership = false;
+
+  bool? endpointTestStatus;
+  String? endpointTestError;
 
   @override
   void didChangeDependencies() {
@@ -84,6 +88,8 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                 ),
                 onChanged: (value) {
                   source.url = value;
+                  endpointTestStatus = null;
+                  endpointTestError = null;
 
                   final canParse =
                       Uri.tryParse(value)?.host.isNotEmpty ?? false;
@@ -113,11 +119,35 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: OutlinedButton.icon(
-                  onPressed: !confirmedOwnership ? null : () {},
+                  onPressed: !confirmedOwnership
+                      ? null
+                      : () async {
+                          endpointTestStatus = null;
+                          endpointTestError = null;
+
+                          final extractor = OPDSExtractor();
+
+                          try {
+                            await extractor.getFeed(Uri.parse(source.url));
+                            endpointTestStatus = true;
+                          } catch (e) {
+                            endpointTestStatus = false;
+                            endpointTestError = e.toString();
+                          } finally {
+                            setState(() {});
+                          }
+                        },
                   icon: const Icon(Icons.bolt),
                   label: const Text("Test endpoint"),
                 ),
               ),
+              if (endpointTestStatus != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: endpointTestStatus!
+                      ? const Text("Valid feed detected.")
+                      : Text("Invalid endpoint.\n\n$endpointTestError"),
+                ),
               const Divider(),
             ],
             Padding(
