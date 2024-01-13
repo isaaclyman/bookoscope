@@ -54,11 +54,19 @@ class BKCrawlManager {
           sourceId: source.id,
           title: event.resource.title,
           authors: event.resource.authors,
-          tags: event.resource.tags,
+          format: event.resource.format,
+          categories: event.resource.categories ?? [],
+          metadata: event.resource.metadata.entries
+              .map((kvp) => BookMetadata(
+                    type: kvp.key,
+                    content: kvp.value,
+                  ))
+              .toList(),
           downloadUrls: event.resource.downloadUrls
               .map((resourceUri) => BookDownloadUrl(
                     label: resourceUri.label,
                     type: resourceUri.type,
+                    rel: resourceUri.rel,
                     uri: resourceUri.uri,
                   ))
               .toList(),
@@ -87,22 +95,28 @@ class BKCrawlManager {
     );
     await dbSources.upsert(source);
 
-    await for (final row in extractor.getRows()) {
-      if (row.title == 'No title') {
-        continue;
-      }
-
-      await dbBooks.upsert(Book(
-        originalId: row.id.toString(),
-        sourceId: source.id,
-        title: row.title,
-        authors: row.authors ?? [],
-        tags: (row.subjects ?? []).followedBy(row.bookshelves ?? []).toList(),
-        downloadUrls: null,
-        imageUrl: null,
-        isGutenberg: true,
-      ));
-    }
+    final rows = await extractor.getRows();
+    final books =
+        rows.where((row) => row.title != "No title").map((row) => Book(
+              originalId: row.id.toString(),
+              sourceId: source.id,
+              title: row.title,
+              authors: row.authors ?? [],
+              format: null,
+              categories: (row.subjects ?? [])
+                  .followedBy(row.bookshelves ?? [])
+                  .toList(),
+              metadata: [
+                BookMetadata(
+                  type: "Date",
+                  content: row.issued,
+                ),
+              ],
+              downloadUrls: null,
+              imageUrl: null,
+              isGutenberg: true,
+            ));
+    await dbBooks.overwriteEntireSource(source.id, books.toList());
 
     source.isCompletelyCrawled = true;
     await dbSources.upsert(source);

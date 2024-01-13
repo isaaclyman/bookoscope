@@ -38,6 +38,7 @@ class OPDSFeed {
 class OPDSEntry {
   final String id;
   final String updated;
+  final String? published;
   final String? title;
   final List<String>? authors;
   final String? summary;
@@ -52,6 +53,7 @@ class OPDSEntry {
   OPDSEntry.fromXML(XmlNode node)
       : id = node.getChildNodeText('id') ?? '',
         updated = node.getChildNodeText('updated') ?? '',
+        published = node.getChildNodeText('published'),
         title = node.getChildNodeText('title'),
         authors = node.getPossiblyNestedChildNodeTexts('author', 'name'),
         summary = node.getChildNodeText('summary'),

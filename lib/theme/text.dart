@@ -22,7 +22,7 @@ class CThemeText {
 
   final TextStyle entryListHeader = TextStyle(
     color: bkThemeColors.text,
-    fontSize: 18,
+    fontSize: 14,
   );
 
   final TextStyle entryMainHeader = TextStyle(

@@ -9,7 +9,7 @@ part 'source.db.g.dart';
 class Source {
   Id id = Isar.autoIncrement;
 
-  @Index()
+  @Index(unique: true, replace: true)
   String url;
 
   String label;
@@ -83,8 +83,7 @@ class DBSources extends ChangeNotifier {
     }
 
     await db.writeTxn(() async {
-      await db.sources.where().urlEqualTo(source.url).deleteAll();
-      await db.sources.put(source);
+      await db.sources.putByUrl(source);
     });
   }
 

@@ -55,7 +55,8 @@ class OPDSCrawler {
     }
 
     final links = feed.links ?? [];
-    for (final link in links.where(OPDSLinkClassifier.isCrawlable)) {
+    for (final link in links
+        .where((link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type))) {
       await for (final event in _extractRecursive(link.href)) {
         yield event;
       }
@@ -64,7 +65,8 @@ class OPDSCrawler {
     final entries = feed.entries ?? [];
     for (final entry in entries.whereNot(OPDSEntryClassifier.isLeafResource)) {
       final entryLinks = entry.links ?? [];
-      for (final link in entryLinks.where(OPDSLinkClassifier.isCrawlable)) {
+      for (final link in entryLinks.where(
+          (link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type))) {
         await for (final event in _extractRecursive(link.href)) {
           yield event;
         }
@@ -84,15 +86,22 @@ class OPDSCrawler {
           originalId: entry.id,
           title: entry.title ?? 'Title Not Found',
           authors: entry.authors ?? [],
-          tags: [
-            if (entry.format != null) entry.format!,
-            if (entry.categories != null) ...entry.categories!,
-          ],
+          format: entry.format,
+          categories: entry.categories,
+          metadata: {
+            if (entry.textContent != null) "Text": entry.textContent ?? "",
+            if (entry.htmlContent != null) "HTML": entry.htmlContent ?? "",
+            if (entry.summary != null) "Summary": entry.summary ?? "",
+            if (entry.published != null || entry.updated.isNotEmpty)
+              "Date": entry.published ?? entry.updated,
+            if (entry.extent != null) "Size": entry.extent ?? "",
+          },
           downloadUrls: links
               .map(
                 (link) => OPDSCrawlResourceUrl(
-                  label: link.title ?? 'Download',
+                  label: link.title,
                   uri: link.href,
+                  rel: link.rel,
                   type: link.type,
                 ),
               )
@@ -111,38 +120,79 @@ class OPDSCrawler {
 // CLASSIFIERS
 //
 
+const _knownMimeTypeLabels = <String, String>{
+  "application/epub": "EPUB",
+  "application/epub+zip": "EPUB",
+  "application/x-mobipocket-ebook": "MOBI",
+  "application/pdf": "PDF",
+};
+
 class OPDSLinkClassifier {
   static const String _relSelf = 'self';
-  static const String _relImage = 'http://opds-spec.org/image';
-  static const String _relThumbnail = 'http://opds-spec.org/image/thumbnail';
+  static const String _relImageRoot = '//opds-spec.org/image';
+  static const String _relThumbnail = '//opds-spec.org/image/thumbnail';
   static const String _relAcquisitionRoot = '//opds-spec.org/acquisition';
 
-  static bool isSelf(OPDSLink link) {
-    return link.rel == _relSelf;
+  static bool isSelf(String rel) {
+    return rel == _relSelf;
   }
 
-  static bool isImage(OPDSLink link) {
-    final type = link.type;
-    return [_relImage, _relThumbnail].contains(link.rel) ||
+  static bool isImage(String rel, String? type) {
+    return rel.contains(_relImageRoot) ||
         (type != null && type.startsWith('image/'));
   }
 
-  static bool isAcquisition(OPDSLink link) {
-    return link.rel.contains(_relAcquisitionRoot);
+  static bool isAcquisition(String rel) {
+    return rel.contains(_relAcquisitionRoot);
   }
 
-  static bool isCrawlable(OPDSLink link) {
-    return !isSelf(link) && !isImage(link) && !isAcquisition(link);
+  static bool isCrawlable(String rel, String? type) {
+    return !isSelf(rel) && !isImage(rel, type) && !isAcquisition(rel);
+  }
+
+  static String getDisplayType(String type) {
+    if (_knownMimeTypeLabels.containsKey(type)) {
+      return _knownMimeTypeLabels[type]!;
+    }
+
+    var lastPart = type.split("/").last;
+    if (lastPart.startsWith("x-")) {
+      lastPart = lastPart.substring(2);
+    }
+
+    return lastPart.toUpperCase();
+  }
+
+  static String getDisplayLabel(String? label, String? rel, String? type) {
+    final displayType =
+        type == null ? null : OPDSLinkClassifier.getDisplayType(type);
+    if (label != null) {
+      return displayType != null ? "$label ($displayType)" : label;
+    }
+
+    if (rel != null && rel.contains("$_relAcquisitionRoot/")) {
+      var acquisitionType = rel.split("$_relAcquisitionRoot/").last;
+
+      if (acquisitionType.trim().isNotEmpty) {
+        acquisitionType.replaceAll("-", " ");
+        acquisitionType =
+            acquisitionType[0].toUpperCase() + acquisitionType.substring(1);
+        return acquisitionType;
+      }
+    }
+
+    return displayType ?? "Unknown Type";
   }
 
   static String? getPreferredImageUrl(List<OPDSLink> links) {
-    final image = links.firstWhereOrNull((link) => link.rel == _relImage);
+    final image =
+        links.firstWhereOrNull((link) => link.rel.contains(_relImageRoot));
     if (image != null) {
       return image.href;
     }
 
     final thumbnail =
-        links.firstWhereOrNull((link) => link.rel == _relThumbnail);
+        links.firstWhereOrNull((link) => link.rel.contains(_relThumbnail));
     if (thumbnail != null) {
       return thumbnail.href;
     }
@@ -160,7 +210,8 @@ class OPDSEntryClassifier {
     }
 
     final links = entry.links;
-    if (links != null && links.any(OPDSLinkClassifier.isAcquisition)) {
+    if (links != null &&
+        links.any((link) => OPDSLinkClassifier.isAcquisition(link.rel))) {
       return true;
     }
 

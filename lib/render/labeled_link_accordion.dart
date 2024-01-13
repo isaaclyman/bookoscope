@@ -5,6 +5,7 @@ import 'package:bookoscope/theme/colors.dart';
 import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CRenderLabeledResultLinkAccordion extends StatelessWidget {
   final String label;
@@ -37,7 +38,7 @@ class CRenderLabeledResultLinkAccordion extends StatelessWidget {
             (link) => Consumer<BKEventHandler>(
               builder: (_, handler, ___) => GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: () {
+                onTap: () async {
                   if (link is CSearchQueryLink) {
                     handler.setSearchQuery(context, link.query);
                     handler.closeDrawer(context);
@@ -47,6 +48,13 @@ class CRenderLabeledResultLinkAccordion extends StatelessWidget {
                       link.resultCategory,
                       link.resultName,
                     );
+                  } else if (link is CExternalLink) {
+                    try {
+                      await launchUrl(Uri.parse(link.uri));
+                    } catch (e) {
+                      debugPrint(e.toString());
+                      // Swallow error
+                    }
                   }
                 },
                 child: Row(

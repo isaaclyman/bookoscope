@@ -1,5 +1,9 @@
 import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/source.db.dart';
+import 'package:bookoscope/format/opds/opds_crawler.dart';
+import 'package:bookoscope/render/labeled_link_accordion.dart';
+import 'package:bookoscope/render/labeled_search_links.dart';
+import 'package:bookoscope/render/link.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +21,44 @@ class BKSearchableBook extends BKSearchable {
 
   @override
   Iterable<Widget> getRenderables() {
-    return [Text('Placeholder')];
+    return [
+      if (book.authors.isNotEmpty)
+        CRenderLinksParagraph(
+          label: "Author${book.authors.length > 1 ? "s" : ""}",
+          textQueries: book.authors
+              .map((author) => CSearchQueryLink(author, "Author: $author"))
+              .toList(),
+        ),
+      if (book.format != null)
+        CRenderLinksParagraph(label: "Format", textQueries: [
+          CSearchQueryLink("Format", "Format: ${book.format}"),
+        ]),
+      if (book.downloadUrls?.isEmpty ?? true)
+        const Text("No download links found.")
+      else
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: CRenderLabeledResultLinkAccordion(
+              label: "Download",
+              links: book.downloadUrls
+                      ?.where(
+                    (uri) =>
+                        uri.rel != null &&
+                        OPDSLinkClassifier.isAcquisition(uri.rel ?? ""),
+                  )
+                      .map((uri) {
+                    return CExternalLink(
+                      OPDSLinkClassifier.getDisplayLabel(
+                        uri.label,
+                        uri.rel,
+                        uri.type,
+                      ),
+                      uri: uri.uri ?? "",
+                    );
+                  }).toList() ??
+                  []),
+        ),
+    ];
   }
 
   @override
@@ -30,8 +71,9 @@ class BKSearchableBook extends BKSearchable {
   Iterable<String> get searchTextList => [
         source.label,
         book.title,
-        ...book.authors,
-        ...book.tags,
+        ...book.authors.map((author) => "Author: $author"),
+        if (book.format != null) "Format: ${book.format}",
+        ...book.categories.map((cat) => "Category: $cat"),
       ];
 
   @override

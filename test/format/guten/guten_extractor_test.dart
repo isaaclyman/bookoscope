@@ -12,7 +12,7 @@ void main() {
     List<GCSVRow> rows = [];
 
     setUpAll(() async {
-      rows = await extractor.getRows().toList();
+      rows = (await extractor.getRows()).toList();
     });
 
     test('extracts the first entry (declaration of independence)', () {

@@ -20,10 +20,13 @@ Future<List<OPDSCrawlResourceUrl>> getGutenbergResourceUris(
       continue;
     }
 
-    for (final link in links.where(OPDSLinkClassifier.isAcquisition)) {
+    for (final link in links.where(
+      (link) => OPDSLinkClassifier.isAcquisition(link.rel),
+    )) {
       acquisitionUris.add(OPDSCrawlResourceUrl(
         label: link.title ?? 'Download',
         uri: link.href,
+        rel: link.rel,
         type: link.type,
       ));
     }

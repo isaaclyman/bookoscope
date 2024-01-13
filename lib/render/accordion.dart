@@ -17,7 +17,7 @@ class CRenderAccordion extends StatelessWidget {
   Widget build(BuildContext context) {
     return Accordion(
       disableScrolling: true,
-      headerBackgroundColor: Colors.white,
+      headerBackgroundColor: context.colors.accent,
       headerBorderColor: context.colors.text,
       headerBorderColorOpened: context.colors.text,
       headerBorderWidth: 1,

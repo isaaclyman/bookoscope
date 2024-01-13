@@ -20,3 +20,12 @@ class CResultLink extends CLink {
     required this.resultName,
   });
 }
+
+class CExternalLink extends CLink {
+  final String uri;
+
+  const CExternalLink(
+    super.label, {
+    required this.uri,
+  });
+}

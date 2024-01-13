@@ -47,9 +47,7 @@ class BKProviders extends StatelessWidget {
           create: (_) => DBInitialize(),
           update: (_, dbSources, crawlManager, dbInit) {
             dbInit ??= DBInitialize();
-            if (!dbInit.isInitialized) {
-              dbInit.initializeGutenberg(dbSources, crawlManager);
-            }
+            dbInit.initializeGutenberg(dbSources, crawlManager);
             return dbInit;
           },
           lazy: false,
