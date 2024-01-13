@@ -163,18 +163,26 @@ class OPDSLinkClassifier {
     return lastPart.toUpperCase();
   }
 
-  static String getDisplayLabel(String? label, String? rel, String? type) {
+  static String getDisplayLabel(
+    String? label,
+    String? rel,
+    String? type, {
+    bool includeType = true,
+  }) {
     final displayType =
         type == null ? null : OPDSLinkClassifier.getDisplayType(type);
     if (label != null) {
-      return displayType != null ? "$label ($displayType)" : label;
+      return includeType && displayType != null
+          ? "$label ($displayType)"
+          : label;
     }
 
     if (rel != null && rel.contains("$_relAcquisitionRoot/")) {
       var acquisitionType = rel.split("$_relAcquisitionRoot/").last;
+      acquisitionType = acquisitionType.trim().replaceAll("/", "");
 
-      if (acquisitionType.trim().isNotEmpty) {
-        acquisitionType.replaceAll("-", " ");
+      if (acquisitionType.isNotEmpty && acquisitionType != 'open-access') {
+        acquisitionType = acquisitionType.replaceAll("-", " ");
         acquisitionType =
             acquisitionType[0].toUpperCase() + acquisitionType.substring(1);
         return acquisitionType;

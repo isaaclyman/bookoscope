@@ -1,6 +1,9 @@
+import 'package:bookoscope/components/future_handler.dart';
 import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/source.db.dart';
+import 'package:bookoscope/format/guten/guten_acquisition.dart';
 import 'package:bookoscope/format/opds/opds_crawler.dart';
+import 'package:bookoscope/format/opds/opds_resource.dart';
 import 'package:bookoscope/render/labeled_link_accordion.dart';
 import 'package:bookoscope/render/labeled_search_links.dart';
 import 'package:bookoscope/render/link.dart';
@@ -33,11 +36,16 @@ class BKSearchableBook extends BKSearchable {
         CRenderLinksParagraph(label: "Format", textQueries: [
           CSearchQueryLink("Format", "Format: ${book.format}"),
         ]),
-      if (book.downloadUrls?.isEmpty ?? true)
+      if ((book.downloadUrls?.isEmpty ?? true) && !book.isGutenberg)
         const Text("No download links found.")
+      else if (book.isGutenberg)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: _GutenbergLinks(textId: book.originalId),
+        )
       else
         Padding(
-          padding: const EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: CRenderLabeledResultLinkAccordion(
               label: "Download",
               links: book.downloadUrls
@@ -117,5 +125,50 @@ class BKHasSearchableSources extends BKHasSearchables {
                   [],
             ))
         .toList();
+  }
+}
+
+class _GutenbergLinks extends StatefulWidget {
+  final String textId;
+
+  const _GutenbergLinks({required this.textId});
+
+  @override
+  State<_GutenbergLinks> createState() => _GutenbergLinksState();
+}
+
+class _GutenbergLinksState extends State<_GutenbergLinks> {
+  late final Future<List<OPDSCrawlResourceUrl>> linksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    linksFuture = getGutenbergResourceUris(widget.textId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BKFutureHandler(
+      future: linksFuture,
+      errorMessage:
+          'Error while getting download links from Gutenberg Project.',
+      nullDataMessage: 'No data received.',
+      builder: (context, links) => CRenderLabeledResultLinkAccordion(
+        label: "Download",
+        links: links
+            .map(
+              (link) => CExternalLink(
+                OPDSLinkClassifier.getDisplayLabel(
+                  link.label,
+                  link.rel,
+                  link.type,
+                  includeType: false,
+                ),
+                uri: link.uri,
+              ),
+            )
+            .toList(),
+      ),
+    );
   }
 }
