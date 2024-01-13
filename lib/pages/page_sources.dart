@@ -1,5 +1,6 @@
 import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/source.db.dart';
+import 'package:bookoscope/format/crawl_manager.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/sources/page_edit_source.dart';
 import 'package:bookoscope/sources/page_fetch_source.dart';
@@ -116,7 +117,26 @@ class _SourceActions extends StatelessWidget {
         switch (action) {
           case _SourceAction.refresh:
             if (context.mounted) {
-              context.pushNamed(BKPageFetchSource.name, extra: source);
+              if (source.url == bkFakeGutenbergUrl) {
+                final messenger = ScaffoldMessenger.of(context);
+                messenger.showSnackBar(const SnackBar(
+                  content: Text("Refreshing Gutenberg database..."),
+                ));
+                await Future.delayed(const Duration(milliseconds: 500));
+
+                await dbBooks.overwriteEntireSource(source.id, []);
+                source.isCompletelyCrawled = false;
+                await dbSources.upsert(source);
+
+                if (context.mounted) {
+                  messenger.clearSnackBars();
+                  messenger.showSnackBar(const SnackBar(
+                    content: Text("Gutenberg database refreshed."),
+                  ));
+                }
+              } else {
+                context.pushNamed(BKPageFetchSource.name, extra: source);
+              }
             }
             break;
           case _SourceAction.edit:
