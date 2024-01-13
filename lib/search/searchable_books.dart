@@ -5,8 +5,10 @@ import 'package:bookoscope/format/guten/guten_acquisition.dart';
 import 'package:bookoscope/format/opds/opds_crawler.dart';
 import 'package:bookoscope/format/opds/opds_resource.dart';
 import 'package:bookoscope/render/labeled_link_accordion.dart';
+import 'package:bookoscope/render/labeled_list_accordion.dart';
 import 'package:bookoscope/render/labeled_search_links.dart';
 import 'package:bookoscope/render/link.dart';
+import 'package:bookoscope/render/name_description.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -36,6 +38,13 @@ class BKSearchableBook extends BKSearchable {
         CRenderLinksParagraph(label: "Format", textQueries: [
           CSearchQueryLink("Format", "Format: ${book.format}"),
         ]),
+      if (book.categories.isNotEmpty)
+        CRenderLinksParagraph(
+          label: "Tags",
+          textQueries: book.categories
+              .map((cat) => CSearchQueryLink(cat, "Category: $cat"))
+              .toList(),
+        ),
       if ((book.downloadUrls?.isEmpty ?? true) && !book.isGutenberg)
         const Text("No download links found.")
       else if (book.isGutenberg)
@@ -65,6 +74,14 @@ class BKSearchableBook extends BKSearchable {
                     );
                   }).toList() ??
                   []),
+        ),
+      if (book.metadata.isNotEmpty)
+        CRenderLabeledListAccordion(
+          book.metadata.map(
+            (metadata) => CNameDescription(
+                metadata.type ?? "Meta", metadata.content ?? "Unknown"),
+          ),
+          label: "Metadata",
         ),
     ];
   }
@@ -153,22 +170,24 @@ class _GutenbergLinksState extends State<_GutenbergLinks> {
       errorMessage:
           'Error while getting download links from Gutenberg Project.',
       nullDataMessage: 'No data received.',
-      builder: (context, links) => CRenderLabeledResultLinkAccordion(
-        label: "Download",
-        links: links
-            .map(
-              (link) => CExternalLink(
-                OPDSLinkClassifier.getDisplayLabel(
-                  link.label,
-                  link.rel,
-                  link.type,
-                  includeType: false,
-                ),
-                uri: link.uri,
-              ),
-            )
-            .toList(),
-      ),
+      builder: (context, links) => links.isEmpty
+          ? const Text("No download links found.")
+          : CRenderLabeledResultLinkAccordion(
+              label: "Download",
+              links: links
+                  .map(
+                    (link) => CExternalLink(
+                      OPDSLinkClassifier.getDisplayLabel(
+                        link.label,
+                        link.rel,
+                        link.type,
+                        includeType: false,
+                      ),
+                      uri: link.uri,
+                    ),
+                  )
+                  .toList(),
+            ),
     );
   }
 }

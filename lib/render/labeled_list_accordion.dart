@@ -56,7 +56,12 @@ class _LabeledListItem extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 2),
             child: CRenderChip(item.name),
           ),
-          Text(item.description),
+          Text(
+            item.description,
+            style: const TextStyle(
+              color: Colors.black,
+            ),
+          ),
         ],
       ),
     );
