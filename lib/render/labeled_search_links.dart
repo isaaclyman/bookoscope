@@ -26,26 +26,27 @@ class CRenderLinksParagraph extends StatelessWidget {
           Expanded(
             child: Text.rich(
               TextSpan(
-                  children: textQueries
-                      .map((item) => TextSpan(
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                if (item is CSearchQueryLink) {
-                                  handler.setSearchQuery(context, item.query);
-                                  handler.closeDrawer(context);
-                                } else if (item is CResultLink) {
-                                  handler.goToResult(
-                                    context,
-                                    item.resultCategory,
-                                    item.resultName,
-                                  );
-                                }
-                              },
-                            style: context.text.link,
-                            text: item.label,
-                          ))
-                      .intersperse(const TextSpan(text: ", "))
-                      .toList()),
+                children: textQueries
+                    .map((item) => TextSpan(
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              if (item is CSearchQueryLink) {
+                                handler.setSearchQuery(context, item.query);
+                                handler.closeDrawer(context);
+                              } else if (item is CResultLink) {
+                                handler.goToResult(
+                                  context,
+                                  item.resultCategory,
+                                  item.resultName,
+                                );
+                              }
+                            },
+                          style: context.text.backgroundLink,
+                          text: item.label,
+                        ))
+                    .intersperse(const TextSpan(text: ", "))
+                    .toList(),
+              ),
             ),
           ),
         ],

@@ -36,7 +36,7 @@ class BKSearchableBook extends BKSearchable {
         ),
       if (book.format != null)
         CRenderLinksParagraph(label: "Format", textQueries: [
-          CSearchQueryLink("Format", "Format: ${book.format}"),
+          CSearchQueryLink(book.format.toString(), "Format: ${book.format}"),
         ]),
       if (book.categories.isNotEmpty)
         CRenderLinksParagraph(

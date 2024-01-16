@@ -26,7 +26,7 @@ class CThemeText {
   );
 
   final TextStyle entryMainHeader = TextStyle(
-    color: bkThemeColors.accent,
+    color: bkThemeColors.primary,
     fontSize: 20,
     fontWeight: FontWeight.w300,
   );
@@ -44,10 +44,16 @@ class CThemeText {
     fontSize: 8,
   );
 
-  final TextStyle link = TextStyle(
-    color: bkThemeColors.accent,
+  final TextStyle accentLink = const TextStyle(
+    color: Colors.black,
     decoration: TextDecoration.underline,
-    decorationColor: bkThemeColors.accent,
+    decorationColor: Colors.black,
+  );
+
+  final TextStyle backgroundLink = const TextStyle(
+    color: Colors.white,
+    decoration: TextDecoration.underline,
+    decorationColor: Colors.white,
   );
 
   final TextStyle mapHorizontalTableCellBordered = TextStyle(

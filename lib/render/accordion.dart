@@ -16,6 +16,7 @@ class CRenderAccordion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Accordion(
+      contentBackgroundColor: Colors.grey,
       disableScrolling: true,
       headerBackgroundColor: context.colors.accent,
       headerBorderColor: context.colors.text,
@@ -43,6 +44,7 @@ class CRenderAccordion extends StatelessWidget {
             style: context.text.entryListHeader,
           ),
           content: content,
+          isOpen: true,
         )
       ],
     );

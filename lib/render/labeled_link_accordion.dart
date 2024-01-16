@@ -60,17 +60,17 @@ class CRenderLabeledResultLinkAccordion extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8),
                       child: Icon(
                         Icons.link,
-                        color: bkThemeColors.accent,
+                        color: Colors.black,
                       ),
                     ),
                     Expanded(
                       child: Text(
                         link.label,
-                        style: context.text.link,
+                        style: context.text.accentLink,
                       ),
                     ),
                   ],
