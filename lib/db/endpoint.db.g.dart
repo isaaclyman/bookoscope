@@ -47,8 +47,8 @@ const EndpointSchema = CollectionSchema(
     r'url': IndexSchema(
       id: -5756857009679432345,
       name: r'url',
-      unique: false,
-      replace: false,
+      unique: true,
+      replace: true,
       properties: [
         IndexPropertySchema(
           name: r'url',
@@ -140,6 +140,60 @@ List<IsarLinkBase<dynamic>> _endpointGetLinks(Endpoint object) {
 
 void _endpointAttach(IsarCollection<dynamic> col, Id id, Endpoint object) {
   object.id = id;
+}
+
+extension EndpointByIndex on IsarCollection<Endpoint> {
+  Future<Endpoint?> getByUrl(String url) {
+    return getByIndex(r'url', [url]);
+  }
+
+  Endpoint? getByUrlSync(String url) {
+    return getByIndexSync(r'url', [url]);
+  }
+
+  Future<bool> deleteByUrl(String url) {
+    return deleteByIndex(r'url', [url]);
+  }
+
+  bool deleteByUrlSync(String url) {
+    return deleteByIndexSync(r'url', [url]);
+  }
+
+  Future<List<Endpoint?>> getAllByUrl(List<String> urlValues) {
+    final values = urlValues.map((e) => [e]).toList();
+    return getAllByIndex(r'url', values);
+  }
+
+  List<Endpoint?> getAllByUrlSync(List<String> urlValues) {
+    final values = urlValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'url', values);
+  }
+
+  Future<int> deleteAllByUrl(List<String> urlValues) {
+    final values = urlValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'url', values);
+  }
+
+  int deleteAllByUrlSync(List<String> urlValues) {
+    final values = urlValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'url', values);
+  }
+
+  Future<Id> putByUrl(Endpoint object) {
+    return putByIndex(r'url', object);
+  }
+
+  Id putByUrlSync(Endpoint object, {bool saveLinks = true}) {
+    return putByIndexSync(r'url', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByUrl(List<Endpoint> objects) {
+    return putAllByIndex(r'url', objects);
+  }
+
+  List<Id> putAllByUrlSync(List<Endpoint> objects, {bool saveLinks = true}) {
+    return putAllByIndexSync(r'url', objects, saveLinks: saveLinks);
+  }
 }
 
 extension EndpointQueryWhereSort on QueryBuilder<Endpoint, Endpoint, QWhere> {

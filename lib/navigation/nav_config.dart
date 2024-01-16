@@ -56,7 +56,9 @@ class BKRouterConfig {
                       name: BKPageFetchSource.name,
                       builder: (context, state) => BKPageShell(
                         routerState: state,
-                        child: const BKPageFetchSource(),
+                        child: BKPageFetchSource(
+                          routerState: state,
+                        ),
                       ),
                     ),
                   ],

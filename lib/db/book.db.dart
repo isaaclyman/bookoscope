@@ -1,5 +1,7 @@
 import 'package:bookoscope/db/db.dart';
 import 'package:bookoscope/util/debounce.dart';
+import 'package:bookoscope/util/list.dart';
+import 'package:bookoscope/util/string.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
@@ -41,6 +43,19 @@ class Book {
     required this.sourceId,
     required this.isGutenberg,
   });
+
+  void merge(Book other) {
+    assert(other.sourceId == sourceId && other.originalId == originalId);
+    title = other.title.coalesce(title);
+    authors = authors.followedBy(other.authors).distinct();
+    format = other.format.coalesce(format);
+    categories = categories.followedBy(other.categories).distinct();
+    metadata = metadata.followedBy(other.metadata).distinctBy((el) => el.type);
+    downloadUrls = (downloadUrls ?? [])
+        .followedBy(other.downloadUrls ?? [])
+        .distinctBy((el) => el.uri);
+    imageUrl = other.imageUrl ?? imageUrl;
+  }
 }
 
 @embedded
@@ -108,19 +123,42 @@ class DBBooks extends ChangeNotifier {
     });
   }
 
-  Future upsert(Book book) async {
+  Future<void> deleteAllBySourceId(int sourceId) async {
     final db = _database;
+    assert(db != null);
     if (db == null) {
       return;
     }
 
     await db.writeTxn(() async {
+      await db.books.filter().sourceIdEqualTo(sourceId).deleteAll();
+    });
+  }
+
+  Future<void> upsert(Book book) async {
+    final db = _database;
+    assert(db != null);
+    if (db == null) {
+      return;
+    }
+
+    await db.writeTxn(() async {
+      final existing = await db.books
+          .where()
+          .originalIdSourceIdEqualTo(book.originalId, book.sourceId)
+          .findFirst();
+
+      if (existing != null) {
+        book.merge(existing);
+      }
+
       await db.books.putByOriginalIdSourceId(book);
     });
   }
 
-  Future overwriteEntireSource(int sourceId, List<Book> books) async {
+  Future<void> overwriteEntireSource(int sourceId, List<Book> books) async {
     final db = _database;
+    assert(db != null);
     if (db == null) {
       return;
     }
@@ -131,8 +169,9 @@ class DBBooks extends ChangeNotifier {
     });
   }
 
-  Future remove(Book book) async {
+  Future<void> remove(Book book) async {
     final db = _database;
+    assert(db != null);
     if (db == null) {
       return;
     }

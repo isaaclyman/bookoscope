@@ -76,8 +76,9 @@ class DBSources extends ChangeNotifier {
     });
   }
 
-  Future upsert(Source source) async {
+  Future<void> upsert(Source source) async {
     final db = _database;
+    assert(db != null);
     if (db == null) {
       return;
     }
@@ -87,8 +88,9 @@ class DBSources extends ChangeNotifier {
     });
   }
 
-  Future delete(Source source) async {
+  Future<void> delete(Source source) async {
     final db = _database;
+    assert(db != null);
     if (db == null) {
       return;
     }

@@ -253,6 +253,10 @@ void main() {
             <id>52</id>
             <title>Test Book #1</title>
             <summary>epub+zip - 8.08 MB</summary>
+            <author>
+              <id>14</id>
+              <name>Test Author</name>
+            </author>
             <extent xmlns="http://purl.org/dc/terms/">8.08 MB</extent>
             <format xmlns="http://purl.org/dc/terms/format">Epub</format>
             <content type="text">application/epub+zip</content>
@@ -279,7 +283,7 @@ void main() {
         expect(entry.textContent, 'application/epub+zip');
 
         expect(entry.summary, 'epub+zip - 8.08 MB');
-        expect(entry.authors, null);
+        expectContains(entry.authors, literal: 'Test Author');
         expect(entry.categories, null);
 
         expect(entry.extent, '8.08 MB');

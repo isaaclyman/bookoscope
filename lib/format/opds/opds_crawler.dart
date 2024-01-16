@@ -9,7 +9,6 @@ import 'package:collection/collection.dart';
 class OPDSCrawler {
   final String opdsRootUri;
   final Set<String> visitedEndpoints = {};
-  final Set<String> foundResourceIds = {};
   final extractor = OPDSExtractor();
 
   OPDSCrawler({
@@ -96,12 +95,6 @@ class OPDSCrawler {
     }
 
     for (final entry in entries.where(OPDSEntryClassifier.isLeafResource)) {
-      if (foundResourceIds.contains(entry.id)) {
-        continue;
-      }
-
-      foundResourceIds.add(entry.id);
-
       final links = entry.links ?? [];
       yield OPDSCrawlResourceFound(
         resource: OPDSCrawlResource(

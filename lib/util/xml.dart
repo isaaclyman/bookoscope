@@ -64,7 +64,9 @@ extension BKXmlNode on XmlNode {
   }
 
   List<String>? getPossiblyNestedChildNodeTexts(
-      String nodeName, String innerNode) {
+    String nodeName,
+    String innerNode,
+  ) {
     final childTexts = childElements
         .where((element) => element.localName == nodeName)
         .map((element) {

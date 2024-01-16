@@ -8,7 +8,7 @@ part 'endpoint.db.g.dart';
 class Endpoint {
   Id id = Isar.autoIncrement;
 
-  @Index()
+  @Index(unique: true, replace: true)
   String url;
 
   bool isCrawled;
@@ -33,7 +33,7 @@ class DBEndpoints extends ChangeNotifier {
   List<VoidCallback> onDispose = [];
 
   DBEndpoints() {
-    endpointsFuture.then((sources) {
+    endpointsFuture.then((endpoints) {
       notifyListeners();
     });
 
@@ -53,22 +53,33 @@ class DBEndpoints extends ChangeNotifier {
     super.dispose();
   }
 
-  Future upsert(Endpoint endpoint) async {
+  Future<void> deleteAllBySourceId(int sourceId) async {
     final db = _database;
+    assert(db != null);
     if (db == null) {
       return;
     }
 
     await db.writeTxn(() async {
-      await db.endpoints.where().urlEqualTo(endpoint.url).deleteAll();
-      await db.endpoints.put(endpoint);
+      await db.endpoints.filter().sourceIdEqualTo(sourceId).deleteAll();
     });
-
-    notifyListeners();
   }
 
-  Future remove(Endpoint endpoint) async {
+  Future<void> upsert(Endpoint endpoint) async {
     final db = _database;
+    assert(db != null);
+    if (db == null) {
+      return;
+    }
+
+    await db.writeTxn(() async {
+      await db.endpoints.putByUrl(endpoint);
+    });
+  }
+
+  Future<void> remove(Endpoint endpoint) async {
+    final db = _database;
+    assert(db != null);
     if (db == null) {
       return;
     }
@@ -76,7 +87,5 @@ class DBEndpoints extends ChangeNotifier {
     await db.writeTxn(() async {
       await db.endpoints.delete(endpoint.id);
     });
-
-    notifyListeners();
   }
 }

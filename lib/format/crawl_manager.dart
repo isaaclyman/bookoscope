@@ -18,6 +18,11 @@ class BKCrawlManager {
     required this.dbBooks,
   });
 
+  Future<void> forceCleanSource(Source source) async {
+    await dbEndpoints.deleteAllBySourceId(source.id);
+    await dbBooks.deleteAllBySourceId(source.id);
+  }
+
   Stream<OPDSCrawlEvent> crawlOpdsUri(Source source) async* {
     final crawler = OPDSCrawler(opdsRootUri: source.url);
     await dbSources.upsert(source);

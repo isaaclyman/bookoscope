@@ -10,8 +10,9 @@ import 'package:provider/provider.dart';
 
 class BKPageFetchSource extends StatefulWidget {
   static const name = 'Fetch Source';
+  final GoRouterState routerState;
 
-  const BKPageFetchSource({super.key});
+  const BKPageFetchSource({super.key, required this.routerState});
 
   @override
   State<BKPageFetchSource> createState() => _BKPageFetchSourceState();
@@ -30,15 +31,16 @@ class _BKPageFetchSourceState extends State<BKPageFetchSource> {
   List<OPDSCrawlException> exceptionEvents = [];
   int get pagesWithExceptions => exceptionEvents.length;
   List<OPDSCrawlResourceFound> resourceEvents = [];
+  Set<String> foundTitles = {};
   int get resourcesFound => resourceEvents.length;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
     crawlManager = context.read<BKCrawlManager>();
 
-    final source = GoRouterState.of(context).extra as Source?;
+    final source = widget.routerState.extra as Source?;
     if (source == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -48,6 +50,11 @@ class _BKPageFetchSourceState extends State<BKPageFetchSource> {
       return;
     }
 
+    _crawlSource(source);
+  }
+
+  Future<void> _crawlSource(Source source) async {
+    await crawlManager.forceCleanSource(source);
     final events = crawlManager.crawlOpdsUri(source);
     crawlSubscription = events.listen(
       (event) {
@@ -72,7 +79,10 @@ class _BKPageFetchSourceState extends State<BKPageFetchSource> {
           }
 
           if (event is OPDSCrawlResourceFound) {
-            resourceEvents.add(event);
+            final isNewResource = foundTitles.add(event.resource.title);
+            if (isNewResource) {
+              resourceEvents.add(event);
+            }
             return;
           }
         });
