@@ -22,6 +22,7 @@ class _BKPageFetchSourceState extends State<BKPageFetchSource> {
   late Source source;
   late BKCrawlManager crawlManager;
   late StreamSubscription crawlSubscription;
+  bool beganCrawl = false;
 
   bool crawlComplete = false;
   List<OPDSCrawlBegin> beginEvents = [];
@@ -54,6 +55,9 @@ class _BKPageFetchSourceState extends State<BKPageFetchSource> {
   }
 
   Future<void> _crawlSource(Source source) async {
+    assert(beganCrawl == false);
+    beganCrawl = true;
+
     await crawlManager.forceCleanSource(source);
     final events = crawlManager.crawlOpdsUri(source);
     crawlSubscription = events.listen(
@@ -169,13 +173,10 @@ class _BKPageFetchSourceState extends State<BKPageFetchSource> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (!crawlComplete) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 12),
                       child: CircularProgressIndicator(
-                        value: pagesDiscovered == 0
-                            ? 0
-                            : (pagesCrawled + pagesWithExceptions) /
-                                pagesDiscovered,
+                        value: null,
                       ),
                     ),
                     const Text("Crawling in progress...")

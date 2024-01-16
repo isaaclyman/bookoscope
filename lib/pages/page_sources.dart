@@ -1,4 +1,5 @@
 import 'package:bookoscope/db/book.db.dart';
+import 'package:bookoscope/db/endpoint.db.dart';
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/format/crawl_manager.dart';
 import 'package:bookoscope/search/search_manager.dart';
@@ -108,6 +109,7 @@ class _SourceActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final searchManager = context.watch<BKSearchManager>();
     final dbSources = context.watch<DBSources>();
+    final dbEndpoints = context.watch<DBEndpoints>();
     final dbBooks = context.watch<DBBooks>();
 
     return PopupMenuButton<_SourceAction>(
@@ -155,6 +157,8 @@ class _SourceActions extends StatelessWidget {
             searchManager.refreshSources(dbSources, dbBooks);
             break;
           case _SourceAction.delete:
+            await dbBooks.deleteAllBySourceId(source.id);
+            await dbEndpoints.deleteAllBySourceId(source.id);
             await dbSources.delete(source);
             searchManager.refreshSources(dbSources, dbBooks);
             break;

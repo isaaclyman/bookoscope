@@ -67,6 +67,11 @@ class OPDSCrawler {
         bestGuessRoot = bestGuessRoot.substring(0, bestGuessRoot.indexOf("?"));
       }
 
+      if (bestGuessRoot.contains("//") && !bestGuessRoot.startsWith('http')) {
+        bestGuessRoot =
+            bestGuessRoot.substring(bestGuessRoot.indexOf('//') + 1);
+      }
+
       if (uriString.contains(bestGuessRoot)) {
         nextRootUri = uriString.substring(0, uriString.indexOf(bestGuessRoot));
       }
