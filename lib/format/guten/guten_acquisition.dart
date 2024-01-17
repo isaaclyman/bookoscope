@@ -3,10 +3,10 @@ import 'package:bookoscope/format/opds/opds_extractor.dart';
 import 'package:bookoscope/format/opds/opds_resource.dart';
 
 Future<List<OPDSCrawlResourceUrl>> getGutenbergResourceUris(
-  String textId,
+  String originalId,
 ) async {
   final extractor = OPDSExtractor();
-  final bookUrl = _getOpdsUrl(textId);
+  final bookUrl = _getOpdsUrl(originalId);
   final feed = await extractor.getFeed(Uri.parse(bookUrl));
   final entries = feed.entries;
   if (entries == null || entries.isEmpty) {

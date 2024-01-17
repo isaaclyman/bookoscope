@@ -25,6 +25,30 @@ class BKSearchableBook extends BKSearchable {
   String get author => book.authors.join("; ");
 
   @override
+  List<CExternalLink> get downloadUrls =>
+      book.downloadUrls
+          ?.where(
+        (uri) =>
+            uri.rel != null &&
+            uri.uri != null &&
+            OPDSLinkClassifier.isAcquisition(uri.rel ?? ""),
+      )
+          .map((uri) {
+        return CExternalLink(
+          OPDSLinkClassifier.getDisplayLabel(
+            uri.label,
+            uri.rel,
+            uri.type,
+          ),
+          uri: uri.uri ?? "",
+        );
+      }).toList() ??
+      [];
+
+  @override
+  bool get isGutenberg => book.isGutenberg;
+
+  @override
   Iterable<Widget> getRenderables() {
     return [
       if (book.authors.isNotEmpty)
@@ -61,31 +85,15 @@ class BKSearchableBook extends BKSearchable {
       else if (book.isGutenberg)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: _GutenbergLinks(textId: book.originalId),
+          child: _GutenbergLinks(originalId: book.originalId),
         )
       else
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: CRenderLabeledResultLinkAccordion(
-              label: "Download",
-              links: book.downloadUrls
-                      ?.where(
-                    (uri) =>
-                        uri.rel != null &&
-                        uri.uri != null &&
-                        OPDSLinkClassifier.isAcquisition(uri.rel ?? ""),
-                  )
-                      .map((uri) {
-                    return CExternalLink(
-                      OPDSLinkClassifier.getDisplayLabel(
-                        uri.label,
-                        uri.rel,
-                        uri.type,
-                      ),
-                      uri: uri.uri ?? "",
-                    );
-                  }).toList() ??
-                  []),
+            label: "Download",
+            links: downloadUrls,
+          ),
         ),
     ];
   }
@@ -150,9 +158,9 @@ class BKHasSearchableSources extends BKHasSearchables {
 }
 
 class _GutenbergLinks extends StatefulWidget {
-  final String textId;
+  final String originalId;
 
-  const _GutenbergLinks({required this.textId});
+  const _GutenbergLinks({required this.originalId});
 
   @override
   State<_GutenbergLinks> createState() => _GutenbergLinksState();
@@ -164,7 +172,7 @@ class _GutenbergLinksState extends State<_GutenbergLinks> {
   @override
   void initState() {
     super.initState();
-    linksFuture = getGutenbergResourceUris(widget.textId);
+    linksFuture = getGutenbergResourceUris(widget.originalId);
   }
 
   @override

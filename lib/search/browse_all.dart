@@ -71,10 +71,13 @@ class _BookGrid extends StatelessWidget {
           final result = results.elementAt(ix);
           return BKBookTile(
             result: BKSearchResult(
+              originalId: result.originalId,
               sourceName: result.sourceName,
               title: result.title,
               author: result.author,
               imageUrl: result.imageUrl,
+              downloadUrls: result.downloadUrls,
+              isGutenberg: result.isGutenberg,
               getRenderables: result.getRenderables,
               priority: 0,
             ),

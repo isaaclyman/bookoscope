@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/source.db.dart';
+import 'package:bookoscope/render/link.dart';
 import 'package:bookoscope/search/searchable_books.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -52,10 +53,13 @@ class BKSearchManager extends ChangeNotifier {
         }
 
         return BKSearchResult(
+          originalId: searchable.originalId,
           sourceName: source.sourceName,
           title: searchable.title,
           author: id,
           imageUrl: searchable.imageUrl,
+          downloadUrls: searchable.downloadUrls,
+          isGutenberg: searchable.isGutenberg,
           getRenderables: searchable.getRenderables,
           priority: 0,
         );
@@ -71,10 +75,13 @@ class BKSearchManager extends ChangeNotifier {
     }
 
     return BKSearchResult(
+      originalId: searchable.originalId,
       sourceName: searchableSource.sourceName,
       title: searchable.title,
       author: id,
       imageUrl: searchable.imageUrl,
+      downloadUrls: searchable.downloadUrls,
+      isGutenberg: searchable.isGutenberg,
       getRenderables: searchable.getRenderables,
       priority: 0,
     );
@@ -150,10 +157,13 @@ class BKSearchManager extends ChangeNotifier {
 
         resultSource.addResult(
           BKSearchResult(
+            originalId: searchable.originalId,
             sourceName: sourceName,
             title: searchable.title,
             author: matchingText ?? searchable.author,
             imageUrl: searchable.imageUrl,
+            downloadUrls: searchable.downloadUrls,
+            isGutenberg: searchable.isGutenberg,
             getRenderables: searchable.getRenderables,
             priority: searchText.toLowerCase() == searchable.title.toLowerCase()
                 ? -1
@@ -200,18 +210,24 @@ class BKSearchResultSource {
 }
 
 class BKSearchResult {
+  final String originalId;
   final String sourceName;
   final String title;
   final String author;
   final String? imageUrl;
+  final List<CExternalLink> downloadUrls;
+  final bool isGutenberg;
   final Iterable<Widget> Function() getRenderables;
   final int priority;
 
   BKSearchResult({
+    required this.originalId,
     required this.sourceName,
     required this.title,
     required this.author,
     required this.imageUrl,
+    required this.downloadUrls,
+    required this.isGutenberg,
     required this.getRenderables,
     required this.priority,
   });
@@ -246,6 +262,8 @@ abstract class BKSearchable {
   String get title;
   String get author;
   String? get imageUrl;
+  List<CExternalLink> get downloadUrls;
+  bool get isGutenberg;
   Iterable<String> get searchTextList;
   Iterable<Widget> getRenderables();
 }
