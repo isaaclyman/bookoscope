@@ -72,6 +72,7 @@ class BKSearchableBook extends BKSearchable {
                       ?.where(
                     (uri) =>
                         uri.rel != null &&
+                        uri.uri != null &&
                         OPDSLinkClassifier.isAcquisition(uri.rel ?? ""),
                   )
                       .map((uri) {

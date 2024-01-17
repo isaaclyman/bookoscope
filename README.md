@@ -54,6 +54,12 @@ If the app doesn't correctly crawl an OPDS endpoint, **please provide at least o
 
 If you'd like me to spend more time on this app (meaning more free features for everyone), simply [sponsor me](https://ko-fi.com/isaaclyman).
 
+# Roadmap
+
+- If the OPDS 2.0 draft becomes stable at some point, supporting that will become a priority. For now, only OPDS 1.x is supported.
+- Authenticated OPDS endpoints are not yet supported.
+- Help needed to test with a variety of different OPDS servers.
+
 # Contributing
 
 Before submitting a PR, please file an issue describing the feature or fix you'd like to work on. This will help me coordinate with any ongoing work.

@@ -54,12 +54,6 @@ class BKCrawlManager {
       }
 
       if (event is OPDSCrawlResourceFound) {
-        if (event.resource.title.toLowerCase().contains("yumi")) {
-          print(event.uri);
-          print(event.resource.title);
-          print(event.resource.authors);
-        }
-
         await dbBooks.upsert(Book(
           originalId: event.resource.originalId,
           sourceId: source.id,

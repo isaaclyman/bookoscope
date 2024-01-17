@@ -1,7 +1,6 @@
 import 'package:bookoscope/events/event_handler.dart';
 import 'package:bookoscope/render/accordion.dart';
 import 'package:bookoscope/render/link.dart';
-import 'package:bookoscope/theme/colors.dart';
 import 'package:bookoscope/theme/text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,10 +49,15 @@ class CRenderLabeledResultLinkAccordion extends StatelessWidget {
                     );
                   } else if (link is CExternalLink) {
                     try {
-                      await launchUrl(Uri.parse(link.uri));
+                      final uri = link.uri;
+                      if (uri == null) {
+                        throw Exception("Link URI was null.");
+                      }
+
+                      await launchUrl(Uri.parse(uri));
                     } catch (e) {
+                      // Swallow error because sometimes it fires for no reason
                       debugPrint(e.toString());
-                      // Swallow error
                     }
                   }
                 },

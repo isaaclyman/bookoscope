@@ -31,7 +31,7 @@ class OPDSCrawlResourceUrl {
   final String? label;
 
   /// The URI of the link.
-  final String uri;
+  final String? uri;
 
   /// The relationship of the linked resource to this entry.
   final String rel;

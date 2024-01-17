@@ -101,7 +101,6 @@ class OPDSCrawler {
 
     for (final entry in entries.where(OPDSEntryClassifier.isLeafResource)) {
       final links = entry.links ?? [];
-      final imageUri = OPDSLinkClassifier.getPreferredImageUrl(links);
 
       yield OPDSCrawlResourceFound(
         resource: OPDSCrawlResource(
@@ -122,16 +121,16 @@ class OPDSCrawler {
               .map(
                 (link) => OPDSCrawlResourceUrl(
                   label: link.title,
-                  uri: link.href,
+                  uri: OPDSLinkClassifier.normalizeUri(nextRootUri, link.href),
                   rel: link.rel,
                   type: link.type,
                 ),
               )
               .toList(),
-          imageUrl:
-              imageUri == null || (Uri.tryParse(imageUri)?.hasScheme ?? false)
-                  ? imageUri
-                  : joinUriString(nextRootUri, imageUri),
+          imageUrl: OPDSLinkClassifier.normalizeUri(
+            nextRootUri,
+            OPDSLinkClassifier.getPreferredImageUrl(links),
+          ),
           htmlDescription: entry.htmlContent,
           textDescription: entry.textContent,
         ),
@@ -158,6 +157,12 @@ class OPDSLinkClassifier {
   static const String _relImageRoot = '//opds-spec.org/image';
   static const String _relThumbnail = '//opds-spec.org/image/thumbnail';
   static const String _relAcquisitionRoot = '//opds-spec.org/acquisition';
+
+  static String? normalizeUri(String rootUri, String? linkUri) {
+    return linkUri == null || (Uri.tryParse(linkUri)?.hasScheme ?? false)
+        ? linkUri
+        : joinUriString(rootUri, linkUri);
+  }
 
   static bool isSelf(String rel) {
     return rel == _relSelf;

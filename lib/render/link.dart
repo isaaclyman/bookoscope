@@ -22,7 +22,7 @@ class CResultLink extends CLink {
 }
 
 class CExternalLink extends CLink {
-  final String uri;
+  final String? uri;
 
   const CExternalLink(
     super.label, {
