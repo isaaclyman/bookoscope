@@ -69,7 +69,7 @@ class OPDSCrawler {
 
       if (bestGuessRoot.contains("//") && !bestGuessRoot.startsWith('http')) {
         bestGuessRoot =
-            bestGuessRoot.substring(bestGuessRoot.indexOf('//') + 1);
+            bestGuessRoot.substring(bestGuessRoot.lastIndexOf('//') + 1);
       }
 
       if (uriString.contains(bestGuessRoot)) {
@@ -101,6 +101,8 @@ class OPDSCrawler {
 
     for (final entry in entries.where(OPDSEntryClassifier.isLeafResource)) {
       final links = entry.links ?? [];
+      final imageUri = OPDSLinkClassifier.getPreferredImageUrl(links);
+
       yield OPDSCrawlResourceFound(
         resource: OPDSCrawlResource(
           originalId: entry.id,
@@ -126,7 +128,10 @@ class OPDSCrawler {
                 ),
               )
               .toList(),
-          imageUrl: OPDSLinkClassifier.getPreferredImageUrl(links),
+          imageUrl:
+              imageUri == null || (Uri.tryParse(imageUri)?.hasScheme ?? false)
+                  ? imageUri
+                  : joinUriString(nextRootUri, imageUri),
           htmlDescription: entry.htmlContent,
           textDescription: entry.textContent,
         ),
