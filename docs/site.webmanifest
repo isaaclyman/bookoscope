@@ -1,6 +1,6 @@
 {
-  "name": "Cypher System SRD Lookup",
-  "short_name": "cyphersrdlookup",
+  "name": "Bookoscope",
+  "short_name": "bookoscope",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
