@@ -24,68 +24,73 @@ class _BKPageSourcesState extends State<BKPageSources> {
   Widget build(BuildContext context) {
     final dbSources = context.watch<DBSources>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Center(
-            child: Text(
-              "Sources",
-              style: context.text.pageHeader,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              final source = dbSources.sources[index];
-              return Card(
-                child: ListTile(
-                  contentPadding: const EdgeInsets.only(
-                    bottom: 4,
-                    left: 16,
-                    right: 4,
-                    top: 4,
-                  ),
-                  title: Text(
-                    source.label,
-                    style: TextStyle(
-                      decoration: source.isEnabled
-                          ? TextDecoration.none
-                          : TextDecoration.lineThrough,
-                    ),
-                  ),
-                  subtitle: source.isEnabled
-                      ? Text(
-                          source.description ?? source.url,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        )
-                      : const Text("Disabled"),
-                  trailing: _SourceActions(
-                    source: source,
-                  ),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: Text(
+                  "Sources",
+                  style: context.text.pageHeader,
                 ),
-              );
-            },
-            itemCount: dbSources.sources.length,
-          ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final source = dbSources.sources[index];
+                  return Card(
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.only(
+                        bottom: 4,
+                        left: 16,
+                        right: 4,
+                        top: 4,
+                      ),
+                      title: Text(
+                        source.label,
+                        style: TextStyle(
+                          decoration: source.isEnabled
+                              ? TextDecoration.none
+                              : TextDecoration.lineThrough,
+                        ),
+                      ),
+                      subtitle: source.isEnabled
+                          ? Text(
+                              source.description ?? source.url,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : const Text("Disabled"),
+                      trailing: _SourceActions(
+                        source: source,
+                      ),
+                    ),
+                  );
+                },
+                itemCount: dbSources.sources.length,
+              ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  context.pushNamed(BKPageEditSource.name);
+                },
+                icon: const Icon(Icons.add),
+                label: const Text("Add source"),
+              ),
+            ),
+          ],
         ),
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: ElevatedButton.icon(
-            onPressed: () {
-              context.pushNamed(BKPageEditSource.name);
-            },
-            icon: const Icon(Icons.add),
-            label: const Text("Add source"),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

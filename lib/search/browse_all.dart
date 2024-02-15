@@ -59,31 +59,38 @@ class _BookGrid extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 5,
-          childAspectRatio: 1 / 1.6,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 800,
         ),
-        itemCount: results.length,
-        itemBuilder: (_, ix) {
-          final result = results.elementAt(ix);
-          return BKBookTile(
-            result: BKSearchResult(
-              originalId: result.originalId,
-              sourceName: result.sourceName,
-              title: result.title,
-              author: result.author,
-              imageUrl: result.imageUrl,
-              downloadUrls: result.downloadUrls,
-              isGutenberg: result.isGutenberg,
-              getRenderables: result.getRenderables,
-              priority: 0,
+        child: Center(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 300,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              childAspectRatio: 1 / 1.6,
             ),
-            searchText: null,
-          );
-        },
+            itemCount: results.length,
+            itemBuilder: (_, ix) {
+              final result = results.elementAt(ix);
+              return BKBookTile(
+                result: BKSearchResult(
+                  originalId: result.originalId,
+                  sourceName: result.sourceName,
+                  title: result.title,
+                  author: result.author,
+                  imageUrl: result.imageUrl,
+                  downloadUrls: result.downloadUrls,
+                  isGutenberg: result.isGutenberg,
+                  getRenderables: result.getRenderables,
+                  priority: 0,
+                ),
+                searchText: null,
+              );
+            },
+          ),
+        ),
       ),
     );
   }

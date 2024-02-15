@@ -64,149 +64,156 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
   Widget build(BuildContext context) {
     final dbSources = context.watch<DBSources>();
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(
-                isNew ? "Add Source" : "Edit Source",
-                style: context.text.pageHeader,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: TextFormField(
-                initialValue: source.url,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  errorText: _urlFieldError,
-                  labelText: "Source URL",
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Text(
+                    isNew ? "Add Source" : "Edit Source",
+                    style: context.text.pageHeader,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                onChanged: (value) {
-                  source.url = value;
-                  endpointTestStatus = null;
-                  endpointTestError = null;
-
-                  final canParse =
-                      Uri.tryParse(value)?.host.isNotEmpty ?? false;
-                  _urlFieldError = !canParse ? 'Not a valid URL' : null;
-
-                  setState(() {});
-                },
-              ),
-            ),
-            if (urlIsValid(source.url)) ...[
-              const Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 12,
-                ),
-                child: BKSourceDisclaimer(),
-              ),
-              CheckboxListTile(
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: (value) {
-                  setState(() {
-                    confirmedOwnership = value ?? false;
-                  });
-                },
-                title: const Text("Yes, I have permission"),
-                value: confirmedOwnership,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: OutlinedButton.icon(
-                  onPressed: !confirmedOwnership
-                      ? null
-                      : () async {
-                          endpointTestStatus = null;
-                          endpointTestError = null;
-
-                          final extractor = OPDSExtractor();
-
-                          try {
-                            await extractor.getFeed(Uri.parse(source.url));
-                            endpointTestStatus = true;
-                          } catch (e) {
-                            endpointTestStatus = false;
-                            endpointTestError = e.toString();
-                          } finally {
-                            setState(() {});
-                          }
-                        },
-                  icon: const Icon(Icons.bolt),
-                  label: const Text("Test endpoint"),
-                ),
-              ),
-              if (endpointTestStatus != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: endpointTestStatus!
-                      ? const Text("Valid feed detected.")
-                      : Text("Invalid endpoint.\n\n$endpointTestError"),
-                ),
-              const Divider(),
-            ],
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: TextFormField(
-                initialValue: source.label,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  errorText: _nameFieldError,
-                  labelText: "Name this source",
-                ),
-                onChanged: (value) {
-                  source.label = value;
-                  _nameFieldError =
-                      value.trim().isEmpty ? 'Please enter a name' : null;
+                  child: TextFormField(
+                    initialValue: source.url,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      errorText: _urlFieldError,
+                      labelText: "Source URL",
+                    ),
+                    onChanged: (value) {
+                      source.url = value;
+                      endpointTestStatus = null;
+                      endpointTestError = null;
 
-                  setState(() {});
-                },
-              ),
-            ),
-            //
-            // AUTHENTICATION IS NOT YET IMPLEMENTED
-            //
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 8),
-            //   child: TextFormField(
-            //     initialValue: source.username,
-            //     decoration: const InputDecoration(
-            //       border: OutlineInputBorder(),
-            //       labelText: "Username (if required)",
-            //     ),
-            //     onChanged: (value) => setState(() {
-            //       source.username = value;
-            //     }),
-            //   ),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 8),
-            //   child: TextFormField(
-            //     initialValue: source.password,
-            //     decoration: const InputDecoration(
-            //       border: OutlineInputBorder(),
-            //       labelText: "Password (if required)",
-            //     ),
-            //     onChanged: (value) => setState(() {
-            //       source.password = value;
-            //     }),
-            //   ),
-            // ),
-            ElevatedButton(
-              onPressed: !formIsValid()
-                  ? null
-                  : () {
-                      dbSources.upsert(source);
-                      context.goNamed(BKPageFetchSource.name, extra: source);
+                      final canParse =
+                          Uri.tryParse(value)?.host.isNotEmpty ?? false;
+                      _urlFieldError = !canParse ? 'Not a valid URL' : null;
+
+                      setState(() {});
                     },
-              child: const Text("Save and crawl"),
+                  ),
+                ),
+                if (urlIsValid(source.url)) ...[
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 12,
+                    ),
+                    child: BKSourceDisclaimer(),
+                  ),
+                  CheckboxListTile(
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (value) {
+                      setState(() {
+                        confirmedOwnership = value ?? false;
+                      });
+                    },
+                    title: const Text("Yes, I have permission"),
+                    value: confirmedOwnership,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: OutlinedButton.icon(
+                      onPressed: !confirmedOwnership
+                          ? null
+                          : () async {
+                              endpointTestStatus = null;
+                              endpointTestError = null;
+
+                              final extractor = OPDSExtractor();
+
+                              try {
+                                await extractor.getFeed(Uri.parse(source.url));
+                                endpointTestStatus = true;
+                              } catch (e) {
+                                endpointTestStatus = false;
+                                endpointTestError = e.toString();
+                              } finally {
+                                setState(() {});
+                              }
+                            },
+                      icon: const Icon(Icons.bolt),
+                      label: const Text("Test endpoint"),
+                    ),
+                  ),
+                  if (endpointTestStatus != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: endpointTestStatus!
+                          ? const Text("Valid feed detected.")
+                          : Text("Invalid endpoint.\n\n$endpointTestError"),
+                    ),
+                  const Divider(),
+                ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: TextFormField(
+                    initialValue: source.label,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      errorText: _nameFieldError,
+                      labelText: "Name this source",
+                    ),
+                    onChanged: (value) {
+                      source.label = value;
+                      _nameFieldError =
+                          value.trim().isEmpty ? 'Please enter a name' : null;
+
+                      setState(() {});
+                    },
+                  ),
+                ),
+                //
+                // AUTHENTICATION IS NOT YET IMPLEMENTED
+                //
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 8),
+                //   child: TextFormField(
+                //     initialValue: source.username,
+                //     decoration: const InputDecoration(
+                //       border: OutlineInputBorder(),
+                //       labelText: "Username (if required)",
+                //     ),
+                //     onChanged: (value) => setState(() {
+                //       source.username = value;
+                //     }),
+                //   ),
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 8),
+                //   child: TextFormField(
+                //     initialValue: source.password,
+                //     decoration: const InputDecoration(
+                //       border: OutlineInputBorder(),
+                //       labelText: "Password (if required)",
+                //     ),
+                //     onChanged: (value) => setState(() {
+                //       source.password = value;
+                //     }),
+                //   ),
+                // ),
+                ElevatedButton(
+                  onPressed: !formIsValid()
+                      ? null
+                      : () {
+                          dbSources.upsert(source);
+                          context.goNamed(BKPageFetchSource.name,
+                              extra: source);
+                        },
+                  child: const Text("Save and crawl"),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
