@@ -41,8 +41,11 @@ class BKPageHelp extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 16),
                       child: ElevatedButton(
                         onPressed: () async {
-                          await launchUrl(Uri.parse(
-                              "https://github.com/isaaclyman/bookoscope/issues"));
+                          await launchUrl(
+                            Uri.parse(
+                              "https://github.com/isaaclyman/bookoscope/issues/new/choose",
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: context.colors.accent.withAlpha(180),
