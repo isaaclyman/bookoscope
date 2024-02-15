@@ -1,6 +1,7 @@
 import 'package:bookoscope/events/event_handler.dart';
 import 'package:bookoscope/navigation/nav_manager.dart';
 import 'package:bookoscope/navigation/providers.dart';
+import 'package:bookoscope/pages/page_help.dart';
 import 'package:bookoscope/pages/page_search.dart';
 import 'package:bookoscope/pages/page_sources.dart';
 import 'package:bookoscope/search/full_entry.dart';
@@ -63,6 +64,14 @@ class BKRouterConfig {
                     ),
                   ],
                 ),
+                GoRoute(
+                  path: '/help',
+                  name: BKPageHelp.name,
+                  builder: (context, state) => BKPageShell(
+                    routerState: state,
+                    child: const BKPageHelp(),
+                  ),
+                ),
               ],
             )
           ],
@@ -119,15 +128,22 @@ class _NavbarState extends State<_Navbar> {
         icon: Icon(Icons.shelves),
         label: "Browse",
       ),
-      BKPageBrowse.name
+      BKPageBrowse.name,
     ),
     (
       const NavigationDestination(
         icon: Icon(Icons.device_hub),
         label: "Sources",
       ),
-      BKPageSources.name
+      BKPageSources.name,
     ),
+    (
+      const NavigationDestination(
+        icon: Icon(Icons.bug_report),
+        label: "Help",
+      ),
+      BKPageHelp.name,
+    )
   ];
 
   @override
