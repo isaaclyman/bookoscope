@@ -4,7 +4,6 @@ import 'package:bookoscope/format/opds/opds_crawler.dart';
 import 'package:bookoscope/render/link.dart';
 import 'package:bookoscope/search/search_manager.dart';
 import 'package:bookoscope/util/menu.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -40,10 +39,10 @@ class _BKBookTileState extends State<BKBookTile> {
           children: [
             Expanded(
               child: imageUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl,
+                  ? Image.network(
+                      imageUrl,
                       fit: BoxFit.contain,
-                      errorWidget: (_, __, err) {
+                      errorBuilder: (_, err, ___) {
                         debugPrint(err.toString());
                         return _DefaultBookCover(
                           title: widget.result.title,
