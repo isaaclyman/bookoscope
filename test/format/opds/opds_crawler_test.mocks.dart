@@ -1463,3 +1463,218 @@ class MockHttpClientResponse extends _i1.Mock
         returnValue: _i4.Stream<List<int>>.empty(),
       ) as _i4.Stream<List<int>>);
 }
+
+/// A class which mocks [HttpHeaders].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockHttpHeaders extends _i1.Mock implements _i2.HttpHeaders {
+  MockHttpHeaders() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  set date(DateTime? _date) => super.noSuchMethod(
+        Invocation.setter(
+          #date,
+          _date,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  set expires(DateTime? _expires) => super.noSuchMethod(
+        Invocation.setter(
+          #expires,
+          _expires,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  set ifModifiedSince(DateTime? _ifModifiedSince) => super.noSuchMethod(
+        Invocation.setter(
+          #ifModifiedSince,
+          _ifModifiedSince,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  set host(String? _host) => super.noSuchMethod(
+        Invocation.setter(
+          #host,
+          _host,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  set port(int? _port) => super.noSuchMethod(
+        Invocation.setter(
+          #port,
+          _port,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  set contentType(_i2.ContentType? _contentType) => super.noSuchMethod(
+        Invocation.setter(
+          #contentType,
+          _contentType,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  int get contentLength => (super.noSuchMethod(
+        Invocation.getter(#contentLength),
+        returnValue: 0,
+      ) as int);
+
+  @override
+  set contentLength(int? _contentLength) => super.noSuchMethod(
+        Invocation.setter(
+          #contentLength,
+          _contentLength,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  bool get persistentConnection => (super.noSuchMethod(
+        Invocation.getter(#persistentConnection),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  set persistentConnection(bool? _persistentConnection) => super.noSuchMethod(
+        Invocation.setter(
+          #persistentConnection,
+          _persistentConnection,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  bool get chunkedTransferEncoding => (super.noSuchMethod(
+        Invocation.getter(#chunkedTransferEncoding),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  set chunkedTransferEncoding(bool? _chunkedTransferEncoding) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #chunkedTransferEncoding,
+          _chunkedTransferEncoding,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  List<String>? operator [](String? name) =>
+      (super.noSuchMethod(Invocation.method(
+        #[],
+        [name],
+      )) as List<String>?);
+
+  @override
+  String? value(String? name) => (super.noSuchMethod(Invocation.method(
+        #value,
+        [name],
+      )) as String?);
+
+  @override
+  void add(
+    String? name,
+    Object? value, {
+    bool? preserveHeaderCase = false,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #add,
+          [
+            name,
+            value,
+          ],
+          {#preserveHeaderCase: preserveHeaderCase},
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void set(
+    String? name,
+    Object? value, {
+    bool? preserveHeaderCase = false,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #set,
+          [
+            name,
+            value,
+          ],
+          {#preserveHeaderCase: preserveHeaderCase},
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void remove(
+    String? name,
+    Object? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #remove,
+          [
+            name,
+            value,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void removeAll(String? name) => super.noSuchMethod(
+        Invocation.method(
+          #removeAll,
+          [name],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void forEach(
+          void Function(
+            String,
+            List<String>,
+          )? action) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #forEach,
+          [action],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void noFolding(String? name) => super.noSuchMethod(
+        Invocation.method(
+          #noFolding,
+          [name],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void clear() => super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}

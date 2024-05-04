@@ -8,6 +8,13 @@ import 'package:xml/xml_events.dart';
 /// Uses [client] to extract [OPDSFeed]s from [Uri]s.
 class OPDSExtractor {
   HttpClient client = HttpClient();
+  String? username;
+  String? password;
+
+  void useBasicAuth(String? username, String? password) {
+    this.username = username;
+    this.password = password;
+  }
 
   /// Extracts an [OPDSFeed] from a [Uri]. Uses a [Stream] internally
   /// to conserve memory.
@@ -61,6 +68,13 @@ class OPDSExtractor {
 
   Future<Stream<List<XmlEvent>>> _fetchXmlEvents(Uri uri) async {
     final request = await client.getUrl(uri);
+
+    if (username != null && password != null) {
+      final basicAuth =
+          "Basic ${base64.encode(utf8.encode('$username:$password'))}";
+      request.headers.set("authorization", basicAuth);
+    }
+
     final response = await request.close();
     if (response.statusCode != HttpStatus.ok) {
       throw Exception('Request to [$uri] returned [${response.statusCode}].');

@@ -57,7 +57,6 @@ If you'd like me to spend more time on this app (meaning more free features for 
 # Roadmap
 
 - If the OPDS 2.0 draft becomes stable at some point, supporting that will become a priority. For now, only OPDS 1.x is supported.
-- Authenticated OPDS endpoints are not yet supported.
 - Help needed to test with a variety of different OPDS servers.
 
 # Contributing

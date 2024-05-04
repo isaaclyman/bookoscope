@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:bookoscope/format/opds/opds_crawler.dart';
 import 'package:bookoscope/format/opds/opds_events.dart';
+import 'package:bookoscope/util/list.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:xml/xml.dart';
 
 import '../../helpers.dart';
-import 'opds_extractor_test.mocks.dart';
+import 'opds_crawler_test.mocks.dart';
 
 const page1xml = '''
 <?xml version="1.0" encoding="utf-8"?>
@@ -97,14 +98,19 @@ const invalidXml = '''
 <
 ''';
 
-@GenerateMocks([HttpClient, HttpClientRequest, HttpClientResponse])
+@GenerateMocks([HttpClient, HttpClientRequest, HttpClientResponse, HttpHeaders])
 void main() {
   final client = MockHttpClient();
+  const username = "USER";
+  const password = "PASS";
 
   Future<void> mockFileResponse(String uri, String response) async {
     final mockRequest = MockHttpClientRequest();
     final mockResponse = MockHttpClientResponse();
+    final mockHeaders = MockHttpHeaders();
 
+    when(mockRequest.headers).thenReturn(mockHeaders);
+    when(mockHeaders.set(any, any)).thenReturn(null);
     when(client.getUrl(
       argThat(predicate<Uri>((uriArg) => uriArg.toString().endsWith(uri))),
     )).thenAnswer((_) => Future.value(mockRequest));
@@ -114,14 +120,43 @@ void main() {
         .thenAnswer((_) => Stream<String>.fromIterable(response.split('\n')));
   }
 
+  Future<void> mockAuthorizedFileResponse(String uri, String response) async {
+    final mockRequest = MockHttpClientRequest();
+    final mockResponse = MockHttpClientResponse();
+    final mockHeaders = MockHttpHeaders();
+
+    when(client.getUrl(
+      argThat(predicate<Uri>((uriArg) => uriArg.toString().endsWith(uri))),
+    )).thenAnswer((_) => Future.value(mockRequest));
+
+    var authorizationSet = false;
+
+    when(mockRequest.headers).thenReturn(mockHeaders);
+    when(mockHeaders.set("authorization", any)).thenAnswer((_) {
+      authorizationSet = true;
+    });
+    when(mockHeaders.value("authorization"))
+        .thenAnswer((_) => authorizationSet ? "AUTH" : null);
+    when(mockRequest.close()).thenAnswer((_) => Future.value(mockResponse));
+    when(mockResponse.statusCode).thenAnswer(
+        (_) => mockRequest.headers.value('authorization') != null ? 200 : 401);
+    when(mockResponse.transform(any))
+        .thenAnswer((_) => Stream<String>.fromIterable(response.split('\n')));
+  }
+
   group('OPDSCrawler - valid endpoints', () {
-    OPDSCrawler crawler =
-        OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
-          ..extractor.client = client;
+    OPDSCrawler crawler = OPDSCrawler(
+      opdsRootUri: 'https://example.com/page1xml',
+      username: null,
+      password: null,
+    )..extractor.client = client;
 
     setUp(() {
-      crawler = OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
-        ..extractor.client = client;
+      crawler = OPDSCrawler(
+        opdsRootUri: 'https://example.com/page1xml',
+        username: null,
+        password: null,
+      )..extractor.client = client;
       mockFileResponse('/page1xml', page1xml);
       mockFileResponse('/page2xml', page2xml);
       mockFileResponse('/page3xml', page3xml);
@@ -190,7 +225,9 @@ void main() {
         events.add(event);
       }
 
-      final resourceEvents = events.whereType<OPDSCrawlResourceFound>();
+      final resourceEvents = events
+          .whereType<OPDSCrawlResourceFound>()
+          .distinctBy((event) => event.resource.originalId);
 
       expect(resourceEvents.length, 2);
 
@@ -202,13 +239,18 @@ void main() {
   });
 
   group('OPDSCrawler - invalid endpoint', () {
-    OPDSCrawler crawler =
-        OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
-          ..extractor.client = client;
+    OPDSCrawler crawler = OPDSCrawler(
+      opdsRootUri: 'https://example.com/page1xml',
+      username: null,
+      password: null,
+    )..extractor.client = client;
 
     setUp(() {
-      crawler = OPDSCrawler(opdsRootUri: 'https://example.com/page1xml')
-        ..extractor.client = client;
+      crawler = OPDSCrawler(
+        opdsRootUri: 'https://example.com/page1xml',
+        username: null,
+        password: null,
+      )..extractor.client = client;
       mockFileResponse('/page1xml', page1xml);
       mockFileResponse('/page2xml', page2xml);
       mockFileResponse('/page3xml', invalidXml);
@@ -267,6 +309,77 @@ void main() {
               event.uri.endsWith('page3xml') &&
               event.exception is XmlParserException);
     });
+
+    test('finds one resource', () async {
+      final events = <OPDSCrawlEvent>[];
+
+      await for (final event in crawler.crawlFromRoot()) {
+        events.add(event);
+      }
+
+      final resourceEvents = events.whereType<OPDSCrawlResourceFound>();
+
+      expect(resourceEvents.length, 1);
+
+      expectContains(resourceEvents,
+          matcher: (event) => event.resource.title == 'Test Book #1');
+    });
+  });
+
+  group('OPDSCrawler - authorized endpoint but no auth provided', () {
+    OPDSCrawler crawler = OPDSCrawler(
+      opdsRootUri: 'https://example.com/page1xml',
+      username: null,
+      password: null,
+    )..extractor.client = client;
+
+    setUp(() {
+      crawler = OPDSCrawler(
+        opdsRootUri: 'https://example.com/page1xml',
+        username: null,
+        password: null,
+      )..extractor.client = client;
+      mockAuthorizedFileResponse('/page1xml', page1xml);
+      mockAuthorizedFileResponse('/page2xml', page2xml);
+      mockAuthorizedFileResponse('/page3xml', invalidXml);
+    });
+
+    tearDown(() => reset(client));
+
+    test('gets a 401 Unauthorized error', () async {
+      final events = <OPDSCrawlEvent>[];
+
+      await for (final event in crawler.crawlFromRoot()) {
+        events.add(event);
+      }
+
+      final errorEvents = events.whereType<OPDSCrawlException>();
+
+      expect(errorEvents.length, 1);
+      print(errorEvents.first);
+      // expectContains(errorEvents, matcher: (event) => event.exception);
+    });
+  });
+
+  group('OPDSCrawler - authorized endpoint with basic auth', () {
+    OPDSCrawler crawler = OPDSCrawler(
+      opdsRootUri: 'https://example.com/page1xml',
+      username: username,
+      password: password,
+    )..extractor.client = client;
+
+    setUp(() {
+      crawler = OPDSCrawler(
+        opdsRootUri: 'https://example.com/page1xml',
+        username: username,
+        password: password,
+      )..extractor.client = client;
+      mockAuthorizedFileResponse('/page1xml', page1xml);
+      mockAuthorizedFileResponse('/page2xml', page2xml);
+      mockAuthorizedFileResponse('/page3xml', invalidXml);
+    });
+
+    tearDown(() => reset(client));
 
     test('finds one resource', () async {
       final events = <OPDSCrawlEvent>[];

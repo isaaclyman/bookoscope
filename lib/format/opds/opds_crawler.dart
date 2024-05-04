@@ -8,12 +8,18 @@ import 'package:collection/collection.dart';
 /// Class for crawling an OPDS catalog starting from [opdsRootUri].
 class OPDSCrawler {
   final String opdsRootUri;
+  final String? username;
+  final String? password;
   final Set<String> visitedEndpoints = {};
   final extractor = OPDSExtractor();
 
   OPDSCrawler({
     required this.opdsRootUri,
-  });
+    required this.username,
+    required this.password,
+  }) {
+    extractor.useBasicAuth(username, password);
+  }
 
   /// Recursively crawls the XML response from [opdsRootUri], then
   /// any endpoints indicated by a <link> element, then <link> elements

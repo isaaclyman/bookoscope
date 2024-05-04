@@ -31,6 +31,7 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
   String? _urlFieldError;
   String? _nameFieldError;
   bool confirmedOwnership = false;
+  bool useBasicAuth = false;
 
   bool? endpointTestStatus;
   String? endpointTestError;
@@ -103,6 +104,48 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                     },
                   ),
                 ),
+                CheckboxListTile(
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (value) {
+                    setState(() {
+                      useBasicAuth = value ?? false;
+                      if (!useBasicAuth) {
+                        source.username = null;
+                        source.password = null;
+                      }
+                    });
+                  },
+                  title: const Text("Use Basic Authentication"),
+                  value: useBasicAuth,
+                ),
+                if (useBasicAuth) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: TextFormField(
+                      initialValue: source.username,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "Username",
+                      ),
+                      onChanged: (value) => setState(() {
+                        source.username = value;
+                      }),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: TextFormField(
+                      initialValue: source.password,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "Password",
+                      ),
+                      onChanged: (value) => setState(() {
+                        source.password = value;
+                      }),
+                    ),
+                  ),
+                ],
                 if (urlIsValid(source.url)) ...[
                   const Padding(
                     padding: EdgeInsets.symmetric(
@@ -129,7 +172,11 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                               endpointTestStatus = null;
                               endpointTestError = null;
 
-                              final extractor = OPDSExtractor();
+                              final extractor = OPDSExtractor()
+                                ..useBasicAuth(
+                                  source.username,
+                                  source.password,
+                                );
 
                               try {
                                 await extractor.getFeed(Uri.parse(source.url));
@@ -172,42 +219,15 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                     },
                   ),
                 ),
-                //
-                // AUTHENTICATION IS NOT YET IMPLEMENTED
-                //
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(vertical: 8),
-                //   child: TextFormField(
-                //     initialValue: source.username,
-                //     decoration: const InputDecoration(
-                //       border: OutlineInputBorder(),
-                //       labelText: "Username (if required)",
-                //     ),
-                //     onChanged: (value) => setState(() {
-                //       source.username = value;
-                //     }),
-                //   ),
-                // ),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(vertical: 8),
-                //   child: TextFormField(
-                //     initialValue: source.password,
-                //     decoration: const InputDecoration(
-                //       border: OutlineInputBorder(),
-                //       labelText: "Password (if required)",
-                //     ),
-                //     onChanged: (value) => setState(() {
-                //       source.password = value;
-                //     }),
-                //   ),
-                // ),
                 ElevatedButton(
                   onPressed: !formIsValid()
                       ? null
                       : () {
                           dbSources.upsert(source);
-                          context.goNamed(BKPageFetchSource.name,
-                              extra: source);
+                          context.goNamed(
+                            BKPageFetchSource.name,
+                            extra: source,
+                          );
                         },
                   child: const Text("Save and crawl"),
                 ),
