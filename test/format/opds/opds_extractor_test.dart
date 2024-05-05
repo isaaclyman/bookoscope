@@ -97,5 +97,74 @@ void main() {
                 link.href == '/api/opds/my-api-key/collections'),
       );
     });
+
+    test('correctly parses calibre root', () async {
+      final file = File('examples/calibre_root.xml');
+      await mockFileResponse(file);
+
+      final feed = await extractor
+          .getFeed(Uri.parse('https://example.com/calibre_root'));
+
+      expect(feed.id, 'urn:calibre:main');
+      expect(feed.title, 'calibre Library');
+      expect(feed.updated, '2024-05-05T11:41:52+00:00');
+
+      expect(feed.links?.length, 2);
+      expectContains(feed.links,
+          matcher: (link) =>
+              link.rel == 'start' &&
+              link.href == '/opds?library_id=Calibre_Library');
+
+      expect(feed.entries?.length, 5);
+      expectContains(
+        feed.entries,
+        matcher: (element) =>
+            element.title == 'By Title' &&
+            element.links!.any((link) =>
+                link.type ==
+                    'application/atom+xml;type=feed;profile=opds-catalog' &&
+                link.href ==
+                    '/opds/navcatalog/4f7469746c65?library_id=Calibre_Library'),
+      );
+      expectContains(
+        feed.entries,
+        matcher: (element) =>
+            element.title == 'Library: Calibre Library' &&
+            element.links!.any((link) =>
+                link.type ==
+                    'application/atom+xml;type=feed;profile=opds-catalog' &&
+                link.href == '/opds?library_id=Calibre_Library'),
+      );
+    });
+
+    test('correctly parses calibre By Title subpage', () async {
+      final file = File('examples/calibre_bytitle.xml');
+      await mockFileResponse(file);
+
+      final feed = await extractor
+          .getFeed(Uri.parse('https://example.com/calibre_bytitle'));
+
+      expect(feed.id, 'calibre-all:title');
+      expect(feed.title, 'calibre Library :: By Title');
+      expect(feed.updated, '2024-05-05T11:41:52+00:00');
+
+      expect(feed.links?.length, 5);
+      expectContains(feed.links,
+          matcher: (link) =>
+              link.rel == 'first' &&
+              link.href ==
+                  '/opds/navcatalog/4f7469746c65?library_id=Calibre_Library');
+
+      expect(feed.entries?.length, 1);
+      expectContains(
+        feed.entries,
+        matcher: (element) =>
+            element.title == 'Quick Start Guide' &&
+            element.authors!.contains("John Schember") &&
+            element.links!.any((link) =>
+                link.rel == 'http://opds-spec.org/acquisition' &&
+                link.href == '/get/epub/1/Calibre_Library'),
+      );
+    });
   });
 }

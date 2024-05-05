@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
+  <title>calibre Library</title>
+  <subtitle>Books in your library</subtitle>
+  <author>
+    <name>calibre</name>
+    <uri>https://calibre-ebook.com</uri>
+  </author>
+  <id>urn:calibre:main</id>
+  <icon>/favicon.png</icon>
+  <updated>2024-05-05T11:41:52+00:00</updated>
+  <link type="application/atom+xml" rel="search" title="Search" href="/opds/search/{searchTerms}?library_id=Calibre_Library"/>
+  <link type="application/atom+xml;type=feed;profile=opds-catalog" rel="start" href="/opds?library_id=Calibre_Library"/>
+  <entry>
+    <title>By Newest</title>
+    <id>calibre-navcatalog:1599abe0ad72203aab3103107a0d78c16c41d412</id>
+    <updated>2024-05-05T11:41:52+00:00</updated>
+    <content type="text">Books sorted by Date</content>
+    <link type="application/atom+xml;type=feed;profile=opds-catalog" href="/opds/navcatalog/4f6e6577657374?library_id=Calibre_Library"/>
+  </entry>
+  <entry>
+    <title>By Title</title>
+    <id>calibre-navcatalog:fc140badc241705c08c4adffaeb680c3103b90fb</id>
+    <updated>2024-05-05T11:41:52+00:00</updated>
+    <content type="text">Books sorted by Title</content>
+    <link type="application/atom+xml;type=feed;profile=opds-catalog" href="/opds/navcatalog/4f7469746c65?library_id=Calibre_Library"/>
+  </entry>
+  <entry>
+    <title>By Authors</title>
+    <id>calibre-navcatalog:e0bc21ffc62881d91f58e6ae2a87ecb17de74b4a</id>
+    <updated>2024-05-05T11:41:52+00:00</updated>
+    <content type="text">Books sorted by Authors</content>
+    <link type="application/atom+xml;type=feed;profile=opds-catalog" href="/opds/navcatalog/4e617574686f7273?library_id=Calibre_Library"/>
+  </entry>
+  <entry>
+    <title>By Languages</title>
+    <id>calibre-navcatalog:d46d3c299b96b4b84e339878ad75adfc86b9245d</id>
+    <updated>2024-05-05T11:41:52+00:00</updated>
+    <content type="text">Books sorted by Languages</content>
+    <link type="application/atom+xml;type=feed;profile=opds-catalog" href="/opds/navcatalog/4e6c616e677561676573?library_id=Calibre_Library"/>
+  </entry>
+  <entry>
+    <title>Library: Calibre Library</title>
+    <id>calibre-library:Calibre_Library</id>
+    <updated>2024-05-05T11:41:52+00:00</updated>
+    <content type="text">Change calibre library to: Calibre Library</content>
+    <link type="application/atom+xml;type=feed;profile=opds-catalog" href="/opds?library_id=Calibre_Library"/>
+  </entry>
+</feed>
