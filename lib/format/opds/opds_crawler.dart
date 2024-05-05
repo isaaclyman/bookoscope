@@ -60,9 +60,13 @@ class OPDSCrawler {
     }
 
     final links = feed.links ?? [];
+    String? apparentSelf =
+        uri.pathSegments.isNotEmpty ? '/${uri.pathSegments.first}' : null;
+
     final selfLink = links
-        .firstWhereOrNull((link) => OPDSLinkClassifier.isSelf(link.rel))
-        ?.href;
+            .firstWhereOrNull((link) => OPDSLinkClassifier.isSelf(link.rel))
+            ?.href ??
+        apparentSelf;
 
     var bestGuessRoot =
         selfLink != null && selfLink.trim().isNotEmpty ? selfLink : null;
@@ -78,13 +82,17 @@ class OPDSCrawler {
             bestGuessRoot.substring(bestGuessRoot.lastIndexOf('//') + 1);
       }
 
-      if (uriString.contains(bestGuessRoot)) {
-        nextRootUri = uriString.substring(0, uriString.indexOf(bestGuessRoot));
+      if (uri.path.contains(bestGuessRoot)) {
+        nextRootUri = uri.replace(
+          path: uri.path.isNotEmpty ? '' : null,
+          queryParameters: {},
+        ).toString();
+        nextRootUri = nextRootUri.replaceAll("?", "");
       }
     }
 
     for (final link in links.where(
-      (link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type),
+      (link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type, link.href),
     )) {
       final nextUri = joinUriString(nextRootUri, link.href);
       await for (final event in _extractRecursive(nextUri)) {
@@ -96,7 +104,8 @@ class OPDSCrawler {
     for (final entry in entries.whereNot(OPDSEntryClassifier.isLeafResource)) {
       final entryLinks = entry.links ?? [];
       for (final link in entryLinks.where(
-        (link) => OPDSLinkClassifier.isCrawlable(link.rel, link.type),
+        (link) =>
+            OPDSLinkClassifier.isCrawlable(link.rel, link.type, link.href),
       )) {
         final nextUri = joinUriString(nextRootUri, link.href);
         await for (final event in _extractRecursive(nextUri)) {
@@ -187,8 +196,11 @@ class OPDSLinkClassifier {
     return rel.contains(_relAcquisitionRoot);
   }
 
-  static bool isCrawlable(String rel, String? type) {
-    return !isSelf(rel) && !isImage(rel, type) && !isAcquisition(rel);
+  static bool isCrawlable(String rel, String? type, String href) {
+    return !isSelf(rel) &&
+        !isImage(rel, type) &&
+        !isAcquisition(rel) &&
+        !href.contains("{searchTerms}");
   }
 
   static String getDisplayType(String type) {

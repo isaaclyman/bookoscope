@@ -28,6 +28,21 @@ const page1xml = '''
   </entry>
 </feed>
 ''';
+const page1pathXml = '''
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/Atom">
+  <updated>2023-12-12T22:58:37</updated>
+  <id>page1xml</id>
+  <link rel="search" type="application/opensearchdescription+xml" href="/opds/page2xml" />
+  <entry>
+    <updated>2023-12-12T22:58:37</updated>
+    <id>page3xml</id>
+    <link rel="subsection" type="application/atom+xml;profile=opds-catalog;kind=navigation"
+      href="/opds/page3xml" />
+  </entry>
+</feed>
+''';
 
 const page2xml = '''
 <?xml version="1.0" encoding="utf-8"?>
@@ -40,6 +55,30 @@ const page2xml = '''
     <updated>2023-12-12T23:11:39</updated>
     <id>1</id>
     <link rel="subsection" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/page3xml" />
+  </entry>
+  <entry>
+    <updated>2023-12-12T23:16:03</updated>
+    <id>52</id>
+    <title>Test Book #1</title>
+    <content type="text">application/epub+zip</content>
+    <link rel="http://opds-spec.org/image" type="image/jpeg"
+      href="/api/image/chapter-cover?chapterId=52&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/epub+zip"
+      href="/api/opds/my-api-key/series/52/volume/52/chapter/52/download/TEST_EPUB.epub"
+      title="TEST_EPUB.epub" p5:count="48" xmlns:p5="http://vaemendis.net/opds-pse/ns" />
+  </entry>
+</feed>
+''';
+const page2pathXml = '''
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/Atom">
+  <updated>2023-12-12T23:11:39</updated>
+  <id>page2xml</id>
+  <link rel="start" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/opds/page1xml" />
+  <entry>
+    <updated>2023-12-12T23:11:39</updated>
+    <id>1</id>
+    <link rel="subsection" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/opds/page3xml" />
   </entry>
   <entry>
     <updated>2023-12-12T23:16:03</updated>
@@ -91,6 +130,41 @@ const page3xml = '''
   </entry>
 </feed>
 ''';
+const page3pathXml = '''
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/Atom">
+  <updated>2023-12-12T23:11:39</updated>
+  <id>page3xml</id>
+  <link rel="start" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/opds/page1xml" />
+  <entry>
+    <updated>2023-12-12T23:11:39</updated>
+    <id>1</id>
+    <link rel="subsection" type="application/atom+xml;profile=opds-catalog;kind=navigation" href="/opds/page2xml" />
+  </entry>
+  <entry>
+    <updated>2023-12-12T23:16:03</updated>
+    <id>52</id>
+    <title>Test Book #1</title>
+    <content type="text">application/epub+zip</content>
+    <link rel="http://opds-spec.org/image" type="image/jpeg"
+      href="/api/image/chapter-cover?chapterId=52&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/epub+zip"
+      href="/api/opds/my-api-key/series/52/volume/52/chapter/52/download/TEST_EPUB.epub"
+      title="TEST_EPUB.epub" />
+  </entry>
+  <entry>
+    <updated>2023-12-12T23:16:03</updated>
+    <id>04</id>
+    <title>Test Book #2</title>
+    <content type="text">application/epub+zip</content>
+    <link rel="http://opds-spec.org/image" type="image/jpeg"
+      href="/api/image/chapter-cover?chapterId=04&amp;apiKey=my-api-key" />
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/epub+zip"
+      href="/api/opds/my-api-key/series/04/volume/04/chapter/04/download/TEST_EPUB.epub"
+      title="TEST_EPUB_2.epub" />
+  </entry>
+</feed>
+''';
 
 const invalidXml = '''
 <blah blah
@@ -104,7 +178,11 @@ void main() {
   const username = "USER";
   const password = "PASS";
 
-  Future<void> mockFileResponse(String uri, String response) async {
+  Future<void> mockFileResponse(
+    String uri,
+    String response, {
+    bool exact = false,
+  }) async {
     final mockRequest = MockHttpClientRequest();
     final mockResponse = MockHttpClientResponse();
     final mockHeaders = MockHttpHeaders();
@@ -112,7 +190,8 @@ void main() {
     when(mockRequest.headers).thenReturn(mockHeaders);
     when(mockHeaders.set(any, any)).thenReturn(null);
     when(client.getUrl(
-      argThat(predicate<Uri>((uriArg) => uriArg.toString().endsWith(uri))),
+      argThat(predicate<Uri>((uriArg) =>
+          exact ? uriArg.toString() == uri : uriArg.toString().endsWith(uri))),
     )).thenAnswer((_) => Future.value(mockRequest));
     when(mockRequest.close()).thenAnswer((_) => Future.value(mockResponse));
     when(mockResponse.statusCode).thenReturn(200);
@@ -217,6 +296,60 @@ void main() {
       expectContains(successEvents,
           matcher: (event) => event.uri.endsWith('page3xml'));
     });
+
+    test('finds exactly two resources', () async {
+      final events = <OPDSCrawlEvent>[];
+
+      await for (final event in crawler.crawlFromRoot()) {
+        events.add(event);
+      }
+
+      final resourceEvents = events
+          .whereType<OPDSCrawlResourceFound>()
+          .distinctBy((event) => event.resource.originalId);
+
+      expect(resourceEvents.length, 2);
+
+      expectContains(resourceEvents,
+          matcher: (event) => event.resource.title == 'Test Book #1');
+      expectContains(resourceEvents,
+          matcher: (event) => event.resource.title == 'Test Book #2');
+    });
+  });
+
+  group('OPDSCrawler - valid endpoints with path', () {
+    OPDSCrawler crawler = OPDSCrawler(
+      opdsRootUri: 'https://example.com/opds',
+      username: null,
+      password: null,
+    )..extractor.client = client;
+
+    setUp(() {
+      crawler = OPDSCrawler(
+        opdsRootUri: 'https://example.com/opds',
+        username: null,
+        password: null,
+      )..extractor.client = client;
+
+      mockFileResponse('https://example.com/opds/opds', invalidXml,
+          exact: true);
+      mockFileResponse('https://example.com/opds/opds/page1xml', invalidXml,
+          exact: true);
+      mockFileResponse('https://example.com/opds/opds/page2xml', invalidXml,
+          exact: true);
+      mockFileResponse('https://example.com/opds/opds/page3xml', invalidXml,
+          exact: true);
+
+      mockFileResponse('https://example.com/opds', page1pathXml, exact: true);
+      mockFileResponse('https://example.com/opds/page1xml', page1pathXml,
+          exact: true);
+      mockFileResponse('https://example.com/opds/page2xml', page2pathXml,
+          exact: true);
+      mockFileResponse('https://example.com/opds/page3xml', page3pathXml,
+          exact: true);
+    });
+
+    tearDown(() => reset(client));
 
     test('finds exactly two resources', () async {
       final events = <OPDSCrawlEvent>[];
@@ -356,8 +489,10 @@ void main() {
       final errorEvents = events.whereType<OPDSCrawlException>();
 
       expect(errorEvents.length, 1);
-      print(errorEvents.first);
-      // expectContains(errorEvents, matcher: (event) => event.exception);
+      expectContains(
+        errorEvents,
+        matcher: (event) => event.exception.toString().contains("401"),
+      );
     });
   });
 
