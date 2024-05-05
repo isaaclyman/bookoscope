@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bookoscope/db/db.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +37,14 @@ class Source {
     required this.isEditable,
     required this.isEnabled,
   });
+
+  String? getBasicAuthHeader() {
+    if ((username?.isNotEmpty ?? false) && (password?.isNotEmpty ?? false)) {
+      return "Basic ${base64.encode(utf8.encode('$username:$password'))}";
+    }
+
+    return null;
+  }
 }
 
 class DBSources extends ChangeNotifier {

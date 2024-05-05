@@ -1,3 +1,4 @@
+import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/format/opds/opds_events.dart';
 import 'package:bookoscope/format/opds/opds_extractor.dart';
 import 'package:bookoscope/format/opds/opds_resource.dart';
@@ -8,17 +9,14 @@ import 'package:collection/collection.dart';
 /// Class for crawling an OPDS catalog starting from [opdsRootUri].
 class OPDSCrawler {
   final String opdsRootUri;
-  final String? username;
-  final String? password;
   final Set<String> visitedEndpoints = {};
   final extractor = OPDSExtractor();
 
   OPDSCrawler({
     required this.opdsRootUri,
-    required this.username,
-    required this.password,
+    required Source source,
   }) {
-    extractor.useBasicAuth(username, password);
+    extractor.useAuth(source);
   }
 
   /// Recursively crawls the XML response from [opdsRootUri], then

@@ -31,7 +31,7 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
   String? _urlFieldError;
   String? _nameFieldError;
   bool confirmedOwnership = false;
-  bool useBasicAuth = false;
+  bool useCredentials = false;
 
   bool? endpointTestStatus;
   String? endpointTestError;
@@ -48,7 +48,7 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
     }
 
     confirmedOwnership = !isNew;
-    useBasicAuth = (source.username?.isNotEmpty ?? false) &&
+    useCredentials = (source.username?.isNotEmpty ?? false) &&
         (source.password?.isNotEmpty ?? false);
   }
 
@@ -110,17 +110,17 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                   controlAffinity: ListTileControlAffinity.leading,
                   onChanged: (value) {
                     setState(() {
-                      useBasicAuth = value ?? false;
-                      if (!useBasicAuth) {
+                      useCredentials = value ?? false;
+                      if (!useCredentials) {
                         source.username = null;
                         source.password = null;
                       }
                     });
                   },
-                  title: const Text("Use Basic Authentication"),
-                  value: useBasicAuth,
+                  title: const Text("Use credentials"),
+                  value: useCredentials,
                 ),
-                if (useBasicAuth) ...[
+                if (useCredentials) ...[
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: TextFormField(
@@ -175,10 +175,7 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                               endpointTestError = null;
 
                               final extractor = OPDSExtractor()
-                                ..useBasicAuth(
-                                  source.username,
-                                  source.password,
-                                );
+                                ..useAuth(source);
 
                               try {
                                 await extractor.getFeed(Uri.parse(source.url));
@@ -201,8 +198,8 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
                           ? const Text("Valid feed detected.")
                           : Text("Invalid endpoint.\n\n$endpointTestError"),
                     ),
-                  const Divider(),
                 ],
+                const Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: TextFormField(

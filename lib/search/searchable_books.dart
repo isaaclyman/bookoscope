@@ -93,6 +93,7 @@ class BKSearchableBook extends BKSearchable {
           child: CRenderLabeledResultLinkAccordion(
             label: "Download",
             links: downloadUrls,
+            source: source,
           ),
         ),
     ];
@@ -199,6 +200,7 @@ class _GutenbergLinksState extends State<_GutenbergLinks> {
                     ),
                   )
                   .toList(),
+              source: null,
             ),
     );
   }

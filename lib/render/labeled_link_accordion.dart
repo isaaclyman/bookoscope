@@ -1,3 +1,4 @@
+import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/events/event_handler.dart';
 import 'package:bookoscope/render/accordion.dart';
 import 'package:bookoscope/render/link.dart';
@@ -10,12 +11,14 @@ class CRenderLabeledResultLinkAccordion extends StatelessWidget {
   final String label;
   final String? innerLabel;
   final List<CLink> links;
+  final Source? source;
 
   const CRenderLabeledResultLinkAccordion({
     super.key,
     required this.label,
     this.innerLabel,
     required this.links,
+    required this.source,
   });
 
   @override
@@ -54,7 +57,19 @@ class CRenderLabeledResultLinkAccordion extends StatelessWidget {
                         throw Exception("Link URI was null.");
                       }
 
-                      await launchUrl(Uri.parse(uri));
+                      final headers = <String, String>{};
+                      if (source != null) {
+                        headers["authorization"] =
+                            source?.getBasicAuthHeader() ?? "";
+                      }
+
+                      await launchUrl(
+                        Uri.parse(uri),
+                        mode: LaunchMode.inAppWebView,
+                        webViewConfiguration: WebViewConfiguration(
+                          headers: headers,
+                        ),
+                      );
                     } catch (e) {
                       // Swallow error because sometimes it fires for no reason
                       debugPrint(e.toString());

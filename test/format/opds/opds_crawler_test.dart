@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/format/opds/opds_crawler.dart';
 import 'package:bookoscope/format/opds/opds_events.dart';
 import 'package:bookoscope/util/list.dart';
@@ -178,6 +179,16 @@ void main() {
   const username = "USER";
   const password = "PASS";
 
+  final testSource = Source(
+    label: 'Test',
+    description: 'Test Description',
+    url: 'https://example.com',
+    username: null,
+    password: null,
+    isEditable: true,
+    isEnabled: true,
+  );
+
   Future<void> mockFileResponse(
     String uri,
     String response, {
@@ -199,10 +210,15 @@ void main() {
         .thenAnswer((_) => Stream<String>.fromIterable(response.split('\n')));
   }
 
-  Future<void> mockAuthorizedFileResponse(String uri, String response) async {
+  Future<void> mockAuthorizedFileResponse(
+    String uri,
+    String response, {
+    bool shouldAuthenticate = false,
+  }) async {
     final mockRequest = MockHttpClientRequest();
     final mockResponse = MockHttpClientResponse();
-    final mockHeaders = MockHttpHeaders();
+    final mockRequestHeaders = MockHttpHeaders();
+    final mockResponseHeaders = MockHttpHeaders();
 
     when(client.getUrl(
       argThat(predicate<Uri>((uriArg) => uriArg.toString().endsWith(uri))),
@@ -210,13 +226,17 @@ void main() {
 
     var authorizationSet = false;
 
-    when(mockRequest.headers).thenReturn(mockHeaders);
-    when(mockHeaders.set("authorization", any)).thenAnswer((_) {
+    when(mockRequest.headers).thenReturn(mockRequestHeaders);
+    when(mockRequestHeaders.set("authorization", any)).thenAnswer((_) {
       authorizationSet = true;
     });
-    when(mockHeaders.value("authorization"))
+    when(mockRequestHeaders.value("authorization"))
         .thenAnswer((_) => authorizationSet ? "AUTH" : null);
     when(mockRequest.close()).thenAnswer((_) => Future.value(mockResponse));
+
+    when(mockResponse.headers).thenReturn(mockResponseHeaders);
+    when(mockResponseHeaders['www-authenticate'])
+        .thenAnswer((_) => shouldAuthenticate ? ['Basic'] : null);
     when(mockResponse.statusCode).thenAnswer(
         (_) => mockRequest.headers.value('authorization') != null ? 200 : 401);
     when(mockResponse.transform(any))
@@ -225,16 +245,13 @@ void main() {
 
   group('OPDSCrawler - valid endpoints', () {
     OPDSCrawler crawler = OPDSCrawler(
-      opdsRootUri: 'https://example.com/page1xml',
-      username: null,
-      password: null,
-    )..extractor.client = client;
+        opdsRootUri: 'https://example.com/page1xml', source: testSource)
+      ..extractor.client = client;
 
     setUp(() {
       crawler = OPDSCrawler(
         opdsRootUri: 'https://example.com/page1xml',
-        username: null,
-        password: null,
+        source: testSource,
       )..extractor.client = client;
       mockFileResponse('/page1xml', page1xml);
       mockFileResponse('/page2xml', page2xml);
@@ -320,15 +337,13 @@ void main() {
   group('OPDSCrawler - valid endpoints with path', () {
     OPDSCrawler crawler = OPDSCrawler(
       opdsRootUri: 'https://example.com/opds',
-      username: null,
-      password: null,
+      source: testSource,
     )..extractor.client = client;
 
     setUp(() {
       crawler = OPDSCrawler(
         opdsRootUri: 'https://example.com/opds',
-        username: null,
-        password: null,
+        source: testSource,
       )..extractor.client = client;
 
       mockFileResponse('https://example.com/opds/opds', invalidXml,
@@ -374,15 +389,13 @@ void main() {
   group('OPDSCrawler - invalid endpoint', () {
     OPDSCrawler crawler = OPDSCrawler(
       opdsRootUri: 'https://example.com/page1xml',
-      username: null,
-      password: null,
+      source: testSource,
     )..extractor.client = client;
 
     setUp(() {
       crawler = OPDSCrawler(
         opdsRootUri: 'https://example.com/page1xml',
-        username: null,
-        password: null,
+        source: testSource,
       )..extractor.client = client;
       mockFileResponse('/page1xml', page1xml);
       mockFileResponse('/page2xml', page2xml);
@@ -462,15 +475,13 @@ void main() {
   group('OPDSCrawler - authorized endpoint but no auth provided', () {
     OPDSCrawler crawler = OPDSCrawler(
       opdsRootUri: 'https://example.com/page1xml',
-      username: null,
-      password: null,
+      source: testSource,
     )..extractor.client = client;
 
     setUp(() {
       crawler = OPDSCrawler(
         opdsRootUri: 'https://example.com/page1xml',
-        username: null,
-        password: null,
+        source: testSource,
       )..extractor.client = client;
       mockAuthorizedFileResponse('/page1xml', page1xml);
       mockAuthorizedFileResponse('/page2xml', page2xml);
@@ -497,21 +508,32 @@ void main() {
   });
 
   group('OPDSCrawler - authorized endpoint with basic auth', () {
-    OPDSCrawler crawler = OPDSCrawler(
-      opdsRootUri: 'https://example.com/page1xml',
+    final testSourceWithCredentials = Source(
+      label: 'Test Credentials',
+      description: 'Description',
+      url: 'http://example.com',
       username: username,
       password: password,
+      isEditable: true,
+      isEnabled: true,
+    );
+
+    OPDSCrawler crawler = OPDSCrawler(
+      opdsRootUri: 'https://example.com/page1xml',
+      source: testSourceWithCredentials,
     )..extractor.client = client;
 
     setUp(() {
       crawler = OPDSCrawler(
         opdsRootUri: 'https://example.com/page1xml',
-        username: username,
-        password: password,
+        source: testSourceWithCredentials,
       )..extractor.client = client;
-      mockAuthorizedFileResponse('/page1xml', page1xml);
-      mockAuthorizedFileResponse('/page2xml', page2xml);
-      mockAuthorizedFileResponse('/page3xml', invalidXml);
+      mockAuthorizedFileResponse('/page1xml', page1xml,
+          shouldAuthenticate: true);
+      mockAuthorizedFileResponse('/page2xml', page2xml,
+          shouldAuthenticate: true);
+      mockAuthorizedFileResponse('/page3xml', invalidXml,
+          shouldAuthenticate: true);
     });
 
     tearDown(() => reset(client));

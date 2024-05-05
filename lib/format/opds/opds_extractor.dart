@@ -1,19 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/format/opds/opds_xml.dart';
+import 'package:bookoscope/util/authenticate.dart';
+import 'package:collection/collection.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xml_events.dart';
 
 /// Uses [client] to extract [OPDSFeed]s from [Uri]s.
 class OPDSExtractor {
   HttpClient client = HttpClient();
-  String? username;
-  String? password;
+  Source? source;
+  String? authHeader;
 
-  void useBasicAuth(String? username, String? password) {
-    this.username = username;
-    this.password = password;
+  void useAuth(Source source) {
+    this.source = source;
   }
 
   /// Extracts an [OPDSFeed] from a [Uri]. Uses a [Stream] internally
@@ -66,16 +68,25 @@ class OPDSExtractor {
     );
   }
 
-  Future<Stream<List<XmlEvent>>> _fetchXmlEvents(Uri uri) async {
+  Future<Stream<List<XmlEvent>>> _fetchXmlEvents(Uri uri,
+      {int retries = 0}) async {
     final request = await client.getUrl(uri);
-
-    if (username != null && password != null) {
-      final basicAuth =
-          "Basic ${base64.encode(utf8.encode('$username:$password'))}";
-      request.headers.set("authorization", basicAuth);
+    if (authHeader?.isNotEmpty ?? false) {
+      request.headers.set('authorization', authHeader ?? "");
     }
 
     final response = await request.close();
+    if (response.statusCode == HttpStatus.unauthorized && retries < 3) {
+      final authenticateHeader = response.headers['www-authenticate'];
+      if (authenticateHeader != null && authenticateHeader.isNotEmpty) {
+        await attemptAuthentication(uri, authenticateHeader);
+        return _fetchXmlEvents(uri, retries: retries + 1);
+      }
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      throw Exception('Request to [$uri] returned [${response.statusCode}]. '
+          'Please check your credentials.');
+    }
+
     if (response.statusCode != HttpStatus.ok) {
       throw Exception('Request to [$uri] returned [${response.statusCode}].');
     }
@@ -85,5 +96,36 @@ class OPDSExtractor {
         .toXmlEvents()
         .normalizeEvents()
         .withParentEvents();
+  }
+
+  Future<void> attemptAuthentication(
+    Uri uri,
+    List<String> authenticateHeaders,
+  ) async {
+    final options =
+        authenticateHeaders.map((header) => parseAuthenticateHeader(header));
+
+    if (options.any((option) => option.scheme == 'basic')) {
+      authHeader = source?.getBasicAuthHeader();
+      return;
+    }
+
+    final digestOption =
+        options.firstWhereOrNull((option) => option.scheme == 'digest');
+    if (digestOption != null) {
+      client.addCredentials(
+        uri,
+        digestOption.realm ?? "",
+        HttpClientDigestCredentials(
+          source?.username ?? "",
+          source?.password ?? "",
+        ),
+      );
+      return;
+    }
+
+    throw Exception(
+      "None of these authorization schemes are supported: [${options.map((option) => option.scheme).join(', ')}].",
+    );
   }
 }

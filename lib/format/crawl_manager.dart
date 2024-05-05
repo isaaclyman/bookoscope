@@ -26,8 +26,7 @@ class BKCrawlManager {
   Stream<OPDSCrawlEvent> crawlOpdsUri(Source source) async* {
     final crawler = OPDSCrawler(
       opdsRootUri: source.url,
-      username: source.username?.isNotEmpty ?? false ? source.username : null,
-      password: source.password?.isNotEmpty ?? false ? source.password : null,
+      source: source,
     );
     await dbSources.upsert(source);
 
