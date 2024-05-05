@@ -36,9 +36,7 @@ You can use Bookoscope to enhance an e-reading experience that includes any or a
 
 # Get the app
 
-<!-- Visit [isaaclyman.com/bookoscope](https://isaaclyman.com/bookoscope/) for links to download on the App Store and Google Play. -->
-
-Not yet published.
+Visit [isaaclyman.com/bookoscope](https://isaaclyman.com/bookoscope/) for links to download on the App Store and Google Play.
 
 # Support
 
