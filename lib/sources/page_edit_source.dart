@@ -48,7 +48,8 @@ class _BKPageEditSourceState extends State<BKPageEditSource> {
     }
 
     confirmedOwnership = !isNew;
-    useBasicAuth = (source.username != null) && (source.password != null);
+    useBasicAuth = (source.username?.isNotEmpty ?? false) &&
+        (source.password?.isNotEmpty ?? false);
   }
 
   bool formIsValid() {
