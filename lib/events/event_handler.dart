@@ -41,4 +41,8 @@ class BKEventHandler {
     searchManager.searchText = query;
     debouncedSearch();
   }
+
+  void shuffleResults() {
+    searchManager.shuffle();
+  }
 }

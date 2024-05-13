@@ -82,7 +82,13 @@ class _CSearchBarState extends State<CSearchBar> {
         focusedBorder: _inputBorder(2),
         labelText: "Search books",
         suffixIcon: _controller.text.isEmpty
-            ? null
+            ? IconButton(
+                icon: const Icon(Icons.shuffle),
+                onPressed: () => setState(() {
+                  handler.shuffleResults();
+                }),
+                tooltip: "Shuffle library",
+              )
             : IconButton(
                 icon: const Icon(Icons.clear),
                 onPressed: () => setState(() {

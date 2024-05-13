@@ -38,6 +38,17 @@ class BKSearchManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void shuffle() {
+    final shuffled = results.toList()..shuffle();
+
+    for (var source in shuffled) {
+      source.results.shuffle();
+    }
+
+    results = shuffled;
+    notifyListeners();
+  }
+
   BKSearchResult? getResult(String? sourceName, String id) {
     var searchableSource = sourceName != null
         ? _root.searchableSources
