@@ -83,7 +83,7 @@ const SourceSchema = CollectionSchema(
   getId: _sourceGetId,
   getLinks: _sourceGetLinks,
   attach: _sourceAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _sourceEstimateSize(

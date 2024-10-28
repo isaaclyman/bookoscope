@@ -1,7 +1,7 @@
 name: bookoscope
 description: OPDS crawl & search + free ebooks
 publish_to: "none"
-version: 1.4.0+8
+version: 1.4.1+9
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
@@ -14,26 +14,32 @@ dependencies:
   flutter:
     sdk: flutter
   go_router: ^12.1.3
-  isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1
-  json_annotation: ^4.8.1
-  mockito: ^5.4.3
-  path_provider: ^2.1.1
-  provider: ^6.1.1
-  url_launcher: ^6.2.2
+  isar: 
+    version: 3.1.8
+    hosted: https://pub.isar-community.dev/
+  isar_flutter_libs: # contains Isar Core
+    version: 3.1.8
+    hosted: https://pub.isar-community.dev/
+  json_annotation: ^4.9.0
+  mockito: ^5.4.4
+  path_provider: ^2.1.4
+  provider: ^6.1.2
+  url_launcher: ^6.3.1
   xml: ^6.5.0
 
 dev_dependencies:
   auto_screenshot:
     path: ../auto_screenshot
-  build_runner: ^2.4.7
+  build_runner: ^2.4.13
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
-  json_serializable: ^6.7.1
+  flutter_lints: ^3.0.2
+  json_serializable: ^6.8.0
   path: 1.9.0
-  flutter_launcher_icons: ^0.13.1
-  isar_generator: ^3.1.0+1
+  flutter_launcher_icons: ^0.14.1
+  isar_generator: 
+    version: 3.1.8
+    hosted: https://pub.isar-community.dev/
 
 flutter:
   assets:
