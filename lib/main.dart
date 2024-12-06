@@ -1,5 +1,6 @@
 import 'package:bookoscope/navigation/nav_config.dart';
 import 'package:bookoscope/theme/colors.dart';
+import 'package:bookoscope/util/app_review.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,12 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+    bkMaybeRequestReview();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
