@@ -17,20 +17,18 @@ Future bkMaybeRequestReview() async {
     return;
   }
 
-  var requested = prefs.getStringWithDefault(
-      requestedDateKey, DateTime.now().toIso8601String());
-
-  var requestedDate = DateTime.tryParse(requested);
-  if (requestedDate == null) {
+  var timeSinceInstallation = DateTime.now().difference(installedDate);
+  if (timeSinceInstallation.inDays < 7) {
     return;
   }
 
-  var timeSinceInstallation = DateTime.now().difference(installedDate);
-  var timeSinceLastRequest = DateTime.now().difference(requestedDate);
+  final requested = prefs.getString(requestedDateKey);
+  final requestedDate = requested == null ? null : DateTime.tryParse(requested);
+  final shouldRequest = requestedDate == null ||
+      DateTime.now().difference(requestedDate).inDays > 14;
 
-  if (timeSinceInstallation.inDays > 7 &&
-      timeSinceLastRequest.inDays > 14 &&
-      await inAppReview.isAvailable()) {
+  if (shouldRequest && await inAppReview.isAvailable()) {
+    await prefs.setString(requestedDateKey, DateTime.now().toIso8601String());
     await inAppReview.requestReview();
   }
 }
