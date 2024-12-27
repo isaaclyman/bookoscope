@@ -1,4 +1,5 @@
 import 'package:bookoscope/db/book.db.dart';
+import 'package:bookoscope/db/dated_title.db.dart';
 import 'package:bookoscope/db/endpoint.db.dart';
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/format/guten/guten_extractor.dart';
@@ -11,11 +12,13 @@ class BKCrawlManager {
   DBSources dbSources;
   DBEndpoints dbEndpoints;
   DBBooks dbBooks;
+  DBDatedTitles dbDatedTitles;
 
   BKCrawlManager({
     required this.dbSources,
     required this.dbEndpoints,
     required this.dbBooks,
+    required this.dbDatedTitles,
   });
 
   Future<void> forceCleanSource(Source source) async {
@@ -81,6 +84,8 @@ class BKCrawlManager {
           imageUrl: event.resource.imageUrl,
           isGutenberg: false,
         ));
+
+        await dbDatedTitles.upsert(event.resource.title);
       }
 
       yield event;
