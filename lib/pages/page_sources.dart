@@ -1,4 +1,5 @@
 import 'package:bookoscope/db/book.db.dart';
+import 'package:bookoscope/db/dated_title.db.dart';
 import 'package:bookoscope/db/endpoint.db.dart';
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/format/crawl_manager.dart';
@@ -116,6 +117,7 @@ class _SourceActions extends StatelessWidget {
     final dbSources = context.watch<DBSources>();
     final dbEndpoints = context.watch<DBEndpoints>();
     final dbBooks = context.watch<DBBooks>();
+    final dbDatedTitles = context.watch<DBDatedTitles>();
 
     return PopupMenuButton<_SourceAction>(
       onSelected: (action) async {
@@ -154,18 +156,18 @@ class _SourceActions extends StatelessWidget {
           case _SourceAction.disable:
             source.isEnabled = false;
             await dbSources.upsert(source);
-            searchManager.refreshSources(dbSources, dbBooks);
+            searchManager.refreshSources(dbSources, dbBooks, dbDatedTitles);
             break;
           case _SourceAction.enable:
             source.isEnabled = true;
             await dbSources.upsert(source);
-            searchManager.refreshSources(dbSources, dbBooks);
+            searchManager.refreshSources(dbSources, dbBooks, dbDatedTitles);
             break;
           case _SourceAction.delete:
             await dbBooks.deleteAllBySourceId(source.id);
             await dbEndpoints.deleteAllBySourceId(source.id);
             await dbSources.delete(source);
-            searchManager.refreshSources(dbSources, dbBooks);
+            searchManager.refreshSources(dbSources, dbBooks, dbDatedTitles);
             break;
         }
       },

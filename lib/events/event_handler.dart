@@ -27,8 +27,12 @@ class BKEventHandler {
     if (result != null) {
       searchManager.selectResult(context, result);
     } else {
-      Future.microtask(() => ScaffoldMessenger.of(context)
-          .showSnackBar(cErrorToast("Couldn't find that item (bad link).")));
+      Future.microtask(() {
+        if (context.mounted) {
+          return ScaffoldMessenger.of(context)
+              .showSnackBar(cErrorToast("Couldn't find that item (bad link)."));
+        }
+      });
     }
   }
 

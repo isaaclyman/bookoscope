@@ -44,6 +44,10 @@ class _BookGrid extends StatelessWidget {
 
     final results = resultSources
         .sorted((a, b) {
+          if (combineSources && a.isNewTitles != b.isNewTitles) {
+            return a.isNewTitles ? -1 : 1;
+          }
+
           if (a.minPriority != b.minPriority) {
             return a.minPriority.compareTo(b.minPriority);
           }
@@ -83,6 +87,7 @@ class _BookGrid extends StatelessWidget {
                   imageUrl: result.imageUrl,
                   downloadUrls: result.downloadUrls,
                   isGutenberg: result.isGutenberg,
+                  isNewTitle: result.isNewTitle,
                   getRenderables: result.getRenderables,
                   priority: 0,
                 ),

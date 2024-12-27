@@ -217,8 +217,11 @@ class BKPageShell extends StatelessWidget {
     final categoryName = params["category"];
     final itemName = params["item"];
     if (itemName != null) {
-      Future.microtask(
-          () => handler.goToResult(context, categoryName, itemName));
+      Future.microtask(() {
+        if (context.mounted) {
+          handler.goToResult(context, categoryName, itemName);
+        }
+      });
     } else if (context.mounted) {
       Scaffold.of(context).closeEndDrawer();
     }

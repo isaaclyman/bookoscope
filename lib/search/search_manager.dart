@@ -1,6 +1,8 @@
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:bookoscope/db/book.db.dart';
+import 'package:bookoscope/db/dated_title.db.dart';
 import 'package:bookoscope/db/source.db.dart';
 import 'package:bookoscope/render/link.dart';
 import 'package:bookoscope/search/searchable_books.dart';
@@ -11,6 +13,7 @@ class BKSearchManager extends ChangeNotifier {
   BKHasSearchableSources _root = BKHasSearchableSources(
     books: [],
     sources: [],
+    newTitles: HashSet(),
   );
   Map<String, bool> filterState = {};
 
@@ -71,6 +74,7 @@ class BKSearchManager extends ChangeNotifier {
           imageUrl: searchable.imageUrl,
           downloadUrls: searchable.downloadUrls,
           isGutenberg: searchable.isGutenberg,
+          isNewTitle: _root.newTitles.contains(searchable.title),
           getRenderables: searchable.getRenderables,
           priority: 0,
         );
@@ -93,16 +97,18 @@ class BKSearchManager extends ChangeNotifier {
       imageUrl: searchable.imageUrl,
       downloadUrls: searchable.downloadUrls,
       isGutenberg: searchable.isGutenberg,
+      isNewTitle: _root.newTitles.contains(searchable.title),
       getRenderables: searchable.getRenderables,
       priority: 0,
     );
   }
 
-  void refreshSources(DBSources dbSources, DBBooks dbBooks) {
+  void refreshSources(
+      DBSources dbSources, DBBooks dbBooks, DBDatedTitles dbDatedTitles) {
     _root = BKHasSearchableSources(
-      sources: dbSources.sources,
-      books: dbBooks.books,
-    );
+        sources: dbSources.sources,
+        books: dbBooks.books,
+        newTitles: dbDatedTitles.newTitles);
     filterState = {for (var s in _root.searchableSources) s.sourceName: true};
     search();
   }
@@ -118,7 +124,13 @@ class BKSearchManager extends ChangeNotifier {
     }
 
     selectedResult = result;
-    Future.microtask(() => Scaffold.of(context).openEndDrawer());
+
+    Future.microtask(() {
+      if (context.mounted) {
+        Scaffold.of(context).openEndDrawer();
+      }
+    });
+
     notifyListeners();
   }
 
@@ -134,6 +146,24 @@ class BKSearchManager extends ChangeNotifier {
   Iterable<BKSearchResultSource> _getResults() {
     final showEverything = !isSearching;
     final results = <String, BKSearchResultSource>{};
+
+    const newTitleSourceName = "✨ New Titles";
+    final newTitleSource = _root.newTitles.isEmpty
+        ? BKSearchResultSource(
+            sourceName: newTitleSourceName,
+            isBuiltInSource: false,
+            isNewTitles: true,
+            results: [],
+          )
+        : results.putIfAbsent(
+            newTitleSourceName,
+            () => BKSearchResultSource(
+              sourceName: newTitleSourceName,
+              isBuiltInSource: false,
+              isNewTitles: true,
+              results: [],
+            ),
+          );
 
     for (var source in _root.searchableSources) {
       final sourceName = source.sourceName;
@@ -162,25 +192,32 @@ class BKSearchManager extends ChangeNotifier {
           () => BKSearchResultSource(
             sourceName: sourceName,
             isBuiltInSource: source.isBuiltInSource,
+            isNewTitles: false,
             results: [],
           ),
         );
 
-        resultSource.addResult(
-          BKSearchResult(
-            originalId: searchable.originalId,
-            sourceName: sourceName,
-            title: searchable.title,
-            author: matchingText ?? searchable.author,
-            imageUrl: searchable.imageUrl,
-            downloadUrls: searchable.downloadUrls,
-            isGutenberg: searchable.isGutenberg,
-            getRenderables: searchable.getRenderables,
-            priority: searchText.toLowerCase() == searchable.title.toLowerCase()
-                ? -1
-                : priority,
-          ),
+        final isNewTitle = _root.newTitles.contains(searchable.title);
+        final searchResult = BKSearchResult(
+          originalId: searchable.originalId,
+          sourceName: sourceName,
+          title: searchable.title,
+          author: matchingText ?? searchable.author,
+          imageUrl: searchable.imageUrl,
+          downloadUrls: searchable.downloadUrls,
+          isGutenberg: searchable.isGutenberg,
+          isNewTitle: isNewTitle,
+          getRenderables: searchable.getRenderables,
+          priority: searchText.toLowerCase() == searchable.title.toLowerCase()
+              ? -1
+              : priority,
         );
+
+        if (isNewTitle) {
+          newTitleSource.addResult(searchResult);
+        } else {
+          resultSource.addResult(searchResult);
+        }
       }
     }
 
@@ -205,12 +242,14 @@ class BKSearchManager extends ChangeNotifier {
 class BKSearchResultSource {
   final String sourceName;
   final bool isBuiltInSource;
+  final bool isNewTitles;
   final List<BKSearchResult> results;
   int minPriority = 100;
 
   BKSearchResultSource({
     required this.sourceName,
     required this.isBuiltInSource,
+    required this.isNewTitles,
     required this.results,
   });
 
@@ -228,6 +267,7 @@ class BKSearchResult {
   final String? imageUrl;
   final List<CExternalLink> downloadUrls;
   final bool isGutenberg;
+  final bool isNewTitle;
   final Iterable<Widget> Function() getRenderables;
   final int priority;
 
@@ -239,6 +279,7 @@ class BKSearchResult {
     required this.imageUrl,
     required this.downloadUrls,
     required this.isGutenberg,
+    required this.isNewTitle,
     required this.getRenderables,
     required this.priority,
   });

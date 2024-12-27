@@ -3,6 +3,7 @@ import 'package:bookoscope/format/guten/guten_acquisition.dart';
 import 'package:bookoscope/format/opds/opds_crawler.dart';
 import 'package:bookoscope/render/link.dart';
 import 'package:bookoscope/search/search_manager.dart';
+import 'package:bookoscope/theme/colors.dart';
 import 'package:bookoscope/util/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,24 +39,35 @@ class _BKBookTileState extends State<BKBookTile> {
         child: Column(
           children: [
             Expanded(
-              child: imageUrl != null
-                  ? Image.network(
-                      imageUrl,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, err, ___) {
-                        debugPrint(err.toString());
-                        return _DefaultBookCover(
+              child: Stack(
+                children: [
+                  imageUrl != null
+                      ? Image.network(
+                          imageUrl,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, err, ___) {
+                            debugPrint(err.toString());
+                            return _DefaultBookCover(
+                              title: widget.result.title,
+                              author: widget.result.author,
+                              sourceName: widget.result.sourceName,
+                            );
+                          },
+                        )
+                      : _DefaultBookCover(
                           title: widget.result.title,
                           author: widget.result.author,
                           sourceName: widget.result.sourceName,
-                        );
-                      },
-                    )
-                  : _DefaultBookCover(
-                      title: widget.result.title,
-                      author: widget.result.author,
-                      sourceName: widget.result.sourceName,
+                        ),
+                  if (widget.result.isNewTitle)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      child: _NewTitleLabel(),
                     ),
+                ],
+              ),
             ),
             ListTile(
               contentPadding: const EdgeInsets.only(
@@ -231,6 +243,34 @@ class _DefaultBookCover extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NewTitleLabel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(8),
+            bottomRight: Radius.circular(8),
+          ),
+          color: context.colors.accent.withOpacity(0.9),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Text(
+            "New",
+            style: TextStyle(
+              color: Colors.white.withAlpha(220),
+              fontFamily: 'Titillium',
+              fontSize: 14,
+            ),
+          ),
         ),
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:bookoscope/components/future_handler.dart';
 import 'package:bookoscope/db/book.db.dart';
 import 'package:bookoscope/db/source.db.dart';
@@ -121,6 +123,7 @@ class BKSearchableBook extends BKSearchable {
 class BKHasSearchableSources extends BKHasSearchables {
   final List<Book> books;
   final List<Source> sources;
+  final HashSet<String> newTitles;
 
   @override
   List<BKSearchableSource> get searchableSources =>
@@ -129,6 +132,7 @@ class BKHasSearchableSources extends BKHasSearchables {
   BKHasSearchableSources({
     required this.books,
     required this.sources,
+    required this.newTitles,
   });
 
   List<BKSearchableSource> _getSearchableSources(

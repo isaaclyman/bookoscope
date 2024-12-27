@@ -1,4 +1,5 @@
 import 'package:bookoscope/db/book.db.dart';
+import 'package:bookoscope/db/dated_title.db.dart';
 import 'package:bookoscope/db/endpoint.db.dart';
 import 'package:bookoscope/db/initialize.dart';
 import 'package:bookoscope/db/source.db.dart';
@@ -21,10 +22,12 @@ class BKProviders extends StatelessWidget {
         ChangeNotifierProvider<DBSources>(create: (_) => DBSources()),
         ChangeNotifierProvider<DBEndpoints>(create: (_) => DBEndpoints()),
         ChangeNotifierProvider<DBBooks>(create: (_) => DBBooks()),
-        ChangeNotifierProxyProvider2<DBSources, DBBooks, BKSearchManager?>(
+        ChangeNotifierProvider<DBDatedTitles>(create: (_) => DBDatedTitles()),
+        ChangeNotifierProxyProvider3<DBSources, DBBooks, DBDatedTitles,
+            BKSearchManager?>(
           create: (_) => BKSearchManager(),
-          update: (_, dbSources, dbBooks, searchManager) {
-            searchManager?.refreshSources(dbSources, dbBooks);
+          update: (_, dbSources, dbBooks, dbDatedTitles, searchManager) {
+            searchManager?.refreshSources(dbSources, dbBooks, dbDatedTitles);
             return searchManager;
           },
         ),
@@ -36,11 +39,14 @@ class BKProviders extends StatelessWidget {
         ChangeNotifierProvider<CNavManager>(
           create: (_) => CNavManager(),
         ),
-        ProxyProvider3<DBSources, DBEndpoints, DBBooks, BKCrawlManager>(
-          update: (_, dbSources, dbEndpoints, dbBooks, __) => BKCrawlManager(
+        ProxyProvider4<DBSources, DBEndpoints, DBBooks, DBDatedTitles,
+            BKCrawlManager>(
+          update: (_, dbSources, dbEndpoints, dbBooks, dbDatedTitles, __) =>
+              BKCrawlManager(
             dbSources: dbSources,
             dbEndpoints: dbEndpoints,
             dbBooks: dbBooks,
+            dbDatedTitles: dbDatedTitles,
           ),
         ),
         ProxyProvider2<DBSources, BKCrawlManager, DBInitialize>(
